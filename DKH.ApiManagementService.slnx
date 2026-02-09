@@ -1,0 +1,16 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/tests/">
+    <Project Path="tests/DKH.ApiManagementService.IntegrationTests/DKH.ApiManagementService.IntegrationTests.csproj" />
+    <Project Path="tests/DKH.ApiManagementService.Tests/DKH.ApiManagementService.Tests.csproj" />
+  </Folder>
+  <Project Path="DKH.ApiManagementService.Api/DKH.ApiManagementService.Api.csproj" />
+  <Project Path="DKH.ApiManagementService.Application/DKH.ApiManagementService.Application.csproj" />
+  <Project Path="DKH.ApiManagementService.Contracts/DKH.ApiManagementService.Contracts.csproj" />
+  <Project Path="DKH.ApiManagementService.Domain/DKH.ApiManagementService.Domain.csproj" />
+  <Project Path="DKH.ApiManagementService.Infrastructure/DKH.ApiManagementService.Infrastructure.csproj" />
+</Solution>
