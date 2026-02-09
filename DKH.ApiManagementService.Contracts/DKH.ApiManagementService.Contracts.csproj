@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="Grpc.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="DKH.Platform.Grpc.Common"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="proto/api_management/services/v1/api_key_crud_service.proto"/>
+    <Protobuf Include="proto/api_management/services/v1/api_key_validation_service.proto"/>
+    <Protobuf Include="proto/api_management/services/v1/api_key_usage_service.proto"/>
+    <Protobuf Include="proto/api_management/models/v1/api_key.proto"/>
+    <Protobuf Include="proto/api_management/models/v1/api_key_usage.proto"/>
+  </ItemGroup>
+</Project>

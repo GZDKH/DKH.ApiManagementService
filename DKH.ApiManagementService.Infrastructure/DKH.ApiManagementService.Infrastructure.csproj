@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="DKH.Platform.EntityFrameworkCore"/>
+    <PackageReference Include="DKH.Platform.EntityFrameworkCore.PostgreSQL"/>
+    <PackageReference Include="DKH.Platform.EntityFrameworkCore.Repositories"/>
+    <PackageReference Include="DKH.Platform.Logging"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions"/>
+    <PackageReference Include="Microsoft.Extensions.Hosting"/>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DKH.ApiManagementService.Application\DKH.ApiManagementService.Application.csproj"/>
+    <ProjectReference Include="..\DKH.ApiManagementService.Domain\DKH.ApiManagementService.Domain.csproj"/>
+  </ItemGroup>
+</Project>

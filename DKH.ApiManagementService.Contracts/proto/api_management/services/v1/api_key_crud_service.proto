@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package api_management.services.v1;
+
+option csharp_namespace = "DKH.ApiManagementService.Contracts.Services.V1";
+
+import "api_management/models/v1/api_key.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+
+service ApiKeyCrudService {
+  rpc CreateApiKey(CreateApiKeyRequest) returns (CreateApiKeyResponse);
+  rpc GetApiKey(GetApiKeyRequest) returns (GetApiKeyResponse);
+  rpc ListApiKeys(ListApiKeysRequest) returns (ListApiKeysResponse);
+  rpc UpdateApiKey(UpdateApiKeyRequest) returns (UpdateApiKeyResponse);
+  rpc DeleteApiKey(DeleteApiKeyRequest) returns (DeleteApiKeyResponse);
+  rpc RegenerateApiKey(RegenerateApiKeyRequest) returns (RegenerateApiKeyResponse);
+}
+
+message CreateApiKeyRequest {
+  string name = 1;
+  api_management.models.v1.ApiKeyScope scope = 2;
+  repeated string permissions = 3;
+  google.protobuf.StringValue description = 4;
+  google.protobuf.Timestamp expires_at = 5;
+  string created_by = 6;
+}
+
+message CreateApiKeyResponse {
+  api_management.models.v1.ApiKey api_key = 1;
+  string raw_key = 2;
+}
+
+message GetApiKeyRequest {
+  string id = 1;
+}
+
+message GetApiKeyResponse {
+  api_management.models.v1.ApiKey api_key = 1;
+}
+
+message ListApiKeysRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  api_management.models.v1.ApiKeyScope scope_filter = 3;
+  api_management.models.v1.ApiKeyStatus status_filter = 4;
+}
+
+message ListApiKeysResponse {
+  repeated api_management.models.v1.ApiKey api_keys = 1;
+  int32 total_count = 2;
+}
+
+message UpdateApiKeyRequest {
+  string id = 1;
+  google.protobuf.StringValue name = 2;
+  google.protobuf.StringValue description = 3;
+  repeated string permissions = 4;
+  google.protobuf.Timestamp expires_at = 5;
+}
+
+message UpdateApiKeyResponse {
+  api_management.models.v1.ApiKey api_key = 1;
+}
+
+message DeleteApiKeyRequest {
+  string id = 1;
+}
+
+message DeleteApiKeyResponse {
+  bool success = 1;
+}
+
+message RegenerateApiKeyRequest {
+  string id = 1;
+}
+
+message RegenerateApiKeyResponse {
+  api_management.models.v1.ApiKey api_key = 1;
+  string raw_key = 2;
+}

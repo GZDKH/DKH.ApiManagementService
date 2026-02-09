@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Update="appsettings.Development.json">
+      <DependentUpon>appsettings.json</DependentUpon>
+    </Content>
+    <Content Include="..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DKH.Platform"/>
+    <PackageReference Include="DKH.Platform.Core"/>
+    <PackageReference Include="DKH.Platform.Logging"/>
+    <PackageReference Include="DKH.Platform.MediatR.Behaviors"/>
+    <PackageReference Include="DKH.Platform.Messaging"/>
+    <PackageReference Include="DKH.Platform.EntityFrameworkCore"/>
+    <PackageReference Include="DKH.Platform.Grpc"/>
+    <PackageReference Include="Grpc.AspNetCore"/>
+    <PackageReference Include="Grpc.AspNetCore.HealthChecks"/>
+    <PackageReference Include="Grpc.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DKH.ApiManagementService.Application\DKH.ApiManagementService.Application.csproj"/>
+    <ProjectReference Include="..\DKH.ApiManagementService.Contracts\DKH.ApiManagementService.Contracts.csproj"/>
+    <ProjectReference Include="..\DKH.ApiManagementService.Infrastructure\DKH.ApiManagementService.Infrastructure.csproj"/>
+  </ItemGroup>
+</Project>

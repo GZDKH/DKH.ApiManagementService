@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package api_management.services.v1;
+
+option csharp_namespace = "DKH.ApiManagementService.Contracts.Services.V1";
+
+import "api_management/models/v1/api_key.proto";
+
+service ApiKeyValidationService {
+  rpc ValidateApiKey(ValidateApiKeyRequest) returns (ValidateApiKeyResponse);
+  rpc CheckPermission(CheckPermissionRequest) returns (CheckPermissionResponse);
+}
+
+message ValidateApiKeyRequest {
+  string raw_key = 1;
+}
+
+message ValidateApiKeyResponse {
+  bool is_valid = 1;
+  string api_key_id = 2;
+  api_management.models.v1.ApiKeyScope scope = 3;
+  repeated string permissions = 4;
+  string error_reason = 5;
+}
+
+message CheckPermissionRequest {
+  string raw_key = 1;
+  string required_permission = 2;
+}
+
+message CheckPermissionResponse {
+  bool is_allowed = 1;
+  string error_reason = 2;
+}

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="DKH.Platform"/>
+    <PackageReference Include="DKH.Platform.Application"/>
+    <PackageReference Include="FluentValidation"/>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions"/>
+    <PackageReference Include="JetBrains.Annotations"/>
+    <PackageReference Include="MediatR"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore"/>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DKH.ApiManagementService.Contracts\DKH.ApiManagementService.Contracts.csproj"/>
+    <ProjectReference Include="..\DKH.ApiManagementService.Domain\DKH.ApiManagementService.Domain.csproj"/>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package api_management.services.v1;
+
+option csharp_namespace = "DKH.ApiManagementService.Contracts.Services.V1";
+
+import "api_management/models/v1/api_key_usage.proto";
+import "google/protobuf/timestamp.proto";
+
+service ApiKeyUsageService {
+  rpc RecordUsage(RecordUsageRequest) returns (RecordUsageResponse);
+  rpc GetUsageStats(GetUsageStatsRequest) returns (GetUsageStatsResponse);
+  rpc GetUsageHistory(GetUsageHistoryRequest) returns (GetUsageHistoryResponse);
+}
+
+message RecordUsageRequest {
+  string api_key_id = 1;
+  string endpoint = 2;
+  int32 status_code = 3;
+  string ip_address = 4;
+  string user_agent = 5;
+  int64 response_time_ms = 6;
+}
+
+message RecordUsageResponse {
+  bool success = 1;
+}
+
+message GetUsageStatsRequest {
+  string api_key_id = 1;
+  google.protobuf.Timestamp from = 2;
+  google.protobuf.Timestamp to = 3;
+}
+
+message GetUsageStatsResponse {
+  api_management.models.v1.ApiKeyUsageStats stats = 1;
+}
+
+message GetUsageHistoryRequest {
+  string api_key_id = 1;
+  google.protobuf.Timestamp from = 2;
+  google.protobuf.Timestamp to = 3;
+  int32 page = 4;
+  int32 page_size = 5;
+}
+
+message GetUsageHistoryResponse {
+  repeated api_management.models.v1.ApiKeyUsage records = 1;
+  int32 total_count = 2;
+}

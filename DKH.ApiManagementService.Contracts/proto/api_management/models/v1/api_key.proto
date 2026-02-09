@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package api_management.models.v1;
+
+option csharp_namespace = "DKH.ApiManagementService.Contracts.Models.V1";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+enum ApiKeyScope {
+  API_KEY_SCOPE_UNSPECIFIED = 0;
+  API_KEY_SCOPE_MCP = 1;
+  API_KEY_SCOPE_WEBHOOK = 2;
+  API_KEY_SCOPE_PARTNER = 3;
+  API_KEY_SCOPE_STOREFRONT = 4;
+  API_KEY_SCOPE_INTERNAL = 5;
+}
+
+enum ApiKeyStatus {
+  API_KEY_STATUS_UNSPECIFIED = 0;
+  API_KEY_STATUS_ACTIVE = 1;
+  API_KEY_STATUS_REVOKED = 2;
+  API_KEY_STATUS_EXPIRED = 3;
+}
+
+message ApiKey {
+  string id = 1;
+  string name = 2;
+  string key_prefix = 3;
+  ApiKeyScope scope = 4;
+  ApiKeyStatus status = 5;
+  repeated string permissions = 6;
+  google.protobuf.StringValue description = 7;
+  google.protobuf.Timestamp expires_at = 8;
+  google.protobuf.Timestamp last_used_at = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+  string created_by = 12;
+}
