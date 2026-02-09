@@ -1,0 +1,10 @@
+services:
+  dkh.api-management.service-db:
+    ports:
+      - "5212:5432"
+
+  dkh.api-management.service:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+    ports:
+      - "5012:5012"

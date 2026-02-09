@@ -1,0 +1,51 @@
+services:
+  dkh.api-management.service-db:
+    image: postgres:18-alpine
+    container_name: dkh.api-management.service-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:-dkh_api_management}
+    volumes:
+      - dkh.api-management.service-db:/var/lib/postgresql
+    networks:
+      - dkh-network
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dkh.api-management.service:
+    image: ${DOCKER_REGISTRY-}dkh-api-management-service
+    container_name: dkh.api-management.service
+    build:
+      context: .
+      dockerfile: DKH.ApiManagementService.Api/Dockerfile
+      secrets:
+        - github_nuget_username
+        - github_nuget_token
+    depends_on:
+      dkh.api-management.service-db:
+        condition: service_healthy
+    volumes:
+      - dkh.api-management.service-logs:/app/logs
+    networks:
+      - dkh-network
+    restart: unless-stopped
+
+volumes:
+  dkh.api-management.service-db:
+  dkh.api-management.service-logs:
+
+networks:
+  dkh-network:
+    name: dkh-network
+    external: true
+
+secrets:
+  github_nuget_username:
+    environment: GITHUB_NUGET_USERNAME
+  github_nuget_token:
+    environment: GITHUB_NUGET_TOKEN
