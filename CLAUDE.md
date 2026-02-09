@@ -8,6 +8,8 @@ Before starting any task in this repository, you MUST read these files from DKH.
 2. **[agents-dotnet.md](https://github.com/GZDKH/DKH.Architecture/blob/main/docs/agents-dotnet.md)** — .NET specific rules
 3. **[github-workflow.md](https://github.com/GZDKH/DKH.Architecture/blob/main/docs/github-workflow.md)** — GitHub Issues & Project Board
 
+These files are located in the DKH.Architecture repository (located in the sibling `libraries/DKH.Architecture` folder relative to your workspace).
+
 ---
 
 This file provides guidance to Claude Code when working in this repository.
@@ -34,6 +36,13 @@ dotnet run --project DKH.ApiManagementService.Api
 dotnet ef database update \
   --project DKH.ApiManagementService.Infrastructure \
   --startup-project DKH.ApiManagementService.Api
+
+# Docker
+docker compose -f docker-compose.yml -f docker-compose.override.yml up -d dkh.api.management.api
+
+# Scripts
+pwsh ./.scripts/build/build.ps1
+pwsh ./.scripts/maintenance/clean.ps1
 ```
 
 ## Architecture
@@ -45,24 +54,27 @@ dotnet ef database update \
 - `DKH.ApiManagementService.Api` — gRPC services (3 services), Program.cs, DI setup
 - `DKH.ApiManagementService.Contracts` — Protobuf schemas in `proto/api_management/`
 
-**Key Patterns:**
-- CQRS via MediatR (Commands, Queries, Handlers per feature)
-- FluentValidation for all commands and queries
-- ApiKey as aggregate root with ApiKeyUsage child
-- Cryptographically secure key generation (SHA-256 hashing)
-- Permission-based access control per API key
-- Scoped keys: mcp, webhook, partner, storefront, internal
+**Gateway Pattern:**
+gRPC Clients (AdminGateway, McpGateway) → gRPC Services → MediatR Handlers → Domain
 
-**gRPC Services:**
-- `ApiKeyCrudService` — CRUD operations (create, update, delete, get, list, regenerate)
-- `ApiKeyValidationService` — Validate keys and check permissions (consumed by McpGateway, future services)
-- `ApiKeyUsageService` — Usage statistics and recording
+## Downstream Services (via gRPC)
+
+This service has no downstream gRPC dependencies.
+
+## gRPC Services
+
+| Service | RPCs | Description |
+|---------|------|-------------|
+| ApiKeyCrudService | Create, Get, List, Update, Delete, Regenerate | API key lifecycle management |
+| ApiKeyValidationService | ValidateApiKey, CheckPermission | Key validation and permission checks |
+| ApiKeyUsageService | RecordUsage, GetUsageStats, GetUsageHistory | Usage tracking and statistics |
 
 ## Contracts (gRPC)
 
 Proto files in `DKH.ApiManagementService.Contracts/proto/api_management/{services|models}/v1/`
 - Services: `api_key_crud_service.proto`, `api_key_validation_service.proto`, `api_key_usage_service.proto`
 - Models: `api_key.proto`, `api_key_usage.proto`
+- C# namespace: `DKH.ApiManagementService.Contracts.Services.V1` / `DKH.ApiManagementService.Contracts.Models.V1`
 
 ## Configuration
 
@@ -76,8 +88,28 @@ Proto files in `DKH.ApiManagementService.Contracts/proto/api_management/{service
 - Example: `dkh_mcp_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6`
 - Storage: SHA-256 hash only (raw key never stored)
 
+## Key Patterns
+
+- CQRS via MediatR (Commands, Queries, Handlers per feature)
+- FluentValidation for all commands and queries
+- ApiKey as aggregate root with ApiKeyUsage child
+- Cryptographically secure key generation (SHA-256 hashing)
+- Permission-based access control per API key
+- Scoped keys: mcp, webhook, partner, storefront, internal
+
 ## External Dependencies
 
 - PostgreSQL via EF Core 10
 - DKH.Platform shared libraries
-- gRPC consumers: AdminGateway, McpGateway, future services
+
+## gRPC Consumers
+
+- `DKH.AdminGateway` — API key management UI (CRUD, usage stats)
+- `DKH.McpGateway` — API key validation for MCP tool requests
+
+## Related Repositories
+
+- `DKH.Platform` — Shared libraries
+- `DKH.Architecture` — Architecture documentation
+- `DKH.Infrastructure` — Docker, scripts, observability
+- Consumers: AdminGateway, McpGateway
