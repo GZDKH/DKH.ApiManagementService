@@ -8,7 +8,7 @@ public sealed class RecordUsageCommandHandler(IApiKeyUsageRepository repository)
 {
     public async Task<bool> Handle(RecordUsageCommand request, CancellationToken cancellationToken)
     {
-        var usage = new ApiKeyUsageEntity(
+        var usage = ApiKeyUsageEntity.Create(
             request.ApiKeyId,
             request.Endpoint,
             request.StatusCode,

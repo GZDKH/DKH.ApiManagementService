@@ -13,7 +13,7 @@ public sealed class CreateApiKeyCommandHandler(
     {
         var (rawKey, keyHash, keyPrefix) = keyGenerator.Generate(request.Scope);
 
-        var entity = new ApiKeyEntity(
+        var entity = ApiKeyEntity.Create(
             request.Name,
             keyHash,
             keyPrefix,

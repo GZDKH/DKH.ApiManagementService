@@ -19,8 +19,8 @@ public static class ApiKeyMapper
             KeyPrefix = entity.KeyPrefix,
             Scope = entity.Scope.ToProtoScope(),
             Status = entity.Status.ToProtoStatus(),
-            CreatedAt = Timestamp.FromDateTimeOffset(entity.CreatedAt),
-            UpdatedAt = Timestamp.FromDateTimeOffset(entity.UpdatedAt),
+            CreatedAt = Timestamp.FromDateTime(DateTime.SpecifyKind(entity.CreationTime, DateTimeKind.Utc)),
+            UpdatedAt = Timestamp.FromDateTime(DateTime.SpecifyKind(entity.LastModificationTime ?? entity.CreationTime, DateTimeKind.Utc)),
             CreatedBy = entity.CreatedBy,
         };
 

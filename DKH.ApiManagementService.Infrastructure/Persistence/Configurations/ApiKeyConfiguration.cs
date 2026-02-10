@@ -44,6 +44,10 @@ public class ApiKeyConfiguration : IEntityTypeConfiguration<ApiKeyEntity>
             .IsRequired()
             .HasMaxLength(256);
 
+        builder.Property(x => x.CreationTime);
+
+        builder.Property(x => x.LastModificationTime);
+
         builder.HasIndex(x => x.KeyHash)
             .IsUnique();
 

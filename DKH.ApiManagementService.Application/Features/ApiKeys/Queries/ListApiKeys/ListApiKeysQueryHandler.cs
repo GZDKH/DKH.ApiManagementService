@@ -24,7 +24,7 @@ public sealed class ListApiKeysQueryHandler(IAppDbContext dbContext) : IRequestH
         var totalCount = await query.CountAsync(cancellationToken);
 
         var entities = await query
-            .OrderByDescending(x => x.CreatedAt)
+            .OrderByDescending(x => x.CreationTime)
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .ToListAsync(cancellationToken);

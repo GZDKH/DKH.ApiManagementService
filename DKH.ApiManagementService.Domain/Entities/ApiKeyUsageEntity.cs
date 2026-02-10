@@ -2,13 +2,14 @@ using DKH.Platform.Domain.Entities;
 
 namespace DKH.ApiManagementService.Domain.Entities;
 
-public class ApiKeyUsageEntity : Entity<Guid>
+public sealed class ApiKeyUsageEntity : Entity<Guid>
 {
     private ApiKeyUsageEntity()
     {
+        Endpoint = string.Empty;
     }
 
-    public ApiKeyUsageEntity(
+    private ApiKeyUsageEntity(
         Guid apiKeyId,
         string endpoint,
         int statusCode,
@@ -28,7 +29,7 @@ public class ApiKeyUsageEntity : Entity<Guid>
 
     public Guid ApiKeyId { get; private set; }
 
-    public string Endpoint { get; private set; } = null!;
+    public string Endpoint { get; private set; }
 
     public int StatusCode { get; private set; }
 
@@ -41,4 +42,25 @@ public class ApiKeyUsageEntity : Entity<Guid>
     public long ResponseTimeMs { get; private set; }
 
     public ApiKeyEntity ApiKey { get; private set; } = null!;
+
+    public static ApiKeyUsageEntity Create(
+        Guid apiKeyId,
+        string endpoint,
+        int statusCode,
+        string? ipAddress,
+        string? userAgent,
+        long responseTimeMs)
+    {
+        if (apiKeyId == Guid.Empty)
+        {
+            throw new ArgumentException("API key ID must be provided", nameof(apiKeyId));
+        }
+
+        if (string.IsNullOrWhiteSpace(endpoint))
+        {
+            throw new ArgumentException("Endpoint must be provided", nameof(endpoint));
+        }
+
+        return new ApiKeyUsageEntity(apiKeyId, endpoint, statusCode, ipAddress, userAgent, responseTimeMs);
+    }
 }
