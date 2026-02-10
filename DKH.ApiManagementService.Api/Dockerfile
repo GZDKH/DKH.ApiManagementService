@@ -50,7 +50,7 @@ COPY ["DKH.ApiManagementService.Domain/DKH.ApiManagementService.Domain.csproj", 
 COPY ["DKH.ApiManagementService.Infrastructure/DKH.ApiManagementService.Infrastructure.csproj", "DKH.ApiManagementService.Infrastructure/"]
 RUN --mount=type=cache,target=/root/.nuget/packages,sharing=locked \
     RUNTIME_ID=$(if [ "$(uname -m)" = "aarch64" ] || [ "$(uname -m)" = "arm64" ]; then echo "linux-arm64"; else echo "linux-x64"; fi) && \
-    dotnet restore "DKH.ApiManagementService.Api/DKH.ApiManagementService.Api.csproj" -r $RUNTIME_ID
+    dotnet restore "DKH.ApiManagementService.Api/DKH.ApiManagementService.Api.csproj" -r $RUNTIME_ID /p:PublishReadyToRun=true
 COPY . .
 
 # This stage is used to publish the service project to be copied to the final stage
