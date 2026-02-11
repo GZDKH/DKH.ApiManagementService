@@ -52,7 +52,10 @@ COPY ["DKH.ApiManagementService.Infrastructure/DKH.ApiManagementService.Infrastr
 RUN --mount=type=cache,target=/root/.nuget/packages,sharing=locked \
     RUNTIME_ID=$(if [ "$(uname -m)" = "aarch64" ] || [ "$(uname -m)" = "arm64" ]; then echo "linux-arm64"; else echo "linux-x64"; fi) && \
     dotnet restore "DKH.ApiManagementService.Api/DKH.ApiManagementService.Api.csproj" -r $RUNTIME_ID /p:PublishReadyToRun=true
+# Preserve authenticated nuget.config before COPY overwrites it
+RUN cp nuget.config /tmp/nuget.config.auth
 COPY . .
+RUN cp /tmp/nuget.config.auth nuget.config
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
