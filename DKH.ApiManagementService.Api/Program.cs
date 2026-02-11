@@ -10,7 +10,7 @@ using DKH.Platform.EntityFrameworkCore.Repositories;
 using DKH.Platform.Grpc;
 using DKH.Platform.Logging;
 using DKH.Platform.MediatR.Behaviors;
-using DKH.Platform.Messaging;
+using DKH.Platform.Messaging.MediatR;
 
 await Platform
     .CreateWeb(args)
