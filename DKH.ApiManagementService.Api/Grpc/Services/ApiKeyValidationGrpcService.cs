@@ -2,6 +2,7 @@ using DKH.ApiManagementService.Application.Features.ApiKeys.Mappers;
 using DKH.ApiManagementService.Application.Features.Validation.CheckPermission;
 using DKH.ApiManagementService.Application.Features.Validation.ValidateApiKey;
 using DKH.ApiManagementService.Contracts.Services.V1;
+using DKH.Platform.Grpc.Common.Types;
 using Grpc.Core;
 using MediatR;
 
@@ -18,7 +19,7 @@ public class ApiKeyValidationGrpcService(IMediator mediator) : ApiKeyValidationS
         var response = new ValidateApiKeyResponse
         {
             IsValid = result.IsValid,
-            ApiKeyId = result.ApiKeyId?.ToString() ?? string.Empty,
+            ApiKeyId = result.ApiKeyId.HasValue ? GuidValue.FromGuid(result.ApiKeyId.Value) : null,
             ErrorReason = result.ErrorReason ?? string.Empty,
         };
 

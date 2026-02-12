@@ -20,7 +20,7 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeyCrudService.ApiKe
                 request.Name,
                 request.Scope.ToDomainScope(),
                 [.. request.Permissions],
-                request.CreatedBy,
+                request.CreatedBy.ToGuid().ToString(),
                 request.Description,
                 request.ExpiresAt?.ToDateTimeOffset()),
             context.CancellationToken);
@@ -35,7 +35,7 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeyCrudService.ApiKe
     public override async Task<GetApiKeyResponse> GetApiKey(GetApiKeyRequest request, ServerCallContext context)
     {
         var apiKey = await mediator.Send(
-            new GetApiKeyQuery(Guid.Parse(request.Id)),
+            new GetApiKeyQuery(request.Id),
             context.CancellationToken);
 
         return new GetApiKeyResponse { ApiKey = apiKey };
@@ -57,13 +57,28 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeyCrudService.ApiKe
 
         var result = await mediator.Send(
             new ListApiKeysQuery(
-                request.Page > 0 ? request.Page : 1,
-                request.PageSize > 0 ? request.PageSize : 20,
+                request.Pagination?.Page > 0 ? request.Pagination.Page : 1,
+                request.Pagination?.PageSize > 0 ? request.Pagination.PageSize : 20,
                 scopeFilter,
                 statusFilter),
             context.CancellationToken);
 
-        var response = new ListApiKeysResponse { TotalCount = result.TotalCount };
+        var page = request.Pagination?.Page ?? 1;
+        var pageSize = request.Pagination?.PageSize ?? 20;
+        var totalPages = (int)Math.Ceiling((double)result.TotalCount / pageSize);
+
+        var response = new ListApiKeysResponse
+        {
+            Metadata = new Platform.Grpc.Common.Types.PaginationMetadata
+            {
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalCount = result.TotalCount,
+                TotalPages = totalPages,
+                HasNextPage = page < totalPages,
+                HasPreviousPage = page > 1,
+            },
+        };
         response.ApiKeys.AddRange(result.ApiKeys);
         return response;
     }
@@ -72,7 +87,7 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeyCrudService.ApiKe
     {
         var apiKey = await mediator.Send(
             new UpdateApiKeyCommand(
-                Guid.Parse(request.Id),
+                request.Id,
                 request.Name,
                 request.Description,
                 request.Permissions.Count > 0 ? request.Permissions.ToList() : null,
@@ -85,7 +100,7 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeyCrudService.ApiKe
     public override async Task<DeleteApiKeyResponse> DeleteApiKey(DeleteApiKeyRequest request, ServerCallContext context)
     {
         var success = await mediator.Send(
-            new DeleteApiKeyCommand(Guid.Parse(request.Id)),
+            new DeleteApiKeyCommand(request.Id),
             context.CancellationToken);
 
         return new DeleteApiKeyResponse { Success = success };
@@ -94,7 +109,7 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeyCrudService.ApiKe
     public override async Task<RegenerateApiKeyResponse> RegenerateApiKey(RegenerateApiKeyRequest request, ServerCallContext context)
     {
         var result = await mediator.Send(
-            new RegenerateApiKeyCommand(Guid.Parse(request.Id)),
+            new RegenerateApiKeyCommand(request.Id),
             context.CancellationToken);
 
         return new RegenerateApiKeyResponse

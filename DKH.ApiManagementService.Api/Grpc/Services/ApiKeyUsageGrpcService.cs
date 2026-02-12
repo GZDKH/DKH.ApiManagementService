@@ -13,7 +13,7 @@ public class ApiKeyUsageGrpcService(IMediator mediator) : ApiKeyUsageService.Api
     {
         var success = await mediator.Send(
             new RecordUsageCommand(
-                Guid.Parse(request.ApiKeyId),
+                request.ApiKeyId,
                 request.Endpoint,
                 request.StatusCode,
                 string.IsNullOrWhiteSpace(request.IpAddress) ? null : request.IpAddress,
@@ -28,7 +28,7 @@ public class ApiKeyUsageGrpcService(IMediator mediator) : ApiKeyUsageService.Api
     {
         var stats = await mediator.Send(
             new GetUsageStatsQuery(
-                Guid.Parse(request.ApiKeyId),
+                request.ApiKeyId,
                 request.From.ToDateTimeOffset(),
                 request.To.ToDateTimeOffset()),
             context.CancellationToken);
@@ -40,14 +40,29 @@ public class ApiKeyUsageGrpcService(IMediator mediator) : ApiKeyUsageService.Api
     {
         var result = await mediator.Send(
             new GetUsageHistoryQuery(
-                Guid.Parse(request.ApiKeyId),
+                request.ApiKeyId,
                 request.From.ToDateTimeOffset(),
                 request.To.ToDateTimeOffset(),
-                request.Page > 0 ? request.Page : 1,
-                request.PageSize > 0 ? request.PageSize : 20),
+                request.Pagination?.Page > 0 ? request.Pagination.Page : 1,
+                request.Pagination?.PageSize > 0 ? request.Pagination.PageSize : 20),
             context.CancellationToken);
 
-        var response = new GetUsageHistoryResponse { TotalCount = result.TotalCount };
+        var page = request.Pagination?.Page ?? 1;
+        var pageSize = request.Pagination?.PageSize ?? 20;
+        var totalPages = (int)Math.Ceiling((double)result.TotalCount / pageSize);
+
+        var response = new GetUsageHistoryResponse
+        {
+            Metadata = new Platform.Grpc.Common.Types.PaginationMetadata
+            {
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalCount = result.TotalCount,
+                TotalPages = totalPages,
+                HasNextPage = page < totalPages,
+                HasPreviousPage = page > 1,
+            },
+        };
         response.Records.AddRange(result.Records);
         return response;
     }

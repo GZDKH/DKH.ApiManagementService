@@ -1,4 +1,5 @@
 using DKH.ApiManagementService.Domain.Entities;
+using DKH.Platform.Grpc.Common.Types;
 using Google.Protobuf.WellKnownTypes;
 using ContractsApiKey = DKH.ApiManagementService.Contracts.Models.V1.ApiKey;
 using ContractsScope = DKH.ApiManagementService.Contracts.Models.V1.ApiKeyScope;
@@ -14,14 +15,14 @@ public static class ApiKeyMapper
     {
         var proto = new ContractsApiKey
         {
-            Id = entity.Id.ToString(),
+            Id = GuidValue.FromGuid(entity.Id),
             Name = entity.Name,
             KeyPrefix = entity.KeyPrefix,
             Scope = entity.Scope.ToProtoScope(),
             Status = entity.Status.ToProtoStatus(),
             CreatedAt = Timestamp.FromDateTime(DateTime.SpecifyKind(entity.CreationTime, DateTimeKind.Utc)),
             UpdatedAt = Timestamp.FromDateTime(DateTime.SpecifyKind(entity.LastModificationTime ?? entity.CreationTime, DateTimeKind.Utc)),
-            CreatedBy = entity.CreatedBy,
+            CreatedBy = GuidValue.FromGuid(Guid.Parse(entity.CreatedBy)),
         };
 
         proto.Permissions.AddRange(entity.Permissions);

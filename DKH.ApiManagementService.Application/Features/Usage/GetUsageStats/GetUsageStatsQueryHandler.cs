@@ -1,5 +1,6 @@
 using DKH.ApiManagementService.Application.Abstractions;
 using DKH.ApiManagementService.Contracts.Models.V1;
+using DKH.Platform.Grpc.Common.Types;
 using Google.Protobuf.WellKnownTypes;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ public sealed class GetUsageStatsQueryHandler(IAppDbContext dbContext) : IReques
 
         return new ApiKeyUsageStats
         {
-            ApiKeyId = request.ApiKeyId.ToString(),
+            ApiKeyId = GuidValue.FromGuid(request.ApiKeyId),
             TotalRequests = totalRequests,
             SuccessfulRequests = successfulRequests,
             FailedRequests = failedRequests,
