@@ -6,10 +6,11 @@ option csharp_namespace = "DKH.ApiManagementService.Contracts.Models.V1";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
+import "types/guid.proto";
 
 message ApiKeyUsage {
-  string id = 1;
-  string api_key_id = 2;
+  proto.platform.grpc.common.types.GuidValue id = 1;
+  proto.platform.grpc.common.types.GuidValue api_key_id = 2;
   string endpoint = 3;
   int32 status_code = 4;
   google.protobuf.StringValue ip_address = 5;
@@ -19,7 +20,7 @@ message ApiKeyUsage {
 }
 
 message ApiKeyUsageStats {
-  string api_key_id = 1;
+  proto.platform.grpc.common.types.GuidValue api_key_id = 1;
   int64 total_requests = 2;
   int64 successful_requests = 3;
   int64 failed_requests = 4;

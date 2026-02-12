@@ -1,4 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <DKHPlatformGrpcCommonProtoPath>$(NuGetPackageRoot)dkh.platform.grpc.common/1.0.0/proto</DKHPlatformGrpcCommonProtoPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Grpc.Tools">
       <PrivateAssets>all</PrivateAssets>
@@ -8,10 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="proto/api_management/services/v1/api_key_crud_service.proto"/>
-    <Protobuf Include="proto/api_management/services/v1/api_key_validation_service.proto"/>
-    <Protobuf Include="proto/api_management/services/v1/api_key_usage_service.proto"/>
-    <Protobuf Include="proto/api_management/models/v1/api_key.proto"/>
-    <Protobuf Include="proto/api_management/models/v1/api_key_usage.proto"/>
+    <Protobuf Include="proto/api_management/services/v1/api_key_crud_service.proto" ProtoRoot="proto" AdditionalProtocArguments="--proto_path=$(DKHPlatformGrpcCommonProtoPath)"/>
+    <Protobuf Include="proto/api_management/services/v1/api_key_validation_service.proto" ProtoRoot="proto" AdditionalProtocArguments="--proto_path=$(DKHPlatformGrpcCommonProtoPath)"/>
+    <Protobuf Include="proto/api_management/services/v1/api_key_usage_service.proto" ProtoRoot="proto" AdditionalProtocArguments="--proto_path=$(DKHPlatformGrpcCommonProtoPath)"/>
+    <Protobuf Include="proto/api_management/models/v1/api_key.proto" ProtoRoot="proto" AdditionalProtocArguments="--proto_path=$(DKHPlatformGrpcCommonProtoPath)"/>
+    <Protobuf Include="proto/api_management/models/v1/api_key_usage.proto" ProtoRoot="proto" AdditionalProtocArguments="--proto_path=$(DKHPlatformGrpcCommonProtoPath)"/>
   </ItemGroup>
 </Project>
