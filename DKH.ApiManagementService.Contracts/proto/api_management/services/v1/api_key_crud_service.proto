@@ -7,6 +7,9 @@ option csharp_namespace = "DKH.ApiManagementService.Contracts.Services.V1";
 import "api_management/models/v1/api_key.proto";
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
+import "types/guid.proto";
+import "types/pagination.proto";
+import "types/pagination_metadata.proto";
 
 service ApiKeyCrudService {
   rpc CreateApiKey(CreateApiKeyRequest) returns (CreateApiKeyResponse);
@@ -23,7 +26,7 @@ message CreateApiKeyRequest {
   repeated string permissions = 3;
   google.protobuf.StringValue description = 4;
   google.protobuf.Timestamp expires_at = 5;
-  string created_by = 6;
+  proto.platform.grpc.common.types.GuidValue created_by = 6;
 }
 
 message CreateApiKeyResponse {
@@ -32,7 +35,7 @@ message CreateApiKeyResponse {
 }
 
 message GetApiKeyRequest {
-  string id = 1;
+  proto.platform.grpc.common.types.GuidValue id = 1;
 }
 
 message GetApiKeyResponse {
@@ -40,19 +43,18 @@ message GetApiKeyResponse {
 }
 
 message ListApiKeysRequest {
-  int32 page = 1;
-  int32 page_size = 2;
-  api_management.models.v1.ApiKeyScope scope_filter = 3;
-  api_management.models.v1.ApiKeyStatus status_filter = 4;
+  proto.platform.grpc.common.types.PaginationRequest pagination = 1;
+  api_management.models.v1.ApiKeyScope scope_filter = 2;
+  api_management.models.v1.ApiKeyStatus status_filter = 3;
 }
 
 message ListApiKeysResponse {
   repeated api_management.models.v1.ApiKey api_keys = 1;
-  int32 total_count = 2;
+  proto.platform.grpc.common.types.PaginationMetadata metadata = 2;
 }
 
 message UpdateApiKeyRequest {
-  string id = 1;
+  proto.platform.grpc.common.types.GuidValue id = 1;
   google.protobuf.StringValue name = 2;
   google.protobuf.StringValue description = 3;
   repeated string permissions = 4;
@@ -64,7 +66,7 @@ message UpdateApiKeyResponse {
 }
 
 message DeleteApiKeyRequest {
-  string id = 1;
+  proto.platform.grpc.common.types.GuidValue id = 1;
 }
 
 message DeleteApiKeyResponse {
@@ -72,7 +74,7 @@ message DeleteApiKeyResponse {
 }
 
 message RegenerateApiKeyRequest {
-  string id = 1;
+  proto.platform.grpc.common.types.GuidValue id = 1;
 }
 
 message RegenerateApiKeyResponse {

@@ -5,6 +5,7 @@ package api_management.services.v1;
 option csharp_namespace = "DKH.ApiManagementService.Contracts.Services.V1";
 
 import "api_management/models/v1/api_key.proto";
+import "types/guid.proto";
 
 service ApiKeyValidationService {
   rpc ValidateApiKey(ValidateApiKeyRequest) returns (ValidateApiKeyResponse);
@@ -17,7 +18,7 @@ message ValidateApiKeyRequest {
 
 message ValidateApiKeyResponse {
   bool is_valid = 1;
-  string api_key_id = 2;
+  proto.platform.grpc.common.types.GuidValue api_key_id = 2;
   api_management.models.v1.ApiKeyScope scope = 3;
   repeated string permissions = 4;
   string error_reason = 5;
