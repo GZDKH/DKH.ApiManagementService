@@ -1,5 +1,6 @@
 using DKH.ApiManagementService.Application.Abstractions;
 using DKH.ApiManagementService.Contracts.Models.V1;
+using DKH.Platform.Grpc.Common.Types;
 using Google.Protobuf.WellKnownTypes;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -26,8 +27,8 @@ public sealed class GetUsageHistoryQueryHandler(IAppDbContext dbContext) : IRequ
 
         var records = entities.Select(e => new ApiKeyUsage
         {
-            Id = e.Id.ToString(),
-            ApiKeyId = e.ApiKeyId.ToString(),
+            Id = GuidValue.FromGuid(e.Id),
+            ApiKeyId = GuidValue.FromGuid(e.ApiKeyId),
             Endpoint = e.Endpoint,
             StatusCode = e.StatusCode,
             IpAddress = e.IpAddress,
