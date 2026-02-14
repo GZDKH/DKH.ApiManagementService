@@ -6,12 +6,13 @@ using DKH.ApiManagementService.Application.Features.ApiKeys.Mappers;
 using DKH.ApiManagementService.Application.Features.ApiKeys.Queries.GetApiKey;
 using DKH.ApiManagementService.Application.Features.ApiKeys.Queries.ListApiKeys;
 using DKH.ApiManagementService.Contracts.Services.V1;
+using DKH.Platform.Identity;
 using Grpc.Core;
 using MediatR;
 
 namespace DKH.ApiManagementService.Api.Grpc.Services;
 
-public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeyCrudService.ApiKeyCrudServiceBase
+public class ApiKeyCrudGrpcService(IMediator mediator, IPlatformCurrentUser currentUser) : ApiKeyCrudService.ApiKeyCrudServiceBase
 {
     public override async Task<CreateApiKeyResponse> CreateApiKey(CreateApiKeyRequest request, ServerCallContext context)
     {
@@ -20,7 +21,7 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeyCrudService.ApiKe
                 request.Name,
                 request.Scope.ToDomainScope(),
                 [.. request.Permissions],
-                request.CreatedBy.ToGuid().ToString(),
+                currentUser.Name ?? "unknown",
                 request.Description,
                 request.ExpiresAt?.ToDateTimeOffset()),
             context.CancellationToken);
