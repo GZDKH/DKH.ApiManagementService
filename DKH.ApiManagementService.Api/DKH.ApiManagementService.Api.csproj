@@ -21,6 +21,7 @@
     <PackageReference Include="DKH.Platform.Messaging.MediatR"/>
     <PackageReference Include="DKH.Platform.EntityFrameworkCore"/>
     <PackageReference Include="DKH.Platform.Grpc"/>
+    <PackageReference Include="DKH.Platform.Identity"/>
     <PackageReference Include="Grpc.AspNetCore"/>
     <PackageReference Include="Grpc.AspNetCore.HealthChecks"/>
     <PackageReference Include="Grpc.Tools">
