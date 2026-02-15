@@ -13,10 +13,6 @@ public sealed class CreateApiKeyCommandValidator : AbstractValidator<CreateApiKe
         RuleFor(x => x.Scope)
             .IsInEnum();
 
-        RuleFor(x => x.CreatedBy)
-            .NotEmpty()
-            .MaximumLength(256);
-
         RuleFor(x => x.Description)
             .MaximumLength(1024)
             .When(x => x.Description is not null);

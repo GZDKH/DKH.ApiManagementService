@@ -22,7 +22,7 @@ public static class ApiKeyMapper
             Status = entity.Status.ToProtoStatus(),
             CreatedAt = Timestamp.FromDateTime(DateTime.SpecifyKind(entity.CreationTime, DateTimeKind.Utc)),
             UpdatedAt = Timestamp.FromDateTime(DateTime.SpecifyKind(entity.LastModificationTime ?? entity.CreationTime, DateTimeKind.Utc)),
-            CreatedBy = GuidValue.FromGuid(Guid.Parse(entity.CreatedBy)),
+            CreatedBy = entity.CreatorId.HasValue ? GuidValue.FromGuid(entity.CreatorId.Value) : null,
         };
 
         proto.Permissions.AddRange(entity.Permissions);
