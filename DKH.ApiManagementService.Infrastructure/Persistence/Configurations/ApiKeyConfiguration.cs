@@ -40,10 +40,6 @@ public class ApiKeyConfiguration : IEntityTypeConfiguration<ApiKeyEntity>
         builder.Property(x => x.Description)
             .HasMaxLength(1024);
 
-        builder.Property(x => x.CreatedBy)
-            .IsRequired()
-            .HasMaxLength(256);
-
         builder.Property(x => x.CreationTime);
 
         builder.Property(x => x.LastModificationTime);

@@ -15,7 +15,6 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
         Name = string.Empty;
         KeyHash = string.Empty;
         KeyPrefix = string.Empty;
-        CreatedBy = string.Empty;
     }
 
     private ApiKeyEntity(
@@ -24,7 +23,6 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
         string keyPrefix,
         ApiKeyScope scope,
         IReadOnlyList<string> permissions,
-        string createdBy,
         string? description,
         DateTimeOffset? expiresAt)
     {
@@ -35,7 +33,6 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
         Scope = scope;
         Status = ApiKeyStatus.Active;
         Permissions = [.. permissions];
-        CreatedBy = createdBy;
         Description = description;
         ExpiresAt = expiresAt;
     }
@@ -54,8 +51,6 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
 
     public string? Description { get; private set; }
 
-    public string CreatedBy { get; private set; }
-
     public DateTimeOffset? ExpiresAt { get; private set; }
 
     public DateTimeOffset? LastUsedAt { get; private set; }
@@ -70,7 +65,6 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
         string keyPrefix,
         ApiKeyScope scope,
         IReadOnlyList<string> permissions,
-        string createdBy,
         string? description = null,
         DateTimeOffset? expiresAt = null)
     {
@@ -80,7 +74,6 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
             Require(keyPrefix, nameof(keyPrefix)),
             scope,
             permissions,
-            Require(createdBy, nameof(createdBy)),
             description,
             expiresAt);
 
