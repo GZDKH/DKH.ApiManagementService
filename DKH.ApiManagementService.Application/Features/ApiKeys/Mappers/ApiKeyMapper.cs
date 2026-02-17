@@ -1,9 +1,9 @@
 using DKH.ApiManagementService.Domain.Entities;
 using DKH.Platform.Grpc.Common.Types;
 using Google.Protobuf.WellKnownTypes;
-using ContractsApiKey = DKH.ApiManagementService.Contracts.Models.V1.ApiKey;
-using ContractsScope = DKH.ApiManagementService.Contracts.Models.V1.ApiKeyScope;
-using ContractsStatus = DKH.ApiManagementService.Contracts.Models.V1.ApiKeyStatus;
+using ContractsApiKey = DKH.ApiManagementService.Contracts.ApiManagement.Models.ApiKey.v1.ApiKeyModel;
+using ContractsScope = DKH.ApiManagementService.Contracts.ApiManagement.Models.ApiKey.v1.ApiKeyScope;
+using ContractsStatus = DKH.ApiManagementService.Contracts.ApiManagement.Models.ApiKey.v1.ApiKeyStatus;
 using DomainScope = DKH.ApiManagementService.Domain.Enums.ApiKeyScope;
 using DomainStatus = DKH.ApiManagementService.Domain.Enums.ApiKeyStatus;
 

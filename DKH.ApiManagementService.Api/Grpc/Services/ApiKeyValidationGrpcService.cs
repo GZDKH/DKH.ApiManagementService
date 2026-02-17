@@ -1,14 +1,14 @@
 using DKH.ApiManagementService.Application.Features.ApiKeys.Mappers;
 using DKH.ApiManagementService.Application.Features.Validation.CheckPermission;
 using DKH.ApiManagementService.Application.Features.Validation.ValidateApiKey;
-using DKH.ApiManagementService.Contracts.Services.V1;
+using DKH.ApiManagementService.Contracts.ApiManagement.Api.ApiKeyQuery.v1;
 using DKH.Platform.Grpc.Common.Types;
 using Grpc.Core;
 using MediatR;
 
 namespace DKH.ApiManagementService.Api.Grpc.Services;
 
-public class ApiKeyValidationGrpcService(IMediator mediator) : ApiKeyValidationService.ApiKeyValidationServiceBase
+public class ApiKeyValidationGrpcService(IMediator mediator) : ApiKeyQueryService.ApiKeyQueryServiceBase
 {
     public override async Task<ValidateApiKeyResponse> ValidateApiKey(ValidateApiKeyRequest request, ServerCallContext context)
     {

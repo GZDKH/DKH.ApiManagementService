@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package proto.api_management.api.api_key_crud.v1;
+
+option csharp_namespace = "DKH.ApiManagementService.Contracts.ApiManagement.Api.ApiKeyCrud.v1";
+
+import "api_management/models/api_key/v1/api_key.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+import "types/guid.proto";
+import "types/pagination.proto";
+import "types/pagination_metadata.proto";
+
+service ApiKeysCrudService {
+  rpc CreateApiKey(CreateApiKeyRequest) returns (CreateApiKeyResponse);
+  rpc GetApiKey(GetApiKeyRequest) returns (GetApiKeyResponse);
+  rpc ListApiKeys(ListApiKeysRequest) returns (ListApiKeysResponse);
+  rpc UpdateApiKey(UpdateApiKeyRequest) returns (UpdateApiKeyResponse);
+  rpc DeleteApiKey(DeleteApiKeyRequest) returns (DeleteApiKeyResponse);
+  rpc RegenerateApiKey(RegenerateApiKeyRequest) returns (RegenerateApiKeyResponse);
+}
+
+message CreateApiKeyRequest {
+  string name = 1;
+  proto.api_management.models.api_key.v1.ApiKeyScope scope = 2;
+  repeated string permissions = 3;
+  google.protobuf.StringValue description = 4;
+  google.protobuf.Timestamp expires_at = 5;
+  proto.platform.grpc.common.types.GuidValue created_by = 6;
+}
+
+message CreateApiKeyResponse {
+  proto.api_management.models.api_key.v1.ApiKeyModel api_key = 1;
+  string raw_key = 2;
+}
+
+message GetApiKeyRequest {
+  proto.platform.grpc.common.types.GuidValue id = 1;
+}
+
+message GetApiKeyResponse {
+  proto.api_management.models.api_key.v1.ApiKeyModel api_key = 1;
+}
+
+message ListApiKeysRequest {
+  proto.platform.grpc.common.types.PaginationRequest pagination = 1;
+  proto.api_management.models.api_key.v1.ApiKeyScope scope_filter = 2;
+  proto.api_management.models.api_key.v1.ApiKeyStatus status_filter = 3;
+}
+
+message ListApiKeysResponse {
+  repeated proto.api_management.models.api_key.v1.ApiKeyModel api_keys = 1;
+  proto.platform.grpc.common.types.PaginationMetadata metadata = 2;
+}
+
+message UpdateApiKeyRequest {
+  proto.platform.grpc.common.types.GuidValue id = 1;
+  google.protobuf.StringValue name = 2;
+  google.protobuf.StringValue description = 3;
+  repeated string permissions = 4;
+  google.protobuf.Timestamp expires_at = 5;
+}
+
+message UpdateApiKeyResponse {
+  proto.api_management.models.api_key.v1.ApiKeyModel api_key = 1;
+}
+
+message DeleteApiKeyRequest {
+  proto.platform.grpc.common.types.GuidValue id = 1;
+}
+
+message DeleteApiKeyResponse {
+  bool success = 1;
+}
+
+message RegenerateApiKeyRequest {
+  proto.platform.grpc.common.types.GuidValue id = 1;
+}
+
+message RegenerateApiKeyResponse {
+  proto.api_management.models.api_key.v1.ApiKeyModel api_key = 1;
+  string raw_key = 2;
+}

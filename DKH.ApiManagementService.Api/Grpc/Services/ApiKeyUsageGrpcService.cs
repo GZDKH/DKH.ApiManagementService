@@ -1,7 +1,7 @@
 using DKH.ApiManagementService.Application.Features.Usage.GetUsageHistory;
 using DKH.ApiManagementService.Application.Features.Usage.GetUsageStats;
 using DKH.ApiManagementService.Application.Features.Usage.RecordUsage;
-using DKH.ApiManagementService.Contracts.Services.V1;
+using DKH.ApiManagementService.Contracts.ApiManagement.Api.ApiKeyUsage.v1;
 using Grpc.Core;
 using MediatR;
 

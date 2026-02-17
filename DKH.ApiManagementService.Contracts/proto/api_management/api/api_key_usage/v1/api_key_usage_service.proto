@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package proto.api_management.api.api_key_usage.v1;
+
+option csharp_namespace = "DKH.ApiManagementService.Contracts.ApiManagement.Api.ApiKeyUsage.v1";
+
+import "api_management/models/api_key_usage/v1/api_key_usage.proto";
+import "google/protobuf/timestamp.proto";
+import "types/guid.proto";
+import "types/pagination.proto";
+import "types/pagination_metadata.proto";
+
+service ApiKeyUsageService {
+  rpc RecordUsage(RecordUsageRequest) returns (RecordUsageResponse);
+  rpc GetUsageStats(GetUsageStatsRequest) returns (GetUsageStatsResponse);
+  rpc GetUsageHistory(GetUsageHistoryRequest) returns (GetUsageHistoryResponse);
+}
+
+message RecordUsageRequest {
+  proto.platform.grpc.common.types.GuidValue api_key_id = 1;
+  string endpoint = 2;
+  int32 status_code = 3;
+  string ip_address = 4;
+  string user_agent = 5;
+  int64 response_time_ms = 6;
+}
+
+message RecordUsageResponse {
+  bool success = 1;
+}
+
+message GetUsageStatsRequest {
+  proto.platform.grpc.common.types.GuidValue api_key_id = 1;
+  google.protobuf.Timestamp from = 2;
+  google.protobuf.Timestamp to = 3;
+}
+
+message GetUsageStatsResponse {
+  proto.api_management.models.api_key_usage.v1.ApiKeyUsageStatsModel stats = 1;
+}
+
+message GetUsageHistoryRequest {
+  proto.platform.grpc.common.types.GuidValue api_key_id = 1;
+  google.protobuf.Timestamp from = 2;
+  google.protobuf.Timestamp to = 3;
+  proto.platform.grpc.common.types.PaginationRequest pagination = 4;
+}
+
+message GetUsageHistoryResponse {
+  repeated proto.api_management.models.api_key_usage.v1.ApiKeyUsageModel records = 1;
+  proto.platform.grpc.common.types.PaginationMetadata metadata = 2;
+}

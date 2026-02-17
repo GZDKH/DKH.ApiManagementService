@@ -1,4 +1,4 @@
-using DKH.ApiManagementService.Contracts.Models.V1;
+using DKH.ApiManagementService.Contracts.ApiManagement.Models.ApiKeyUsage.v1;
 using MediatR;
 
 namespace DKH.ApiManagementService.Application.Features.Usage.GetUsageHistory;
@@ -10,4 +10,4 @@ public sealed record GetUsageHistoryQuery(
     int Page,
     int PageSize) : IRequest<GetUsageHistoryResult>;
 
-public sealed record GetUsageHistoryResult(IReadOnlyList<ApiKeyUsage> Records, int TotalCount);
+public sealed record GetUsageHistoryResult(IReadOnlyList<ApiKeyUsageModel> Records, int TotalCount);

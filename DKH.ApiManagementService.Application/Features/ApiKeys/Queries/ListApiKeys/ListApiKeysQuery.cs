@@ -1,4 +1,4 @@
-using DKH.ApiManagementService.Contracts.Models.V1;
+using DKH.ApiManagementService.Contracts.ApiManagement.Models.ApiKey.v1;
 using MediatR;
 
 namespace DKH.ApiManagementService.Application.Features.ApiKeys.Queries.ListApiKeys;
@@ -9,4 +9,4 @@ public sealed record ListApiKeysQuery(
     Domain.Enums.ApiKeyScope? ScopeFilter = null,
     Domain.Enums.ApiKeyStatus? StatusFilter = null) : IRequest<ListApiKeysResult>;
 
-public sealed record ListApiKeysResult(IReadOnlyList<ApiKey> ApiKeys, int TotalCount);
+public sealed record ListApiKeysResult(IReadOnlyList<ApiKeyModel> ApiKeys, int TotalCount);

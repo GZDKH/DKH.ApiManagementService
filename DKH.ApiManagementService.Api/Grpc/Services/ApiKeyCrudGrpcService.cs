@@ -5,13 +5,13 @@ using DKH.ApiManagementService.Application.Features.ApiKeys.Commands.UpdateApiKe
 using DKH.ApiManagementService.Application.Features.ApiKeys.Mappers;
 using DKH.ApiManagementService.Application.Features.ApiKeys.Queries.GetApiKey;
 using DKH.ApiManagementService.Application.Features.ApiKeys.Queries.ListApiKeys;
-using DKH.ApiManagementService.Contracts.Services.V1;
+using DKH.ApiManagementService.Contracts.ApiManagement.Api.ApiKeyCrud.v1;
 using Grpc.Core;
 using MediatR;
 
 namespace DKH.ApiManagementService.Api.Grpc.Services;
 
-public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeyCrudService.ApiKeyCrudServiceBase
+public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeysCrudService.ApiKeysCrudServiceBase
 {
     public override async Task<CreateApiKeyResponse> CreateApiKey(CreateApiKeyRequest request, ServerCallContext context)
     {
@@ -42,15 +42,15 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeyCrudService.ApiKe
 
     public override async Task<ListApiKeysResponse> ListApiKeys(ListApiKeysRequest request, ServerCallContext context)
     {
-        var scopeFilter = request.ScopeFilter != Contracts.Models.V1.ApiKeyScope.Unspecified
+        var scopeFilter = request.ScopeFilter != Contracts.ApiManagement.Models.ApiKey.v1.ApiKeyScope.Unspecified
             ? request.ScopeFilter.ToDomainScope()
             : (Domain.Enums.ApiKeyScope?)null;
 
         var statusFilter = request.StatusFilter switch
         {
-            Contracts.Models.V1.ApiKeyStatus.Active => Domain.Enums.ApiKeyStatus.Active,
-            Contracts.Models.V1.ApiKeyStatus.Revoked => Domain.Enums.ApiKeyStatus.Revoked,
-            Contracts.Models.V1.ApiKeyStatus.Expired => Domain.Enums.ApiKeyStatus.Expired,
+            Contracts.ApiManagement.Models.ApiKey.v1.ApiKeyStatus.Active => Domain.Enums.ApiKeyStatus.Active,
+            Contracts.ApiManagement.Models.ApiKey.v1.ApiKeyStatus.Revoked => Domain.Enums.ApiKeyStatus.Revoked,
+            Contracts.ApiManagement.Models.ApiKey.v1.ApiKeyStatus.Expired => Domain.Enums.ApiKeyStatus.Expired,
             _ => (Domain.Enums.ApiKeyStatus?)null,
         };
 

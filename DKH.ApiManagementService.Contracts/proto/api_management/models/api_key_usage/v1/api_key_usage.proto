@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package proto.api_management.models.api_key_usage.v1;
+
+option csharp_namespace = "DKH.ApiManagementService.Contracts.ApiManagement.Models.ApiKeyUsage.v1";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "types/guid.proto";
+
+message ApiKeyUsageModel {
+  proto.platform.grpc.common.types.GuidValue id = 1;
+  proto.platform.grpc.common.types.GuidValue api_key_id = 2;
+  string endpoint = 3;
+  int32 status_code = 4;
+  google.protobuf.StringValue ip_address = 5;
+  google.protobuf.StringValue user_agent = 6;
+  google.protobuf.Timestamp timestamp = 7;
+  int64 response_time_ms = 8;
+}
+
+message ApiKeyUsageStatsModel {
+  proto.platform.grpc.common.types.GuidValue api_key_id = 1;
+  int64 total_requests = 2;
+  int64 successful_requests = 3;
+  int64 failed_requests = 4;
+  google.protobuf.Timestamp period_start = 5;
+  google.protobuf.Timestamp period_end = 6;
+}

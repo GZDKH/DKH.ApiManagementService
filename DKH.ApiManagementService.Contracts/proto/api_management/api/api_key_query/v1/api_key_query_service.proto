@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package proto.api_management.api.api_key_query.v1;
+
+option csharp_namespace = "DKH.ApiManagementService.Contracts.ApiManagement.Api.ApiKeyQuery.v1";
+
+import "api_management/models/api_key/v1/api_key.proto";
+import "types/guid.proto";
+
+service ApiKeyQueryService {
+  rpc ValidateApiKey(ValidateApiKeyRequest) returns (ValidateApiKeyResponse);
+  rpc CheckPermission(CheckPermissionRequest) returns (CheckPermissionResponse);
+}
+
+message ValidateApiKeyRequest {
+  string raw_key = 1;
+}
+
+message ValidateApiKeyResponse {
+  bool is_valid = 1;
+  proto.platform.grpc.common.types.GuidValue api_key_id = 2;
+  proto.api_management.models.api_key.v1.ApiKeyScope scope = 3;
+  repeated string permissions = 4;
+  string error_reason = 5;
+}
+
+message CheckPermissionRequest {
+  string raw_key = 1;
+  string required_permission = 2;
+}
+
+message CheckPermissionResponse {
+  bool is_allowed = 1;
+  string error_reason = 2;
+}

@@ -1,5 +1,5 @@
 using DKH.ApiManagementService.Application.Abstractions;
-using DKH.ApiManagementService.Contracts.Models.V1;
+using DKH.ApiManagementService.Contracts.ApiManagement.Models.ApiKeyUsage.v1;
 using DKH.Platform.Grpc.Common.Types;
 using Google.Protobuf.WellKnownTypes;
 using MediatR;
@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DKH.ApiManagementService.Application.Features.Usage.GetUsageStats;
 
-public sealed class GetUsageStatsQueryHandler(IAppDbContext dbContext) : IRequestHandler<GetUsageStatsQuery, ApiKeyUsageStats>
+public sealed class GetUsageStatsQueryHandler(IAppDbContext dbContext) : IRequestHandler<GetUsageStatsQuery, ApiKeyUsageStatsModel>
 {
-    public async Task<ApiKeyUsageStats> Handle(GetUsageStatsQuery request, CancellationToken cancellationToken)
+    public async Task<ApiKeyUsageStatsModel> Handle(GetUsageStatsQuery request, CancellationToken cancellationToken)
     {
         var query = dbContext.ApiKeyUsageRecords
             .AsNoTracking()
@@ -21,7 +21,7 @@ public sealed class GetUsageStatsQueryHandler(IAppDbContext dbContext) : IReques
         var successfulRequests = await query.CountAsync(x => x.StatusCode >= 200 && x.StatusCode < 300, cancellationToken);
         var failedRequests = totalRequests - successfulRequests;
 
-        return new ApiKeyUsageStats
+        return new ApiKeyUsageStatsModel
         {
             ApiKeyId = GuidValue.FromGuid(request.ApiKeyId),
             TotalRequests = totalRequests,

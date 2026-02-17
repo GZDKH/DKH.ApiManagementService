@@ -1,4 +1,4 @@
-using DKH.ApiManagementService.Contracts.Models.V1;
+using DKH.ApiManagementService.Contracts.ApiManagement.Models.ApiKey.v1;
 using MediatR;
 
 namespace DKH.ApiManagementService.Application.Features.ApiKeys.Commands.UpdateApiKey;
@@ -8,4 +8,4 @@ public sealed record UpdateApiKeyCommand(
     string? Name,
     string? Description,
     IReadOnlyList<string>? Permissions,
-    DateTimeOffset? ExpiresAt) : IRequest<ApiKey>;
+    DateTimeOffset? ExpiresAt) : IRequest<ApiKeyModel>;
