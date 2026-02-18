@@ -3,7 +3,5 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <!-- Disable default **/*.resx glob to prevent MSB3552 in Docker (dotnet/sdk#8239) -->
-    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
   </PropertyGroup>
 </Project>
