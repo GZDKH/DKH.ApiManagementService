@@ -5,7 +5,7 @@
 | Document | Description |
 |----------|-------------|
 | [Architecture](architecture.md) | Service architecture and design decisions |
-| [Domain model](domain-model.md) | Entities, value objects, enums |
+| [Domain model](domain-model.md) | Entities, value objects, enums, domain events |
 | [gRPC API](grpc-api.md) | gRPC service methods and contracts |
 | [Database](database.md) | Database schema and migrations |
 
