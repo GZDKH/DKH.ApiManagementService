@@ -3,5 +3,5 @@ include:
     file: '/ci-cd/gitlab/dotnet-service.gitlab-ci.yml'
 
 variables:
-  COMPOSE_SERVICE_NAME: "api-management"
+  COMPOSE_SERVICE_NAME: "api-management-service"
   NUGET_PROJECT_ID: "79414535"
