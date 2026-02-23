@@ -30,7 +30,6 @@ await Platform
     .AddGrpcCurrentUser()
     .AddPlatformGrpc(grpc =>
     {
-        grpc.ConfigureServer(options => options.EnableDetailedErrors = true);
         grpc.MapService<ApiKeyCrudGrpcService>();
         grpc.MapService<ApiKeyValidationGrpcService>();
         grpc.MapService<ApiKeyUsageGrpcService>();
