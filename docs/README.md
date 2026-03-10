@@ -9,6 +9,14 @@
 | [gRPC API](grpc-api.md) | gRPC service methods and contracts |
 | [Database](database.md) | Database schema and migrations |
 
+## Russian documentation / Документация на русском
+
+- [README (RU)](ru/README.md)
+- [Архитектура](ru/architecture.md)
+- [Доменная модель](ru/domain-model.md)
+- [gRPC API](ru/grpc-api.md)
+- [База данных](ru/database.md)
+
 ## External documentation
 
 - [Architecture Docs (EN)](https://github.com/GZDKH/DKH.Architecture/blob/main/en/services/backend/api-management-index.md)
