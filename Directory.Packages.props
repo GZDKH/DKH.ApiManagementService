@@ -33,15 +33,15 @@
     <PackageVersion Include="DKH.Platform.Domain" Version="1.1.0" />
     <PackageVersion Include="DKH.Platform.Application" Version="1.1.0" />
     <PackageVersion Include="DKH.Platform.Logging" Version="1.2.0" />
-    <PackageVersion Include="DKH.Platform.EntityFrameworkCore" Version="1.1.1" />
+    <PackageVersion Include="DKH.Platform.EntityFrameworkCore" Version="1.1.2" />
     <PackageVersion Include="DKH.Platform.EntityFrameworkCore.PostgreSQL" Version="1.1.0" />
     <PackageVersion Include="DKH.Platform.EntityFrameworkCore.Repositories" Version="1.0.1" />
     <PackageVersion Include="DKH.Platform.MediatR.Behaviors" Version="1.0.1" />
-    <PackageVersion Include="DKH.Platform.Messaging" Version="1.1.0" />
+    <PackageVersion Include="DKH.Platform.Messaging" Version="1.2.0" />
     <PackageVersion Include="DKH.Platform.Messaging.MediatR" Version="1.0.0" />
     <PackageVersion Include="DKH.Platform.IntegrationTesting" Version="1.0.1" />
     <PackageVersion Include="DKH.Platform.Grpc.IntegrationTesting" Version="1.0.1" />
-    <PackageVersion Include="DKH.Platform.Outbox" Version="1.1.0"/>
+    <PackageVersion Include="DKH.Platform.Outbox" Version="1.2.0"/>
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Grpc.Tools" Version="2.76.0" />
