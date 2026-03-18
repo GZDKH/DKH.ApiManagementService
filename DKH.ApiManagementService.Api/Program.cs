@@ -12,6 +12,7 @@ using DKH.Platform.Identity;
 using DKH.Platform.Logging;
 using DKH.Platform.MediatR.Behaviors;
 using DKH.Platform.Messaging.MediatR;
+using DKH.Platform.Telemetry;
 
 await Platform
     .CreateWeb(args)
@@ -24,6 +25,7 @@ await Platform
     .AddPlatformMessagingWithMediatR(typeof(ConfigureServices).Assembly)
     .AddPlatformMediatRBehaviors()
     .AddPlatformLogging()
+    .AddPlatformTelemetry()
     .AddPlatformPostgreSql<AppDbContext>(options => options.ConnectionStringKey = "Default")
     .AddPlatformRepositories<AppDbContext>()
     .AddPlatformDomainEvents()
