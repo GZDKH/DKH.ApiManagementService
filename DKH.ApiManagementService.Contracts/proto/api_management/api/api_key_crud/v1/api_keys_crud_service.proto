@@ -5,11 +5,13 @@ package proto.api_management.api.api_key_crud.v1;
 option csharp_namespace = "DKH.ApiManagementService.Contracts.ApiManagement.Api.ApiKeyCrud.v1";
 
 import "api_management/models/api_key/v1/api_key.proto";
+import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
 import "types/guid.proto";
 import "types/pagination.proto";
 import "types/pagination_metadata.proto";
+import "types/soft_delete_filter.proto";
 
 service ApiKeysCrudService {
   rpc CreateApiKey(CreateApiKeyRequest) returns (CreateApiKeyResponse);
@@ -18,6 +20,8 @@ service ApiKeysCrudService {
   rpc UpdateApiKey(UpdateApiKeyRequest) returns (UpdateApiKeyResponse);
   rpc DeleteApiKey(DeleteApiKeyRequest) returns (DeleteApiKeyResponse);
   rpc RegenerateApiKey(RegenerateApiKeyRequest) returns (RegenerateApiKeyResponse);
+  rpc RestoreApiKey(RestoreApiKeyRequest) returns (proto.api_management.models.api_key.v1.ApiKeyModel);
+  rpc PermanentlyDeleteApiKey(PermanentlyDeleteApiKeyRequest) returns (google.protobuf.Empty);
 }
 
 message CreateApiKeyRequest {
@@ -46,6 +50,7 @@ message ListApiKeysRequest {
   proto.platform.grpc.common.types.PaginationRequest pagination = 1;
   proto.api_management.models.api_key.v1.ApiKeyScope scope_filter = 2;
   proto.api_management.models.api_key.v1.ApiKeyStatus status_filter = 3;
+  optional proto.platform.grpc.common.types.SoftDeleteFilter soft_delete_filter = 4;
 }
 
 message ListApiKeysResponse {
@@ -80,4 +85,12 @@ message RegenerateApiKeyRequest {
 message RegenerateApiKeyResponse {
   proto.api_management.models.api_key.v1.ApiKeyModel api_key = 1;
   string raw_key = 2;
+}
+
+message RestoreApiKeyRequest {
+  proto.platform.grpc.common.types.GuidValue id = 1;
+}
+
+message PermanentlyDeleteApiKeyRequest {
+  proto.platform.grpc.common.types.GuidValue id = 1;
 }
