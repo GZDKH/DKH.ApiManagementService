@@ -1,5 +1,6 @@
 using DKH.ApiManagementService.Application.Abstractions;
 using DKH.ApiManagementService.Application.Features.ApiKeys.Mappers;
+using DKH.Platform.EntityFrameworkCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +10,9 @@ public sealed class ListApiKeysQueryHandler(IAppDbContext dbContext) : IRequestH
 {
     public async Task<ListApiKeysResult> Handle(ListApiKeysQuery request, CancellationToken cancellationToken)
     {
-        var query = dbContext.ApiKeys.AsNoTracking().AsQueryable();
+        var query = dbContext.ApiKeys
+            .AsNoTracking()
+            .ApplySoftDeleteFilter(request.SoftDeleteFilter);
 
         if (request.ScopeFilter.HasValue)
         {

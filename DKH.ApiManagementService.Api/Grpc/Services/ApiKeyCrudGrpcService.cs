@@ -1,11 +1,16 @@
 using DKH.ApiManagementService.Application.Features.ApiKeys.Commands.CreateApiKey;
 using DKH.ApiManagementService.Application.Features.ApiKeys.Commands.DeleteApiKey;
+using DKH.ApiManagementService.Application.Features.ApiKeys.Commands.PermanentlyDeleteApiKey;
 using DKH.ApiManagementService.Application.Features.ApiKeys.Commands.RegenerateApiKey;
+using DKH.ApiManagementService.Application.Features.ApiKeys.Commands.RestoreApiKey;
 using DKH.ApiManagementService.Application.Features.ApiKeys.Commands.UpdateApiKey;
 using DKH.ApiManagementService.Application.Features.ApiKeys.Mappers;
 using DKH.ApiManagementService.Application.Features.ApiKeys.Queries.GetApiKey;
 using DKH.ApiManagementService.Application.Features.ApiKeys.Queries.ListApiKeys;
 using DKH.ApiManagementService.Contracts.ApiManagement.Api.ApiKeyCrud.v1;
+using DKH.ApiManagementService.Contracts.ApiManagement.Models.ApiKey.v1;
+using DKH.Platform.Grpc.Extensions;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
 
@@ -42,24 +47,29 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeysCrudService.ApiK
 
     public override async Task<ListApiKeysResponse> ListApiKeys(ListApiKeysRequest request, ServerCallContext context)
     {
-        var scopeFilter = request.ScopeFilter != Contracts.ApiManagement.Models.ApiKey.v1.ApiKeyScope.Unspecified
+        var scopeFilter = request.ScopeFilter != ApiKeyScope.Unspecified
             ? request.ScopeFilter.ToDomainScope()
             : (Domain.Enums.ApiKeyScope?)null;
 
         var statusFilter = request.StatusFilter switch
         {
-            Contracts.ApiManagement.Models.ApiKey.v1.ApiKeyStatus.Active => Domain.Enums.ApiKeyStatus.Active,
-            Contracts.ApiManagement.Models.ApiKey.v1.ApiKeyStatus.Revoked => Domain.Enums.ApiKeyStatus.Revoked,
-            Contracts.ApiManagement.Models.ApiKey.v1.ApiKeyStatus.Expired => Domain.Enums.ApiKeyStatus.Expired,
+            ApiKeyStatus.Active => Domain.Enums.ApiKeyStatus.Active,
+            ApiKeyStatus.Revoked => Domain.Enums.ApiKeyStatus.Revoked,
+            ApiKeyStatus.Expired => Domain.Enums.ApiKeyStatus.Expired,
             _ => (Domain.Enums.ApiKeyStatus?)null,
         };
+
+        var softDeleteFilter = request.HasSoftDeleteFilter
+            ? request.SoftDeleteFilter.ToDomain()
+            : Platform.Domain.Enums.PlatformSoftDeleteFilter.ActiveOnly;
 
         var result = await mediator.Send(
             new ListApiKeysQuery(
                 request.Pagination?.Page > 0 ? request.Pagination.Page : 1,
                 request.Pagination?.PageSize > 0 ? request.Pagination.PageSize : 20,
                 scopeFilter,
-                statusFilter),
+                statusFilter,
+                softDeleteFilter),
             context.CancellationToken);
 
         var page = request.Pagination?.Page ?? 1;
@@ -116,5 +126,21 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeysCrudService.ApiK
             ApiKey = result.ApiKey,
             RawKey = result.RawKey,
         };
+    }
+
+    public override async Task<ApiKeyModel> RestoreApiKey(RestoreApiKeyRequest request, ServerCallContext context)
+    {
+        return await mediator.Send(
+            new RestoreApiKeyCommand(request.Id),
+            context.CancellationToken);
+    }
+
+    public override async Task<Empty> PermanentlyDeleteApiKey(PermanentlyDeleteApiKeyRequest request, ServerCallContext context)
+    {
+        await mediator.Send(
+            new PermanentlyDeleteApiKeyCommand(request.Id),
+            context.CancellationToken);
+
+        return new Empty();
     }
 }
