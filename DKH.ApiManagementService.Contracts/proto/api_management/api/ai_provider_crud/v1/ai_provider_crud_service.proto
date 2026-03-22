@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package proto.api_management.api.ai_provider_crud.v1;
+
+option csharp_namespace = "DKH.ApiManagementService.Contracts.ApiManagement.Api.AiProviderCrud.v1";
+
+import "api_management/models/ai_provider/v1/ai_provider.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+import "types/guid.proto";
+import "types/pagination.proto";
+import "types/pagination_metadata.proto";
+
+service AiProviderCrudService {
+  rpc Create(CreateAiProviderRequest) returns (proto.api_management.models.ai_provider.v1.AiProviderModel);
+  rpc Get(GetAiProviderRequest) returns (proto.api_management.models.ai_provider.v1.AiProviderModel);
+  rpc List(ListAiProvidersRequest) returns (ListAiProvidersResponse);
+  rpc Update(UpdateAiProviderRequest) returns (proto.api_management.models.ai_provider.v1.AiProviderModel);
+  rpc Delete(DeleteAiProviderRequest) returns (google.protobuf.Empty);
+}
+
+message CreateAiProviderRequest {
+  string name = 1;
+  proto.api_management.models.ai_provider.v1.AiProviderType provider_type = 2;
+  google.protobuf.StringValue display_name = 3;
+  google.protobuf.StringValue base_url = 4;
+  repeated string models = 5;
+  google.protobuf.StringValue api_key_reference = 6;
+  google.protobuf.Int32Value rate_limit_per_minute = 7;
+  google.protobuf.Int32Value daily_quota = 8;
+}
+
+message GetAiProviderRequest {
+  proto.platform.grpc.common.types.GuidValue id = 1;
+}
+
+message ListAiProvidersRequest {
+  proto.platform.grpc.common.types.PaginationRequest pagination = 1;
+  proto.api_management.models.ai_provider.v1.AiProviderType type_filter = 2;
+  proto.api_management.models.ai_provider.v1.AiProviderStatus status_filter = 3;
+}
+
+message ListAiProvidersResponse {
+  repeated proto.api_management.models.ai_provider.v1.AiProviderModel providers = 1;
+  proto.platform.grpc.common.types.PaginationMetadata metadata = 2;
+}
+
+message UpdateAiProviderRequest {
+  proto.platform.grpc.common.types.GuidValue id = 1;
+  google.protobuf.StringValue name = 2;
+  google.protobuf.StringValue display_name = 3;
+  google.protobuf.StringValue base_url = 4;
+  repeated string models = 5;
+  google.protobuf.StringValue api_key_reference = 6;
+  google.protobuf.Int32Value rate_limit_per_minute = 7;
+  google.protobuf.Int32Value daily_quota = 8;
+}
+
+message DeleteAiProviderRequest {
+  proto.platform.grpc.common.types.GuidValue id = 1;
+}

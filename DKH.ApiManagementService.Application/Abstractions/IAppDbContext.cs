@@ -9,5 +9,7 @@ public interface IAppDbContext
 
     DbSet<ApiKeyUsageEntity> ApiKeyUsageRecords { get; }
 
+    DbSet<AiProviderEntity> AiProviders { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

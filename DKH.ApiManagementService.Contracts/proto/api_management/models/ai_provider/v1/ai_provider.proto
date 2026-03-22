@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package proto.api_management.models.ai_provider.v1;
+
+option csharp_namespace = "DKH.ApiManagementService.Contracts.ApiManagement.Models.AiProvider.v1";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "types/guid.proto";
+
+enum AiProviderType {
+  AI_PROVIDER_TYPE_UNSPECIFIED = 0;
+  AI_PROVIDER_TYPE_ANTHROPIC = 1;
+  AI_PROVIDER_TYPE_OPEN_AI = 2;
+  AI_PROVIDER_TYPE_GOOGLE_GEMINI = 3;
+  AI_PROVIDER_TYPE_AZURE = 4;
+  AI_PROVIDER_TYPE_CUSTOM = 5;
+}
+
+enum AiProviderStatus {
+  AI_PROVIDER_STATUS_UNSPECIFIED = 0;
+  AI_PROVIDER_STATUS_ACTIVE = 1;
+  AI_PROVIDER_STATUS_INACTIVE = 2;
+  AI_PROVIDER_STATUS_ERROR = 3;
+}
+
+message AiProviderModel {
+  proto.platform.grpc.common.types.GuidValue id = 1;
+  string name = 2;
+  AiProviderType provider_type = 3;
+  AiProviderStatus status = 4;
+  google.protobuf.StringValue display_name = 5;
+  google.protobuf.StringValue base_url = 6;
+  repeated string models = 7;
+  google.protobuf.StringValue api_key_reference = 8;
+  google.protobuf.Int32Value rate_limit_per_minute = 9;
+  google.protobuf.Int32Value daily_quota = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+  proto.platform.grpc.common.types.GuidValue created_by = 13;
+}

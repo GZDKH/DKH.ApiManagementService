@@ -16,6 +16,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
     public DbSet<ApiKeyUsageEntity> ApiKeyUsageRecords { get; init; } = null!;
 
+    public DbSet<AiProviderEntity> AiProviders { get; init; } = null!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
