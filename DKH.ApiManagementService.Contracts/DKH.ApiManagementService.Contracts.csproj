@@ -13,5 +13,7 @@
     <Protobuf Include="proto/api_management/api/api_key_usage/v1/api_key_usage_service.proto" ProtoRoot="proto" AdditionalProtocArguments="--proto_path=$(DKHPlatformGrpcCommonProtoDir)"/>
     <Protobuf Include="proto/api_management/models/api_key/v1/api_key.proto" ProtoRoot="proto" AdditionalProtocArguments="--proto_path=$(DKHPlatformGrpcCommonProtoDir)"/>
     <Protobuf Include="proto/api_management/models/api_key_usage/v1/api_key_usage.proto" ProtoRoot="proto" AdditionalProtocArguments="--proto_path=$(DKHPlatformGrpcCommonProtoDir)"/>
+    <Protobuf Include="proto/api_management/models/ai_provider/v1/ai_provider.proto" ProtoRoot="proto" AdditionalProtocArguments="--proto_path=$(DKHPlatformGrpcCommonProtoDir)"/>
+    <Protobuf Include="proto/api_management/api/ai_provider_crud/v1/ai_provider_crud_service.proto" ProtoRoot="proto" AdditionalProtocArguments="--proto_path=$(DKHPlatformGrpcCommonProtoDir)"/>
   </ItemGroup>
 </Project>

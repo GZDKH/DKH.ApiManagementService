@@ -15,6 +15,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
         services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
         services.AddScoped<IApiKeyUsageRepository, ApiKeyUsageRepository>();
+        services.AddScoped<IAiProviderRepository, AiProviderRepository>();
         services.AddSingleton<IApiKeyGenerator, ApiKeyGenerator>();
         return services;
     }
