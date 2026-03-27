@@ -10,6 +10,7 @@ import "google/protobuf/wrappers.proto";
 import "types/guid.proto";
 import "types/pagination.proto";
 import "types/pagination_metadata.proto";
+import "types/soft_delete_filter.proto";
 
 service AiProviderCrudService {
   rpc Create(CreateAiProviderRequest) returns (proto.api_management.models.ai_provider.v1.AiProviderModel);
@@ -17,6 +18,8 @@ service AiProviderCrudService {
   rpc List(ListAiProvidersRequest) returns (ListAiProvidersResponse);
   rpc Update(UpdateAiProviderRequest) returns (proto.api_management.models.ai_provider.v1.AiProviderModel);
   rpc Delete(DeleteAiProviderRequest) returns (google.protobuf.Empty);
+  rpc Restore(RestoreAiProviderRequest) returns (proto.api_management.models.ai_provider.v1.AiProviderModel);
+  rpc PermanentlyDelete(PermanentlyDeleteAiProviderRequest) returns (google.protobuf.Empty);
 }
 
 message CreateAiProviderRequest {
@@ -38,6 +41,7 @@ message ListAiProvidersRequest {
   proto.platform.grpc.common.types.PaginationRequest pagination = 1;
   proto.api_management.models.ai_provider.v1.AiProviderType type_filter = 2;
   proto.api_management.models.ai_provider.v1.AiProviderStatus status_filter = 3;
+  optional proto.platform.grpc.common.types.SoftDeleteFilter soft_delete_filter = 4;
 }
 
 message ListAiProvidersResponse {
@@ -57,5 +61,13 @@ message UpdateAiProviderRequest {
 }
 
 message DeleteAiProviderRequest {
+  proto.platform.grpc.common.types.GuidValue id = 1;
+}
+
+message RestoreAiProviderRequest {
+  proto.platform.grpc.common.types.GuidValue id = 1;
+}
+
+message PermanentlyDeleteAiProviderRequest {
   proto.platform.grpc.common.types.GuidValue id = 1;
 }
