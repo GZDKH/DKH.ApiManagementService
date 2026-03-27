@@ -1,11 +1,15 @@
 using DKH.ApiManagementService.Application.Features.AiProviders.Commands.CreateAiProvider;
 using DKH.ApiManagementService.Application.Features.AiProviders.Commands.DeleteAiProvider;
+using DKH.ApiManagementService.Application.Features.AiProviders.Commands.PermanentlyDeleteAiProvider;
+using DKH.ApiManagementService.Application.Features.AiProviders.Commands.RestoreAiProvider;
 using DKH.ApiManagementService.Application.Features.AiProviders.Commands.UpdateAiProvider;
 using DKH.ApiManagementService.Application.Features.AiProviders.Mappers;
 using DKH.ApiManagementService.Application.Features.AiProviders.Queries.GetAiProvider;
 using DKH.ApiManagementService.Application.Features.AiProviders.Queries.ListAiProviders;
 using DKH.ApiManagementService.Contracts.ApiManagement.Api.AiProviderCrud.v1;
 using DKH.ApiManagementService.Contracts.ApiManagement.Models.AiProvider.v1;
+using DKH.Platform.Domain.Enums;
+using DKH.Platform.Grpc.Extensions;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
@@ -50,12 +54,17 @@ public class AiProviderCrudGrpcService(IMediator mediator) : AiProviderCrudServi
             _ => (Domain.Enums.AiProviderStatus?)null,
         };
 
+        var softDeleteFilter = request.HasSoftDeleteFilter
+            ? request.SoftDeleteFilter.ToDomain()
+            : PlatformSoftDeleteFilter.ActiveOnly;
+
         var result = await mediator.Send(
             new ListAiProvidersQuery(
                 request.Pagination?.Page > 0 ? request.Pagination.Page : 1,
                 request.Pagination?.PageSize > 0 ? request.Pagination.PageSize : 20,
                 typeFilter,
-                statusFilter),
+                statusFilter,
+                softDeleteFilter),
             context.CancellationToken);
 
         var page = request.Pagination?.Page ?? 1;
@@ -97,6 +106,22 @@ public class AiProviderCrudGrpcService(IMediator mediator) : AiProviderCrudServi
     {
         await mediator.Send(
             new DeleteAiProviderCommand(request.Id),
+            context.CancellationToken);
+
+        return new Empty();
+    }
+
+    public override async Task<AiProviderModel> Restore(RestoreAiProviderRequest request, ServerCallContext context)
+    {
+        return await mediator.Send(
+            new RestoreAiProviderCommand(request.Id),
+            context.CancellationToken);
+    }
+
+    public override async Task<Empty> PermanentlyDelete(PermanentlyDeleteAiProviderRequest request, ServerCallContext context)
+    {
+        await mediator.Send(
+            new PermanentlyDeleteAiProviderCommand(request.Id),
             context.CancellationToken);
 
         return new Empty();
