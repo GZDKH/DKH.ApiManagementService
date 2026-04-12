@@ -4,9 +4,11 @@ using DKH.ApiManagementService.Application.Features.Usage.RecordUsage;
 using DKH.ApiManagementService.Contracts.ApiManagement.Api.ApiKeyUsage.v1;
 using Grpc.Core;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DKH.ApiManagementService.Api.Grpc.Services;
 
+[Authorize(Policy = ApiManagementServiceAuthorizationPolicies.ApiManagementAccess)]
 public class ApiKeyUsageGrpcService(IMediator mediator) : ApiKeyUsageService.ApiKeyUsageServiceBase
 {
     public override async Task<RecordUsageResponse> RecordUsage(RecordUsageRequest request, ServerCallContext context)

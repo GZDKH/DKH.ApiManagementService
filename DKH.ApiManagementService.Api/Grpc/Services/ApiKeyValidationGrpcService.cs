@@ -5,9 +5,11 @@ using DKH.ApiManagementService.Contracts.ApiManagement.Api.ApiKeyQuery.v1;
 using DKH.Platform.Grpc.Common.Types;
 using Grpc.Core;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DKH.ApiManagementService.Api.Grpc.Services;
 
+[Authorize(Policy = ApiManagementServiceAuthorizationPolicies.ApiManagementAccess)]
 public class ApiKeyValidationGrpcService(IMediator mediator) : ApiKeyQueryService.ApiKeyQueryServiceBase
 {
     public override async Task<ValidateApiKeyResponse> ValidateApiKey(ValidateApiKeyRequest request, ServerCallContext context)
