@@ -42,7 +42,7 @@
     <PackageVersion Include="DKH.Platform.IntegrationTesting" Version="1.0.1" />
     <PackageVersion Include="DKH.Platform.Grpc.IntegrationTesting" Version="1.0.1" />
     <PackageVersion Include="DKH.Platform.Outbox" Version="1.2.4"/>
-    <PackageVersion Include="DKH.Platform.Telemetry" Version="1.0.8" />
+    <PackageVersion Include="DKH.Platform.Telemetry" Version="1.0.9" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Grpc.Tools" Version="2.76.0" />
