@@ -2,10 +2,10 @@ using DKH.ApiManagementService.Domain.Entities;
 using DKH.Platform.Grpc.Common.Types;
 using Google.Protobuf.WellKnownTypes;
 using ContractsAiProvider = DKH.ApiManagementService.Contracts.ApiManagement.Models.AiProvider.v1.AiProviderModel;
-using ContractsProviderType = DKH.ApiManagementService.Contracts.ApiManagement.Models.AiProvider.v1.AiProviderType;
 using ContractsProviderStatus = DKH.ApiManagementService.Contracts.ApiManagement.Models.AiProvider.v1.AiProviderStatus;
-using DomainProviderType = DKH.ApiManagementService.Domain.Enums.AiProviderType;
+using ContractsProviderType = DKH.ApiManagementService.Contracts.ApiManagement.Models.AiProvider.v1.AiProviderType;
 using DomainProviderStatus = DKH.ApiManagementService.Domain.Enums.AiProviderStatus;
+using DomainProviderType = DKH.ApiManagementService.Domain.Enums.AiProviderType;
 
 namespace DKH.ApiManagementService.Application.Features.AiProviders.Mappers;
 
