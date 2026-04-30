@@ -13,9 +13,11 @@ using DKH.Platform.Grpc.Extensions;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DKH.ApiManagementService.Api.Grpc.Services;
 
+[Authorize(Policy = ApiManagementServiceAuthorizationPolicies.ApiManagementAdminAccess)]
 public class AiProviderCrudGrpcService(IMediator mediator) : AiProviderCrudService.AiProviderCrudServiceBase
 {
     public override async Task<AiProviderModel> Create(CreateAiProviderRequest request, ServerCallContext context)

@@ -14,6 +14,8 @@
 
   <ItemGroup>
     <PackageReference Include="DKH.Platform"/>
+    <PackageReference Include="DKH.Platform.Authentication.Keycloak"/>
+    <PackageReference Include="DKH.Platform.Authorization"/>
     <PackageReference Include="DKH.Platform.Core"/>
     <PackageReference Include="DKH.Platform.Logging"/>
     <PackageReference Include="DKH.Platform.MediatR.Behaviors"/>

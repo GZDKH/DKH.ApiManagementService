@@ -3,6 +3,8 @@ using DKH.ApiManagementService.Application;
 using DKH.ApiManagementService.Infrastructure;
 using DKH.ApiManagementService.Infrastructure.Persistence;
 using DKH.Platform;
+using DKH.Platform.Authentication.Keycloak;
+using DKH.Platform.Authorization;
 using DKH.Platform.Configuration;
 using DKH.Platform.Domain.Events;
 using DKH.Platform.EntityFrameworkCore.PostgreSQL;
@@ -26,6 +28,13 @@ await Platform
     .AddPlatformMediatRBehaviors()
     .AddPlatformLogging()
     .AddPlatformTelemetry()
+    .AddPlatformKeycloakAuth()
+    .AddPlatformAuthorization(policies => policies.AddRolePolicy(
+        ApiManagementServiceAuthorizationPolicies.ApiManagementAdminAccess,
+        PlatformRoles.Realm.SuperAdmin,
+        PlatformRoles.Realm.Admin,
+        PlatformRoles.FullAccess,
+        PlatformRoles.Realm.StorefrontOwner))
     .AddPlatformPostgreSql<AppDbContext>(options => options.ConnectionStringKey = "Default")
     .AddPlatformRepositories<AppDbContext>()
     .AddPlatformDomainEvents()
@@ -40,3 +49,8 @@ await Platform
     })
     .Build()
     .RunAsync();
+
+internal static class ApiManagementServiceAuthorizationPolicies
+{
+    public const string ApiManagementAdminAccess = "ApiManagementAdminAccess";
+}

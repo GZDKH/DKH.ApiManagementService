@@ -13,9 +13,11 @@ using DKH.Platform.Grpc.Extensions;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DKH.ApiManagementService.Api.Grpc.Services;
 
+[Authorize(Policy = ApiManagementServiceAuthorizationPolicies.ApiManagementAdminAccess)]
 public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeysCrudService.ApiKeysCrudServiceBase
 {
     public override async Task<CreateApiKeyResponse> CreateApiKey(CreateApiKeyRequest request, ServerCallContext context)
