@@ -9,6 +9,8 @@ using DKH.ApiManagementService.Application.Features.ApiKeys.Queries.GetApiKey;
 using DKH.ApiManagementService.Application.Features.ApiKeys.Queries.ListApiKeys;
 using DKH.ApiManagementService.Contracts.ApiManagement.Api.ApiKeyCrud.v1;
 using DKH.ApiManagementService.Contracts.ApiManagement.Models.ApiKey.v1;
+using DKH.Platform.Authorization.ResourceAccess;
+using DKH.Platform.Authorization.ResourceAccess.Attributes;
 using DKH.Platform.Grpc.Extensions;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
@@ -94,6 +96,7 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeysCrudService.ApiK
         return response;
     }
 
+    [RequireResourceAccess("api_key", ResourceAccessPermissions.Update)]
     public override async Task<UpdateApiKeyResponse> UpdateApiKey(UpdateApiKeyRequest request, ServerCallContext context)
     {
         var apiKey = await mediator.Send(
@@ -108,6 +111,7 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeysCrudService.ApiK
         return new UpdateApiKeyResponse { ApiKey = apiKey };
     }
 
+    [RequireResourceAccess("api_key", ResourceAccessPermissions.Delete)]
     public override async Task<DeleteApiKeyResponse> DeleteApiKey(DeleteApiKeyRequest request, ServerCallContext context)
     {
         var success = await mediator.Send(
@@ -117,6 +121,7 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeysCrudService.ApiK
         return new DeleteApiKeyResponse { Success = success };
     }
 
+    [RequireResourceAccess("api_key", ResourceAccessPermissions.Update)]
     public override async Task<RegenerateApiKeyResponse> RegenerateApiKey(RegenerateApiKeyRequest request, ServerCallContext context)
     {
         var result = await mediator.Send(
@@ -130,6 +135,7 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeysCrudService.ApiK
         };
     }
 
+    [RequireResourceAccess("api_key", ResourceAccessPermissions.Update)]
     public override async Task<ApiKeyModel> RestoreApiKey(RestoreApiKeyRequest request, ServerCallContext context)
     {
         return await mediator.Send(
@@ -137,6 +143,7 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeysCrudService.ApiK
             context.CancellationToken);
     }
 
+    [RequireResourceAccess("api_key", ResourceAccessPermissions.Delete)]
     public override async Task<Empty> PermanentlyDeleteApiKey(PermanentlyDeleteApiKeyRequest request, ServerCallContext context)
     {
         await mediator.Send(

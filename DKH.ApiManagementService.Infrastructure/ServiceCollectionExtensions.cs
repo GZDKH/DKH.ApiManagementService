@@ -2,6 +2,7 @@ using DKH.ApiManagementService.Application.Abstractions;
 using DKH.ApiManagementService.Infrastructure.Persistence;
 using DKH.ApiManagementService.Infrastructure.Persistence.Repositories;
 using DKH.ApiManagementService.Infrastructure.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +14,7 @@ public static class ServiceCollectionExtensions
     {
         _ = configuration;
         services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
+        services.AddScoped<DbContext>(provider => provider.GetRequiredService<AppDbContext>());
         services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
         services.AddScoped<IApiKeyUsageRepository, ApiKeyUsageRepository>();
         services.AddScoped<IAiProviderRepository, AiProviderRepository>();
