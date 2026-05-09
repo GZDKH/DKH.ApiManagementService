@@ -1,5 +1,6 @@
 using System.Reflection;
 using DKH.ApiManagementService.Application.Abstractions;
+using DKH.ApiManagementService.Domain.Authorization;
 using DKH.ApiManagementService.Domain.Entities;
 using DKH.Platform.EntityFrameworkCore;
 using DKH.Platform.Identity;
@@ -17,6 +18,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<ApiKeyUsageEntity> ApiKeyUsageRecords { get; init; } = null!;
 
     public DbSet<AiProviderEntity> AiProviders { get; init; } = null!;
+
+    public DbSet<ApiManagementAccessGrantEntity> ApiManagementAccessGrants => Set<ApiManagementAccessGrantEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
