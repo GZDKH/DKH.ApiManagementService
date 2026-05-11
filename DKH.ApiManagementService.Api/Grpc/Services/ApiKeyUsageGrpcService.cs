@@ -2,6 +2,8 @@ using DKH.ApiManagementService.Application.Features.Usage.GetUsageHistory;
 using DKH.ApiManagementService.Application.Features.Usage.GetUsageStats;
 using DKH.ApiManagementService.Application.Features.Usage.RecordUsage;
 using DKH.ApiManagementService.Contracts.ApiManagement.Api.ApiKeyUsage.v1;
+using DKH.Platform.Authorization.ResourceAccess;
+using DKH.Platform.Authorization.ResourceAccess.Attributes;
 using Grpc.Core;
 using MediatR;
 
@@ -24,6 +26,7 @@ public class ApiKeyUsageGrpcService(IMediator mediator) : ApiKeyUsageService.Api
         return new RecordUsageResponse { Success = success };
     }
 
+    [RequireResourceAccess("api_key", ResourceAccessPermissions.Read, ResourceIdProperty = "ApiKeyId")]
     public override async Task<GetUsageStatsResponse> GetUsageStats(GetUsageStatsRequest request, ServerCallContext context)
     {
         var stats = await mediator.Send(
@@ -36,6 +39,7 @@ public class ApiKeyUsageGrpcService(IMediator mediator) : ApiKeyUsageService.Api
         return new GetUsageStatsResponse { Stats = stats };
     }
 
+    [RequireResourceAccess("api_key", ResourceAccessPermissions.Read, ResourceIdProperty = "ApiKeyId")]
     public override async Task<GetUsageHistoryResponse> GetUsageHistory(GetUsageHistoryRequest request, ServerCallContext context)
     {
         var result = await mediator.Send(

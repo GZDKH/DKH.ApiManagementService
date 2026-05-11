@@ -40,6 +40,7 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeysCrudService.ApiK
         };
     }
 
+    [RequireResourceAccess("api_key", ResourceAccessPermissions.Read)]
     public override async Task<GetApiKeyResponse> GetApiKey(GetApiKeyRequest request, ServerCallContext context)
     {
         var apiKey = await mediator.Send(
