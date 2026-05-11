@@ -1,18 +1,31 @@
 using DKH.ApiManagementService.Application.Abstractions;
 using DKH.ApiManagementService.Application.Features.ApiKeys.Mappers;
+using DKH.ApiManagementService.Domain.Authorization;
+using DKH.ApiManagementService.Domain.Entities;
+using DKH.Platform.Authorization.ResourceAccess;
+using DKH.Platform.Authorization.ResourceAccess.EntityFrameworkCore.QueryFilters;
 using DKH.Platform.EntityFrameworkCore;
+using DKH.Platform.Identity;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace DKH.ApiManagementService.Application.Features.ApiKeys.Queries.ListApiKeys;
 
-public sealed class ListApiKeysQueryHandler(IAppDbContext dbContext) : IRequestHandler<ListApiKeysQuery, ListApiKeysResult>
+public sealed class ListApiKeysQueryHandler(IAppDbContext dbContext, IPlatformCurrentUser currentUser)
+    : IRequestHandler<ListApiKeysQuery, ListApiKeysResult>
 {
     public async Task<ListApiKeysResult> Handle(ListApiKeysQuery request, CancellationToken cancellationToken)
     {
+        var ef = (DbContext)dbContext;
         var query = dbContext.ApiKeys
             .AsNoTracking()
-            .ApplySoftDeleteFilter(request.SoftDeleteFilter);
+            .ApplySoftDeleteFilter(request.SoftDeleteFilter)
+            .ApplyResourceAccessFilter<ApiKeyEntity, ApiManagementAccessGrantEntity, Guid>(
+                ef,
+                currentUser,
+                resourceType: "api_key",
+                permission: ResourceAccessPermissions.Read,
+                resourceIdSelector: x => x.Id);
 
         if (request.ScopeFilter.HasValue)
         {
