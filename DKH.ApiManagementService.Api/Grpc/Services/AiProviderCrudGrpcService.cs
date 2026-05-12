@@ -8,6 +8,8 @@ using DKH.ApiManagementService.Application.Features.AiProviders.Queries.GetAiPro
 using DKH.ApiManagementService.Application.Features.AiProviders.Queries.ListAiProviders;
 using DKH.ApiManagementService.Contracts.ApiManagement.Api.AiProviderCrud.v1;
 using DKH.ApiManagementService.Contracts.ApiManagement.Models.AiProvider.v1;
+using DKH.Platform.Authorization.ResourceAccess;
+using DKH.Platform.Authorization.ResourceAccess.Attributes;
 using DKH.Platform.Domain.Enums;
 using DKH.Platform.Grpc.Extensions;
 using Google.Protobuf.WellKnownTypes;
@@ -20,6 +22,8 @@ namespace DKH.ApiManagementService.Api.Grpc.Services;
 [Authorize(Policy = ApiManagementServiceAuthorizationPolicies.ApiManagementAdminAccess)]
 public class AiProviderCrudGrpcService(IMediator mediator) : AiProviderCrudService.AiProviderCrudServiceBase
 {
+    // Create is admin-only via the AdminAccess policy. The resulting AiProvider gets a creator
+    // grant automatically (GrantCreatorFullAccess) and downstream operations rely on it.
     public override async Task<AiProviderModel> Create(CreateAiProviderRequest request, ServerCallContext context)
     {
         return await mediator.Send(
@@ -35,6 +39,7 @@ public class AiProviderCrudGrpcService(IMediator mediator) : AiProviderCrudServi
             context.CancellationToken);
     }
 
+    [RequireResourceAccess("ai_provider", ResourceAccessPermissions.Read, ResourceIdProperty = "Id")]
     public override async Task<AiProviderModel> Get(GetAiProviderRequest request, ServerCallContext context)
     {
         return await mediator.Send(
@@ -42,6 +47,8 @@ public class AiProviderCrudGrpcService(IMediator mediator) : AiProviderCrudServi
             context.CancellationToken);
     }
 
+    // List is admin-only; SuperAdmin/Admin baseline grants on ai_provider cover the read path.
+    // A handler-level ApplyResourceAccessFilter can be added later for non-admin scopes.
     public override async Task<ListAiProvidersResponse> List(ListAiProvidersRequest request, ServerCallContext context)
     {
         var typeFilter = request.TypeFilter != AiProviderType.Unspecified
@@ -89,6 +96,7 @@ public class AiProviderCrudGrpcService(IMediator mediator) : AiProviderCrudServi
         return response;
     }
 
+    [RequireResourceAccess("ai_provider", ResourceAccessPermissions.Update, ResourceIdProperty = "Id")]
     public override async Task<AiProviderModel> Update(UpdateAiProviderRequest request, ServerCallContext context)
     {
         return await mediator.Send(
@@ -104,6 +112,7 @@ public class AiProviderCrudGrpcService(IMediator mediator) : AiProviderCrudServi
             context.CancellationToken);
     }
 
+    [RequireResourceAccess("ai_provider", ResourceAccessPermissions.Delete, ResourceIdProperty = "Id")]
     public override async Task<Empty> Delete(DeleteAiProviderRequest request, ServerCallContext context)
     {
         await mediator.Send(
@@ -113,6 +122,7 @@ public class AiProviderCrudGrpcService(IMediator mediator) : AiProviderCrudServi
         return new Empty();
     }
 
+    [RequireResourceAccess("ai_provider", ResourceAccessPermissions.Update, ResourceIdProperty = "Id")]
     public override async Task<AiProviderModel> Restore(RestoreAiProviderRequest request, ServerCallContext context)
     {
         return await mediator.Send(
@@ -120,6 +130,7 @@ public class AiProviderCrudGrpcService(IMediator mediator) : AiProviderCrudServi
             context.CancellationToken);
     }
 
+    [RequireResourceAccess("ai_provider", ResourceAccessPermissions.Delete, ResourceIdProperty = "Id")]
     public override async Task<Empty> PermanentlyDelete(PermanentlyDeleteAiProviderRequest request, ServerCallContext context)
     {
         await mediator.Send(

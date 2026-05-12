@@ -41,6 +41,7 @@ await Platform
         PlatformRoles.FullAccess,
         PlatformRoles.Realm.StorefrontOwner))
     .ConfigurePlatformWebApplicationBuilder(builder =>
+    {
         builder.Services.AddPlatformResourceAccess<ApiKeyEntity, ApiManagementAccessGrantEntity, Guid>(opts =>
         {
             opts.ResourceType = "api_key";
@@ -56,7 +57,24 @@ await Platform
                         ResourceAccessConstants.WildcardResourceId,
                         ResourceAccessPermissions.FullAccess);
             };
-        }))
+        });
+        builder.Services.AddPlatformResourceAccess<AiProviderEntity, ApiManagementAccessGrantEntity, Guid>(opts =>
+        {
+            opts.ResourceType = "ai_provider";
+            opts.DisplayName = "AI Provider";
+            opts.GrantCreatorFullAccess = true;
+            opts.CreatorGrantReason = "creator-default";
+            opts.BaselineRoleGrants = b =>
+            {
+                b.Grant(PlatformRoles.Realm.SuperAdmin,
+                        ResourceAccessConstants.WildcardResourceId,
+                        ResourceAccessPermissions.FullAccess);
+                b.Grant(PlatformRoles.Realm.Admin,
+                        ResourceAccessConstants.WildcardResourceId,
+                        ResourceAccessPermissions.FullAccess);
+            };
+        });
+    })
     .AddPlatformPostgreSql<AppDbContext>(options => options.ConnectionStringKey = "Default")
     .AddPlatformRepositories<AppDbContext>()
     .AddPlatformDomainEvents()

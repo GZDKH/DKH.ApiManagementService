@@ -5,7 +5,11 @@ namespace DKH.ApiManagementService.Domain.Authorization;
 
 public sealed class ApiManagementAccessGrantEntity : ResourceAccessGrantEntity<Guid>
 {
-    private static readonly HashSet<string> AllowedResourceTypes = new(StringComparer.Ordinal) { "api_key" };
+    private static readonly HashSet<string> AllowedResourceTypes = new(StringComparer.Ordinal)
+    {
+        "api_key",
+        "ai_provider",
+    };
 
     private ApiManagementAccessGrantEntity() { }
 

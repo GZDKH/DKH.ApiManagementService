@@ -22,6 +22,8 @@ namespace DKH.ApiManagementService.Api.Grpc.Services;
 [Authorize(Policy = ApiManagementServiceAuthorizationPolicies.ApiManagementAdminAccess)]
 public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeysCrudService.ApiKeysCrudServiceBase
 {
+    // CreateApiKey has no resource id yet; admin-only via the AdminAccess policy. The new
+    // ApiKey gets a creator grant automatically (GrantCreatorFullAccess).
     public override async Task<CreateApiKeyResponse> CreateApiKey(CreateApiKeyRequest request, ServerCallContext context)
     {
         var result = await mediator.Send(
@@ -50,6 +52,8 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeysCrudService.ApiK
         return new GetApiKeyResponse { ApiKey = apiKey };
     }
 
+    // ListApiKeys is admin-only; SuperAdmin/Admin baseline grants on api_key cover the read
+    // path. A handler-level ApplyResourceAccessFilter can be added later for non-admin scopes.
     public override async Task<ListApiKeysResponse> ListApiKeys(ListApiKeysRequest request, ServerCallContext context)
     {
         var scopeFilter = request.ScopeFilter != ApiKeyScope.Unspecified
