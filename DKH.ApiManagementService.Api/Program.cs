@@ -39,11 +39,9 @@ await Platform
     .AddPlatformKeycloakAuth()
     .AddPlatformApiKeyAuth<ApiKeyValidator>()
     .ConfigurePlatformWebApplicationBuilder(builder =>
-    {
         builder.Services
             .AddOptions<PlatformApiKeyAuthOptions>()
-            .Bind(builder.Configuration.GetSection(PlatformApiKeyAuthOptions.Section));
-    })
+            .Bind(builder.Configuration.GetSection(PlatformApiKeyAuthOptions.Section)))
     .ConfigurePlatformWebApplication(app =>
     {
         // API key auth is an ADDITIONAL scheme alongside Keycloak — only engage the middleware

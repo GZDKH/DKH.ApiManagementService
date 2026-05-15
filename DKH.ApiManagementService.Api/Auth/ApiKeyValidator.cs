@@ -3,7 +3,6 @@ using DKH.ApiManagementService.Application.Abstractions;
 using DKH.ApiManagementService.Domain.Entities;
 using DKH.ApiManagementService.Domain.ValueObjects;
 using DKH.Platform.ApiKeyAuth;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace DKH.ApiManagementService.Api.Auth;
