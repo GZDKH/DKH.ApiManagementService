@@ -4,6 +4,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DKH.Platform.ApiKeyAuth"/>
     <PackageReference Include="Microsoft.NET.Test.Sdk"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory"/>
     <PackageReference Include="NSubstitute"/>
@@ -17,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\DKH.ApiManagementService.Api\DKH.ApiManagementService.Api.csproj"/>
     <ProjectReference Include="..\..\DKH.ApiManagementService.Domain\DKH.ApiManagementService.Domain.csproj"/>
     <ProjectReference Include="..\..\DKH.ApiManagementService.Application\DKH.ApiManagementService.Application.csproj"/>
     <ProjectReference Include="..\..\DKH.ApiManagementService.Infrastructure\DKH.ApiManagementService.Infrastructure.csproj"/>

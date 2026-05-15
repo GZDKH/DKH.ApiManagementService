@@ -1,3 +1,4 @@
+using DKH.ApiManagementService.Api.Auth;
 using DKH.ApiManagementService.Api.Grpc.Services;
 using DKH.ApiManagementService.Application;
 using DKH.ApiManagementService.Domain.Authorization;
@@ -5,6 +6,7 @@ using DKH.ApiManagementService.Domain.Entities;
 using DKH.ApiManagementService.Infrastructure;
 using DKH.ApiManagementService.Infrastructure.Persistence;
 using DKH.Platform;
+using DKH.Platform.ApiKeyAuth;
 using DKH.Platform.Authentication.Keycloak;
 using DKH.Platform.Authorization;
 using DKH.Platform.Authorization.ResourceAccess;
@@ -20,6 +22,7 @@ using DKH.Platform.Logging;
 using DKH.Platform.MediatR.Behaviors;
 using DKH.Platform.Messaging.MediatR;
 using DKH.Platform.Telemetry;
+using Microsoft.Extensions.Options;
 
 await Platform
     .CreateWeb(args)
@@ -34,6 +37,25 @@ await Platform
     .AddPlatformLogging()
     .AddPlatformTelemetry()
     .AddPlatformKeycloakAuth()
+    .AddPlatformApiKeyAuth<ApiKeyValidator>()
+    .ConfigurePlatformWebApplicationBuilder(builder =>
+    {
+        builder.Services
+            .AddOptions<PlatformApiKeyAuthOptions>()
+            .Bind(builder.Configuration.GetSection(PlatformApiKeyAuthOptions.Section));
+    })
+    .ConfigurePlatformWebApplication(app =>
+    {
+        // API key auth is an ADDITIONAL scheme alongside Keycloak — only engage the middleware
+        // when the configured header is actually presented. Requests without the header fall
+        // through to the rest of the pipeline (Keycloak JWT for gRPC callers, health probes, etc.).
+        var apiKeyOptions = app.Services
+            .GetRequiredService<IOptions<PlatformApiKeyAuthOptions>>()
+            .Value;
+        app.UseWhen(
+            ctx => ctx.Request.Headers.ContainsKey(apiKeyOptions.HeaderName),
+            branch => branch.UseMiddleware<PlatformApiKeyAuthMiddleware>());
+    })
     .AddPlatformAuthorization(policies => policies.AddRolePolicy(
         ApiManagementServiceAuthorizationPolicies.ApiManagementAdminAccess,
         PlatformRoles.Realm.SuperAdmin,
