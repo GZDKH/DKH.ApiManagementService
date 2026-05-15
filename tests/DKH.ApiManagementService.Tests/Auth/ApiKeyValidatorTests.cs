@@ -25,7 +25,7 @@ public sealed class ApiKeyValidatorTests
     }
 
     [Fact]
-    public async Task ValidateAsync_EmptyKey_ReturnsInvalid()
+    public async Task ValidateAsync_EmptyKey_ReturnsInvalidAsync()
     {
         var validator = CreateValidator();
 
@@ -36,7 +36,7 @@ public sealed class ApiKeyValidatorTests
     }
 
     [Fact]
-    public async Task ValidateAsync_WhitespaceKey_ReturnsInvalid()
+    public async Task ValidateAsync_WhitespaceKey_ReturnsInvalidAsync()
     {
         var validator = CreateValidator();
 
@@ -46,7 +46,7 @@ public sealed class ApiKeyValidatorTests
     }
 
     [Fact]
-    public async Task ValidateAsync_UnknownKey_ReturnsInvalid()
+    public async Task ValidateAsync_UnknownKey_ReturnsInvalidAsync()
     {
         _repository.GetByKeyHashAsync(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns((ApiKeyEntity?)null);
 
@@ -58,7 +58,7 @@ public sealed class ApiKeyValidatorTests
     }
 
     [Fact]
-    public async Task ValidateAsync_RevokedKey_ReturnsInvalid()
+    public async Task ValidateAsync_RevokedKey_ReturnsInvalidAsync()
     {
         const string rawKey = "dkh_mcp_revoked_key_aaaaaaaaaaaaaaa";
         var hash = ApiKeyHash.FromRawKey(rawKey).Value;
@@ -82,7 +82,7 @@ public sealed class ApiKeyValidatorTests
     }
 
     [Fact]
-    public async Task ValidateAsync_ExpiredKey_ReturnsInvalid()
+    public async Task ValidateAsync_ExpiredKey_ReturnsInvalidAsync()
     {
         const string rawKey = "dkh_mcp_expired_key_aaaaaaaaaaaaaa";
         var hash = ApiKeyHash.FromRawKey(rawKey).Value;
@@ -105,7 +105,7 @@ public sealed class ApiKeyValidatorTests
     }
 
     [Fact]
-    public async Task ValidateAsync_ActiveKey_ReturnsValidWithClaimsAndRecordsUsage()
+    public async Task ValidateAsync_ActiveKey_ReturnsValidWithClaimsAndRecordsUsageAsync()
     {
         const string rawKey = "dkh_mcp_active_key_aaaaaaaaaaaaaaa";
         var hash = ApiKeyHash.FromRawKey(rawKey).Value;
@@ -139,7 +139,7 @@ public sealed class ApiKeyValidatorTests
     }
 
     [Fact]
-    public async Task ValidateAsync_HashMatchesValidationHandler()
+    public async Task ValidateAsync_HashMatchesValidationHandlerAsync()
     {
         // Sanity check: validator must hash with the same SHA-256 lowercase-hex
         // algorithm used by ApiKeyHash.FromRawKey / ApiKeyGenerator / ValidateApiKeyQueryHandler.
@@ -158,6 +158,5 @@ public sealed class ApiKeyValidatorTests
         observedHash.Should().Be(expectedHash);
     }
 
-    private ApiKeyValidator CreateValidator() =>
-        new(_scopeFactory, NullLogger<ApiKeyValidator>.Instance);
+    private ApiKeyValidator CreateValidator() => new(_scopeFactory, NullLogger<ApiKeyValidator>.Instance);
 }
