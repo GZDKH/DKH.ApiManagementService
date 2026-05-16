@@ -18,6 +18,7 @@
     <PackageReference Include="DKH.Platform.Authentication.Keycloak"/>
     <PackageReference Include="DKH.Platform.Authorization"/>
     <PackageReference Include="DKH.Platform.Authorization.ResourceAccess"/>
+    <PackageReference Include="DKH.Platform.Authorization.ResourceAccess.Contracts"/>
     <PackageReference Include="DKH.Platform.Authorization.ResourceAccess.Grpc"/>
     <PackageReference Include="DKH.Platform.Core"/>
     <PackageReference Include="DKH.Platform.Logging"/>
