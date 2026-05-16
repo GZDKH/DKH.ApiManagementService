@@ -106,6 +106,7 @@ await Platform
         grpc.MapService<ApiKeyValidationGrpcService>();
         grpc.MapService<ApiKeyUsageGrpcService>();
         grpc.MapService<AiProviderCrudGrpcService>();
+        grpc.MapService<ApiManagementGrantsGrpcService>();
         grpc.ConfigureDefaultRoute("ApiManagementService gRPC is running.");
     })
     .Build()
