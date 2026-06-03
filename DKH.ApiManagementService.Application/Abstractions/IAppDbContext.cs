@@ -11,5 +11,9 @@ public interface IAppDbContext
 
     DbSet<AiProviderEntity> AiProviders { get; }
 
+    DbSet<ModuleStateEntity> ModuleStates { get; }
+
+    DbSet<ModuleEntitlementEntity> ModuleEntitlements { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

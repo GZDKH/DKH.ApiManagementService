@@ -21,6 +21,7 @@ using DKH.Platform.Identity;
 using DKH.Platform.Logging;
 using DKH.Platform.MediatR.Behaviors;
 using DKH.Platform.Messaging.MediatR;
+using DKH.Platform.Modularity;
 using DKH.Platform.Telemetry;
 using Microsoft.Extensions.Options;
 
@@ -31,6 +32,7 @@ await Platform
         builder.ConfigurePlatformStandardConfiguration();
         builder.Services.AddApiManagementInfrastructure(builder.Configuration);
         builder.Services.AddApplication(builder.Configuration);
+        builder.Services.AddSingleton<IPlatformModuleEntitlementProvider, PlatformConfigurationModuleEntitlementProvider>();
     })
     .AddPlatformMessagingWithMediatR(typeof(ConfigureServices).Assembly)
     .AddPlatformMediatRBehaviors()
@@ -107,6 +109,9 @@ await Platform
         grpc.MapService<ApiKeyUsageGrpcService>();
         grpc.MapService<AiProviderCrudGrpcService>();
         grpc.MapService<ApiManagementGrantsGrpcService>();
+        grpc.MapService<ModuleCatalogGrpcService>();
+        grpc.MapService<ModuleStateGrpcService>();
+        grpc.MapService<ModuleEntitlementGrpcService>();
         grpc.ConfigureDefaultRoute("ApiManagementService gRPC is running.");
     })
     .Build()
