@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package proto.api_management.api.module_entitlement.v1;
+
+option csharp_namespace = "DKH.ApiManagementService.Contracts.ApiManagement.Api.ModuleEntitlement.v1";
+
+import "api_management/models/module/v1/module.proto";
+
+// Answers and lists entitlements for a scope. The Layer 0 source is a configuration stub.
+service ModuleEntitlementService {
+  rpc CheckEntitlement(CheckEntitlementRequest) returns (CheckEntitlementResponse);
+  rpc ListEntitlements(ListEntitlementsRequest) returns (ListEntitlementsResponse);
+}
+
+message CheckEntitlementRequest {
+  proto.api_management.models.module.v1.ModuleScope scope = 1;
+  string module_id = 2;
+}
+
+message CheckEntitlementResponse {
+  bool granted = 1;
+}
+
+message ListEntitlementsRequest {
+  proto.api_management.models.module.v1.ModuleScope scope = 1;
+}
+
+message ListEntitlementsResponse {
+  repeated proto.api_management.models.module.v1.ModuleEntitlementModel entitlements = 1;
+}
