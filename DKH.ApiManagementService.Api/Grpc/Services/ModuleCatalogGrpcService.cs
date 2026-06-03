@@ -10,36 +10,37 @@ using Microsoft.EntityFrameworkCore;
 namespace DKH.ApiManagementService.Api.Grpc.Services;
 
 [Authorize(Policy = ApiManagementServiceAuthorizationPolicies.ApiManagementAdminAccess)]
-public class ModuleCatalogGrpcService(IAppDbContext dbContext) : ModuleCatalogService.ModuleCatalogServiceBase
+public class ModuleCatalogGrpcService(IModuleManifestSource manifestSource, IAppDbContext dbContext)
+    : ModuleCatalogService.ModuleCatalogServiceBase
 {
     public override async Task<ListComponentsResponse> ListComponents(ListComponentsRequest request, ServerCallContext context)
     {
-        var states = await dbContext.ModuleStates.AsNoTracking().ToListAsync(context.CancellationToken);
+        var components = await manifestSource.GetComponentsAsync(context.CancellationToken);
+        var stateByModuleId = await dbContext.ModuleStates
+            .AsNoTracking()
+            .ToDictionaryAsync(x => x.ModuleId, x => x.State, context.CancellationToken);
 
         var response = new ListComponentsResponse();
-        response.Components.AddRange(states.Select(state => state.ToComponentModel()));
+        response.Components.AddRange(components.Select(component =>
+            component.ToComponentModel(stateByModuleId.TryGetValue(component.Id, out var state) ? state : null)));
         return response;
     }
 
-    // Layer 0: editions are declared via edition.json and ingested in a later phase. None are persisted yet.
-    public override Task<ListEditionsResponse> ListEditions(ListEditionsRequest request, ServerCallContext context)
-        => Task.FromResult(new ListEditionsResponse());
+    public override async Task<ListEditionsResponse> ListEditions(ListEditionsRequest request, ServerCallContext context)
+    {
+        var editions = await manifestSource.GetEditionsAsync(context.CancellationToken);
+
+        var response = new ListEditionsResponse();
+        response.Editions.AddRange(editions.Select(edition => edition.ToEditionModel()));
+        return response;
+    }
 
     public override async Task<ModuleDependencyGraphModel> GetDependencyGraph(GetDependencyGraphRequest request, ServerCallContext context)
     {
-        var states = await dbContext.ModuleStates.AsNoTracking().ToListAsync(context.CancellationToken);
+        var components = await manifestSource.GetComponentsAsync(context.CancellationToken);
+        var editions = await manifestSource.GetEditionsAsync(context.CancellationToken);
 
-        var components = states
-            .Select(state => new PlatformModuleManifest
-            {
-                Id = state.ModuleId,
-                Kind = PlatformModuleKind.Service,
-                Name = new LocalizedString { ["en"] = state.ModuleId },
-                Version = state.Version,
-            })
-            .ToList();
-
-        var resolution = PlatformModuleDependencyResolver.Resolve(components);
+        var resolution = PlatformModuleDependencyResolver.Resolve(components, editions);
 
         var model = new ModuleDependencyGraphModel();
         model.OrderedComponentIds.AddRange(resolution.Order);

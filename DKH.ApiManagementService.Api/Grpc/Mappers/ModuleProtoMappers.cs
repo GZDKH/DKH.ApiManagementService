@@ -17,6 +17,13 @@ internal static class ModuleProtoMappers
         _ => ProtoModule.ModuleState.Unspecified,
     };
 
+    public static ProtoModule.ModuleKind ToProto(this PlatformModuleKind kind) => kind switch
+    {
+        PlatformModuleKind.Plugin => ProtoModule.ModuleKind.Plugin,
+        PlatformModuleKind.Service => ProtoModule.ModuleKind.Service,
+        _ => ProtoModule.ModuleKind.Unspecified,
+    };
+
     public static ModuleEntitlementScopeKind ToDomainScopeKind(this ProtoModule.ModuleScopeKind kind) => kind switch
     {
         ProtoModule.ModuleScopeKind.Tenant => ModuleEntitlementScopeKind.Tenant,
@@ -66,14 +73,43 @@ internal static class ModuleProtoMappers
         Version = entity.Version,
     };
 
-    public static ProtoModule.ModuleComponentModel ToComponentModel(this ModuleStateEntity entity) => new()
+    public static ProtoModule.ModuleComponentModel ToComponentModel(this PlatformModuleManifest manifest, ModuleLifecycleState? state)
     {
-        Id = entity.ModuleId,
-        Kind = ProtoModule.ModuleKind.Service,
-        Version = entity.Version,
-        State = entity.State.ToProto(),
-        RequiresEntitlement = string.Empty,
-    };
+        var model = new ProtoModule.ModuleComponentModel
+        {
+            Id = manifest.Id,
+            Kind = manifest.Kind.ToProto(),
+            Name = ToLocalizedText(manifest.Name),
+            Version = manifest.Version,
+            RequiresEntitlement = manifest.RequiresEntitlement ?? string.Empty,
+            State = (state ?? ModuleLifecycleState.Discovered).ToProto(),
+        };
+
+        foreach (var capability in manifest.Provides)
+        {
+            model.Provides.Add(new ProtoModule.ModuleCapability { Id = capability.Id, Version = capability.Version ?? string.Empty });
+        }
+
+        foreach (var dependency in manifest.Requires)
+        {
+            model.Requires.Add(new ProtoModule.ModuleDependency { CapabilityId = dependency.CapabilityId, VersionRange = dependency.VersionRange ?? string.Empty });
+        }
+
+        return model;
+    }
+
+    public static ProtoModule.ModuleEditionModel ToEditionModel(this PlatformEditionManifest manifest)
+    {
+        var model = new ProtoModule.ModuleEditionModel
+        {
+            Id = manifest.Id,
+            Name = ToLocalizedText(manifest.Name),
+            RequiresEntitlement = manifest.RequiresEntitlement ?? string.Empty,
+        };
+
+        model.ComponentIds.AddRange(manifest.Components);
+        return model;
+    }
 
     public static ProtoModule.ModuleEntitlementModel ToEntitlementModel(this ModuleEntitlementEntity entity) => new()
     {
@@ -81,4 +117,18 @@ internal static class ModuleProtoMappers
         ModuleId = entity.ModuleId,
         Granted = entity.Granted,
     };
+
+    private static ProtoModule.LocalizedText ToLocalizedText(LocalizedString? source)
+    {
+        var text = new ProtoModule.LocalizedText();
+        if (source is not null)
+        {
+            foreach (var pair in source)
+            {
+                text.Values[pair.Key] = pair.Value;
+            }
+        }
+
+        return text;
+    }
 }
