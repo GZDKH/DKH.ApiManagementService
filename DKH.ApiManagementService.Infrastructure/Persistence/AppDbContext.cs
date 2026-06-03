@@ -19,6 +19,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
     public DbSet<AiProviderEntity> AiProviders { get; init; } = null!;
 
+    public DbSet<ModuleStateEntity> ModuleStates { get; init; } = null!;
+
+    public DbSet<ModuleEntitlementEntity> ModuleEntitlements { get; init; } = null!;
+
     public DbSet<ApiManagementAccessGrantEntity> ApiManagementAccessGrants => Set<ApiManagementAccessGrantEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
