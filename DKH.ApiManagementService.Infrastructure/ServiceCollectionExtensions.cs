@@ -1,4 +1,5 @@
 using DKH.ApiManagementService.Application.Abstractions;
+using DKH.ApiManagementService.Infrastructure.Modularity;
 using DKH.ApiManagementService.Infrastructure.Persistence;
 using DKH.ApiManagementService.Infrastructure.Persistence.Repositories;
 using DKH.ApiManagementService.Infrastructure.Services;
@@ -19,6 +20,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IApiKeyUsageRepository, ApiKeyUsageRepository>();
         services.AddScoped<IAiProviderRepository, AiProviderRepository>();
         services.AddSingleton<IApiKeyGenerator, ApiKeyGenerator>();
+        services.AddSingleton<IModuleManifestSource, DirectoryModuleManifestSource>();
         return services;
     }
 }
