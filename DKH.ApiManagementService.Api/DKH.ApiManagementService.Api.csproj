@@ -23,6 +23,8 @@
     <PackageReference Include="DKH.Platform.Authorization.ResourceAccess.Grpc"/>
     <PackageReference Include="DKH.Platform.Core"/>
     <PackageReference Include="DKH.Platform.Logging"/>
+    <PackageReference Include="DKH.Platform.Modularity"/>
+    <PackageReference Include="DKH.Platform.Modularity.Abstractions"/>
     <PackageReference Include="DKH.Platform.MediatR.Behaviors"/>
     <PackageReference Include="DKH.Platform.Messaging"/>
     <PackageReference Include="DKH.Platform.Outbox" />
