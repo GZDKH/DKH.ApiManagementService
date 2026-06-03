@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package proto.api_management.api.module_catalog.v1;
+
+option csharp_namespace = "DKH.ApiManagementService.Contracts.ApiManagement.Api.ModuleCatalog.v1";
+
+import "api_management/models/module/v1/module.proto";
+
+// Read-only access to the module catalog and the resolved dependency graph.
+service ModuleCatalogService {
+  rpc ListComponents(ListComponentsRequest) returns (ListComponentsResponse);
+  rpc ListEditions(ListEditionsRequest) returns (ListEditionsResponse);
+  rpc GetDependencyGraph(GetDependencyGraphRequest) returns (proto.api_management.models.module.v1.ModuleDependencyGraphModel);
+}
+
+message ListComponentsRequest {}
+
+message ListComponentsResponse {
+  repeated proto.api_management.models.module.v1.ModuleComponentModel components = 1;
+}
+
+message ListEditionsRequest {}
+
+message ListEditionsResponse {
+  repeated proto.api_management.models.module.v1.ModuleEditionModel editions = 1;
+}
+
+message GetDependencyGraphRequest {}

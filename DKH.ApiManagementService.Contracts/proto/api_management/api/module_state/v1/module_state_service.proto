@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package proto.api_management.api.module_state.v1;
+
+option csharp_namespace = "DKH.ApiManagementService.Contracts.ApiManagement.Api.ModuleState.v1";
+
+import "api_management/models/module/v1/module.proto";
+
+// Manages the deployment-level lifecycle state of components.
+service ModuleStateService {
+  rpc InstallModule(InstallModuleRequest) returns (proto.api_management.models.module.v1.ModuleStateModel);
+  rpc EnableModule(EnableModuleRequest) returns (proto.api_management.models.module.v1.ModuleStateModel);
+  rpc DisableModule(DisableModuleRequest) returns (proto.api_management.models.module.v1.ModuleStateModel);
+  rpc GetModuleState(GetModuleStateRequest) returns (proto.api_management.models.module.v1.ModuleStateModel);
+}
+
+message InstallModuleRequest {
+  string module_id = 1;
+  string version = 2;
+}
+
+message EnableModuleRequest {
+  string module_id = 1;
+}
+
+message DisableModuleRequest {
+  string module_id = 1;
+}
+
+message GetModuleStateRequest {
+  string module_id = 1;
+}
