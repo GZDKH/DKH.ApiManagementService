@@ -24,6 +24,20 @@ enum ApiKeyStatus {
   API_KEY_STATUS_EXPIRED = 3;
 }
 
+enum ApiKeyEnvironment {
+  API_KEY_ENVIRONMENT_UNSPECIFIED = 0;
+  API_KEY_ENVIRONMENT_SANDBOX = 1;
+  API_KEY_ENVIRONMENT_PRODUCTION = 2;
+}
+
+enum ApiKeyRateLimitTier {
+  API_KEY_RATE_LIMIT_TIER_UNSPECIFIED = 0;
+  API_KEY_RATE_LIMIT_TIER_DEVELOPMENT = 1;
+  API_KEY_RATE_LIMIT_TIER_STANDARD = 2;
+  API_KEY_RATE_LIMIT_TIER_PROFESSIONAL = 3;
+  API_KEY_RATE_LIMIT_TIER_ENTERPRISE = 4;
+}
+
 message ApiKeyModel {
   proto.platform.grpc.common.types.GuidValue id = 1;
   string name = 2;
@@ -37,4 +51,11 @@ message ApiKeyModel {
   google.protobuf.Timestamp created_at = 10;
   google.protobuf.Timestamp updated_at = 11;
   proto.platform.grpc.common.types.GuidValue created_by = 12;
+  proto.platform.grpc.common.types.GuidValue customer_id = 13;
+  ApiKeyEnvironment environment = 14;
+  ApiKeyRateLimitTier rate_limit_tier = 15;
+  int32 rate_limit_requests_per_minute = 16;
+  google.protobuf.Timestamp last_rotated_at = 17;
+  int32 rotation_count = 18;
+  google.protobuf.StringValue previous_key_prefix = 19;
 }

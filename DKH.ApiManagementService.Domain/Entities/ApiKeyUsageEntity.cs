@@ -1,3 +1,4 @@
+using DKH.ApiManagementService.Domain.Enums;
 using DKH.Platform.Domain.Entities;
 
 namespace DKH.ApiManagementService.Domain.Entities;
@@ -15,7 +16,11 @@ public sealed class ApiKeyUsageEntity : Entity<Guid>
         int statusCode,
         string? ipAddress,
         string? userAgent,
-        long responseTimeMs)
+        long responseTimeMs,
+        Guid? customerId,
+        ApiKeyEnvironment environment,
+        ApiKeyRateLimitTier rateLimitTier,
+        int rateLimitRequestsPerMinute)
     {
         Id = Guid.NewGuid();
         ApiKeyId = apiKeyId;
@@ -24,6 +29,10 @@ public sealed class ApiKeyUsageEntity : Entity<Guid>
         IpAddress = ipAddress;
         UserAgent = userAgent;
         ResponseTimeMs = responseTimeMs;
+        CustomerId = customerId;
+        Environment = environment;
+        RateLimitTier = rateLimitTier;
+        RateLimitRequestsPerMinute = rateLimitRequestsPerMinute;
         Timestamp = DateTimeOffset.UtcNow;
     }
 
@@ -41,6 +50,14 @@ public sealed class ApiKeyUsageEntity : Entity<Guid>
 
     public long ResponseTimeMs { get; private set; }
 
+    public Guid? CustomerId { get; private set; }
+
+    public ApiKeyEnvironment Environment { get; private set; } = ApiKeyEnvironment.Production;
+
+    public ApiKeyRateLimitTier RateLimitTier { get; private set; } = ApiKeyRateLimitTier.Standard;
+
+    public int RateLimitRequestsPerMinute { get; private set; }
+
     public ApiKeyEntity ApiKey { get; private set; } = null!;
 
     public static ApiKeyUsageEntity Create(
@@ -50,6 +67,31 @@ public sealed class ApiKeyUsageEntity : Entity<Guid>
         string? ipAddress,
         string? userAgent,
         long responseTimeMs)
+    {
+        return Create(
+            apiKeyId,
+            endpoint,
+            statusCode,
+            ipAddress,
+            userAgent,
+            responseTimeMs,
+            customerId: null,
+            ApiKeyEnvironment.Production,
+            ApiKeyRateLimitTier.Standard,
+            rateLimitRequestsPerMinute: 600);
+    }
+
+    public static ApiKeyUsageEntity Create(
+        Guid apiKeyId,
+        string endpoint,
+        int statusCode,
+        string? ipAddress,
+        string? userAgent,
+        long responseTimeMs,
+        Guid? customerId,
+        ApiKeyEnvironment environment,
+        ApiKeyRateLimitTier rateLimitTier,
+        int rateLimitRequestsPerMinute)
     {
         if (apiKeyId == Guid.Empty)
         {
@@ -61,6 +103,16 @@ public sealed class ApiKeyUsageEntity : Entity<Guid>
             throw new ArgumentException("Endpoint must be provided", nameof(endpoint));
         }
 
-        return new ApiKeyUsageEntity(apiKeyId, endpoint, statusCode, ipAddress, userAgent, responseTimeMs);
+        return new ApiKeyUsageEntity(
+            apiKeyId,
+            endpoint,
+            statusCode,
+            ipAddress,
+            userAgent,
+            responseTimeMs,
+            customerId,
+            environment,
+            rateLimitTier,
+            rateLimitRequestsPerMinute);
     }
 }

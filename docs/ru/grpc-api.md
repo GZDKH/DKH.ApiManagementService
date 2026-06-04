@@ -12,8 +12,8 @@ CRUD-операции для управления API-ключами.
 |-------|--------|-------|----------|
 | CreateApiKey | `CreateApiKeyRequest` | `CreateApiKeyResponse` | Создание нового API-ключа (возвращает сырой ключ один раз) |
 | GetApiKey | `GetApiKeyRequest` | `GetApiKeyResponse` | Получение API-ключа по ID |
-| ListApiKeys | `ListApiKeysRequest` | `ListApiKeysResponse` | Список API-ключей с фильтрацией по scope/status и пагинацией |
-| UpdateApiKey | `UpdateApiKeyRequest` | `UpdateApiKeyResponse` | Обновление имени, описания, разрешений, срока действия |
+| ListApiKeys | `ListApiKeysRequest` | `ListApiKeysResponse` | Список API-ключей с фильтрацией по scope/status/customer/environment/tier и пагинацией |
+| UpdateApiKey | `UpdateApiKeyRequest` | `UpdateApiKeyResponse` | Обновление имени, описания, разрешений, срока действия, customer, environment и tier |
 | DeleteApiKey | `DeleteApiKeyRequest` | `DeleteApiKeyResponse` | Отзыв и мягкое удаление ключа |
 | RegenerateApiKey | `RegenerateApiKeyRequest` | `RegenerateApiKeyResponse` | Перегенерация значения ключа (возвращает новый сырой ключ) |
 
@@ -23,7 +23,7 @@ CRUD-операции для управления API-ключами.
 
 | Метод | Запрос | Ответ | Описание |
 |-------|--------|-------|----------|
-| ValidateApiKey | `ValidateApiKeyRequest` | `ValidateApiKeyResponse` | Валидация сырого ключа, возвращает scope, разрешения и причину ошибки |
+| ValidateApiKey | `ValidateApiKeyRequest` | `ValidateApiKeyResponse` | Валидация сырого ключа, возвращает scope, разрешения, customer, environment, rate-limit tier и причину ошибки |
 | CheckPermission | `CheckPermissionRequest` | `CheckPermissionResponse` | Проверка наличия определённого разрешения у ключа |
 
 ### ApiKeyUsageService
@@ -54,6 +54,13 @@ CRUD-операции для управления API-ключами.
 | created_at | `Timestamp` | Время создания |
 | updated_at | `Timestamp` | Время последнего обновления |
 | created_by | `GuidValue` | ID пользователя-создателя |
+| customer_id | `GuidValue` | Владелец customer/tenant для публичных ключей |
+| environment | `ApiKeyEnvironment` | Sandbox или production |
+| rate_limit_tier | `ApiKeyRateLimitTier` | Настроенный tier |
+| rate_limit_requests_per_minute | `int32` | Рассчитанный лимит запросов в минуту |
+| last_rotated_at | `Timestamp` | Время последней ротации |
+| rotation_count | `int32` | Количество выполненных ротаций |
+| previous_key_prefix | `StringValue` | Предыдущий префикс ключа после ротации |
 
 ### ApiKeyUsageModel
 
@@ -67,6 +74,10 @@ CRUD-операции для управления API-ключами.
 | user_agent | `StringValue` | User-agent клиента |
 | timestamp | `Timestamp` | Время использования |
 | response_time_ms | `int64` | Время ответа в миллисекундах |
+| customer_id | `GuidValue` | Владелец customer/tenant, скопированный из ключа при записи |
+| environment | `ApiKeyEnvironment` | Окружение ключа при записи |
+| rate_limit_tier | `ApiKeyRateLimitTier` | Tier при записи |
+| rate_limit_requests_per_minute | `int32` | Рассчитанный лимит при записи |
 
 ### ApiKeyUsageStatsModel
 

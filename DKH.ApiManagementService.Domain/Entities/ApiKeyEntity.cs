@@ -1,5 +1,6 @@
 using DKH.ApiManagementService.Domain.Entities.Events;
 using DKH.ApiManagementService.Domain.Enums;
+using DKH.ApiManagementService.Domain.Services;
 using DKH.Platform.Domain.Entities.Auditing;
 using DKH.Platform.Domain.Events;
 
@@ -15,6 +16,9 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
         Name = string.Empty;
         KeyHash = string.Empty;
         KeyPrefix = string.Empty;
+        Environment = ApiKeyEnvironment.Production;
+        RateLimitTier = ApiKeyRateLimitTier.Standard;
+        RateLimitRequestsPerMinute = ApiKeyRateLimitPolicy.GetRequestsPerMinute(Environment, RateLimitTier);
     }
 
     private ApiKeyEntity(
@@ -23,6 +27,9 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
         string keyPrefix,
         ApiKeyScope scope,
         IReadOnlyList<string> permissions,
+        Guid? customerId,
+        ApiKeyEnvironment environment,
+        ApiKeyRateLimitTier rateLimitTier,
         string? description,
         DateTimeOffset? expiresAt)
     {
@@ -33,6 +40,10 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
         Scope = scope;
         Status = ApiKeyStatus.Active;
         Permissions = [.. permissions];
+        CustomerId = customerId;
+        Environment = environment;
+        RateLimitTier = rateLimitTier;
+        RateLimitRequestsPerMinute = ApiKeyRateLimitPolicy.GetRequestsPerMinute(environment, rateLimitTier);
         Description = description;
         ExpiresAt = expiresAt;
     }
@@ -49,11 +60,25 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
 
     public List<string> Permissions { get; private set; } = [];
 
+    public Guid? CustomerId { get; private set; }
+
+    public ApiKeyEnvironment Environment { get; private set; }
+
+    public ApiKeyRateLimitTier RateLimitTier { get; private set; }
+
+    public int RateLimitRequestsPerMinute { get; private set; }
+
     public string? Description { get; private set; }
 
     public DateTimeOffset? ExpiresAt { get; private set; }
 
     public DateTimeOffset? LastUsedAt { get; private set; }
+
+    public DateTimeOffset? LastRotatedAt { get; private set; }
+
+    public int RotationCount { get; private set; }
+
+    public string? PreviousKeyPrefix { get; private set; }
 
     public IReadOnlyCollection<ApiKeyUsageEntity> UsageRecords => _usageRecords.AsReadOnly();
 
@@ -68,12 +93,40 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
         string? description = null,
         DateTimeOffset? expiresAt = null)
     {
+        return Create(
+            name,
+            keyHash,
+            keyPrefix,
+            scope,
+            permissions,
+            customerId: null,
+            ApiKeyEnvironment.Production,
+            ApiKeyRateLimitTier.Standard,
+            description,
+            expiresAt);
+    }
+
+    public static ApiKeyEntity Create(
+        string name,
+        string keyHash,
+        string keyPrefix,
+        ApiKeyScope scope,
+        IReadOnlyList<string> permissions,
+        Guid? customerId,
+        ApiKeyEnvironment environment,
+        ApiKeyRateLimitTier rateLimitTier,
+        string? description = null,
+        DateTimeOffset? expiresAt = null)
+    {
         var entity = new ApiKeyEntity(
             Require(name, nameof(name)),
             Require(keyHash, nameof(keyHash)),
             Require(keyPrefix, nameof(keyPrefix)),
             scope,
             permissions,
+            customerId,
+            environment,
+            rateLimitTier,
             description,
             expiresAt);
 
@@ -82,7 +135,14 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
         return entity;
     }
 
-    public void Update(string? name, string? description, IReadOnlyList<string>? permissions, DateTimeOffset? expiresAt)
+    public void Update(
+        string? name,
+        string? description,
+        IReadOnlyList<string>? permissions,
+        DateTimeOffset? expiresAt,
+        Guid? customerId = null,
+        ApiKeyEnvironment? environment = null,
+        ApiKeyRateLimitTier? rateLimitTier = null)
     {
         if (name is not null)
         {
@@ -103,6 +163,26 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
         {
             ExpiresAt = expiresAt;
         }
+
+        if (customerId.HasValue)
+        {
+            CustomerId = customerId;
+        }
+
+        if (environment.HasValue)
+        {
+            Environment = environment.Value;
+        }
+
+        if (rateLimitTier.HasValue)
+        {
+            RateLimitTier = rateLimitTier.Value;
+        }
+
+        if (environment.HasValue || rateLimitTier.HasValue)
+        {
+            RateLimitRequestsPerMinute = ApiKeyRateLimitPolicy.GetRequestsPerMinute(Environment, RateLimitTier);
+        }
     }
 
     public void Revoke()
@@ -116,8 +196,11 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
         Require(newKeyHash, nameof(newKeyHash));
         Require(newKeyPrefix, nameof(newKeyPrefix));
 
+        PreviousKeyPrefix = KeyPrefix;
         KeyHash = newKeyHash;
         KeyPrefix = newKeyPrefix;
+        LastRotatedAt = DateTimeOffset.UtcNow;
+        RotationCount++;
         AddDomainEvent(new ApiKeyRegeneratedDomainEvent(Id, Name));
     }
 

@@ -139,6 +139,37 @@ public sealed class ApiKeyValidatorTests
     }
 
     [Fact]
+    public async Task ValidateAsync_PublicApiKey_ReturnsCustomerEnvironmentAndRateLimitClaimsAsync()
+    {
+        const string rawKey = "dkh_ptr_public_key_aaaaaaaaaaaaaaa";
+        var hash = ApiKeyHash.FromRawKey(rawKey).Value;
+        var customerId = Guid.NewGuid();
+
+        var entity = ApiKeyEntity.Create(
+            "public-key",
+            hash,
+            "dkh_ptr_public_",
+            ApiKeyScope.Partner,
+            ["orders.read"],
+            customerId,
+            ApiKeyEnvironment.Production,
+            ApiKeyRateLimitTier.Enterprise);
+
+        _repository.GetByKeyHashAsync(hash, Arg.Any<CancellationToken>()).Returns(entity);
+
+        var validator = CreateValidator();
+
+        var result = await validator.ValidateAsync(rawKey);
+
+        result.IsValid.Should().BeTrue();
+        result.Claims.Should().NotBeNull();
+        result.Claims!.Should().Contain(c => c.Type == "customer_id" && c.Value == customerId.ToString());
+        result.Claims!.Should().Contain(c => c.Type == "api_key_environment" && c.Value == "Production");
+        result.Claims!.Should().Contain(c => c.Type == "api_key_rate_limit_tier" && c.Value == "Enterprise");
+        result.Claims!.Should().Contain(c => c.Type == "api_key_rate_limit_rpm" && c.Value == "12000");
+    }
+
+    [Fact]
     public async Task ValidateAsync_HashMatchesValidationHandlerAsync()
     {
         // Sanity check: validator must hash with the same SHA-256 lowercase-hex

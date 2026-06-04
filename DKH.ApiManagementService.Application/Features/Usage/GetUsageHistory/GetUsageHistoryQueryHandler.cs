@@ -1,4 +1,5 @@
 using DKH.ApiManagementService.Application.Abstractions;
+using DKH.ApiManagementService.Application.Features.ApiKeys.Mappers;
 using DKH.ApiManagementService.Contracts.ApiManagement.Models.ApiKeyUsage.v1;
 using DKH.Platform.Grpc.Common.Types;
 using Google.Protobuf.WellKnownTypes;
@@ -35,6 +36,10 @@ public sealed class GetUsageHistoryQueryHandler(IAppDbContext dbContext) : IRequ
             UserAgent = e.UserAgent,
             Timestamp = Timestamp.FromDateTimeOffset(e.Timestamp),
             ResponseTimeMs = e.ResponseTimeMs,
+            CustomerId = e.CustomerId.HasValue ? GuidValue.FromGuid(e.CustomerId.Value) : null,
+            Environment = e.Environment.ToProtoEnvironment(),
+            RateLimitTier = e.RateLimitTier.ToProtoRateLimitTier(),
+            RateLimitRequestsPerMinute = e.RateLimitRequestsPerMinute,
         }).ToList();
 
         return new GetUsageHistoryResult(records, totalCount);

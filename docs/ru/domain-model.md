@@ -17,16 +17,23 @@
 | Scope | `ApiKeyScope` | Область доступа |
 | Status | `ApiKeyStatus` | Текущий статус |
 | Permissions | `List<string>` | Предоставленные разрешения |
+| CustomerId | `Guid?` | Владелец customer/tenant для публичных ключей |
+| Environment | `ApiKeyEnvironment` | Sandbox или production окружение ключа |
+| RateLimitTier | `ApiKeyRateLimitTier` | Настроенный rate-limit tier |
+| RateLimitRequestsPerMinute | `int` | Рассчитанный лимит запросов в минуту |
 | Description | `string?` | Необязательное описание |
 | ExpiresAt | `DateTimeOffset?` | Необязательный срок действия |
 | LastUsedAt | `DateTimeOffset?` | Время последнего использования |
+| LastRotatedAt | `DateTimeOffset?` | Время последней ротации |
+| PreviousKeyPrefix | `string?` | Предыдущий префикс ключа после ротации |
+| RotationCount | `int` | Количество выполненных ротаций |
 | UsageRecords | `IReadOnlyCollection<ApiKeyUsageEntity>` | Навигация к записям использования |
 
 **Методы поведения:**
-- `Create(name, keyHash, keyPrefix, scope, permissions, description?, expiresAt?)` — фабричный метод, вызывает `ApiKeyCreatedDomainEvent`
-- `Update(name?, description?, permissions?, expiresAt?)` — обновление изменяемых полей
+- `Create(name, keyHash, keyPrefix, scope, permissions, customerId?, environment, rateLimitTier, description?, expiresAt?)` — фабричный метод, вызывает `ApiKeyCreatedDomainEvent`
+- `Update(name?, description?, permissions?, expiresAt?, customerId?, environment?, rateLimitTier?)` — обновление изменяемых полей и policy-метаданных публичного API
 - `Revoke()` — установка статуса Revoked, вызывает `ApiKeyRevokedDomainEvent`
-- `Regenerate(newKeyHash, newKeyPrefix)` — замена хеша/префикса ключа, вызывает `ApiKeyRegeneratedDomainEvent`
+- `Regenerate(newKeyHash, newKeyPrefix)` — замена хеша/префикса ключа, записывает метаданные ротации и вызывает `ApiKeyRegeneratedDomainEvent`
 - `RecordUsage()` — обновление `LastUsedAt` текущим временем UTC
 - `IsExpired()` — проверка истечения срока действия
 - `IsActive()` — проверка: статус Active и не истёк
@@ -44,12 +51,16 @@
 | StatusCode | `int` | Код статуса ответа |
 | IpAddress | `string?` | IP-адрес клиента |
 | UserAgent | `string?` | User-agent строка клиента |
+| CustomerId | `Guid?` | Владелец customer/tenant, скопированный из ключа при записи |
+| Environment | `ApiKeyEnvironment` | Окружение ключа при записи |
+| RateLimitTier | `ApiKeyRateLimitTier` | Tier ключа при записи |
+| RateLimitRequestsPerMinute | `int` | Рассчитанный лимит при записи |
 | Timestamp | `DateTimeOffset` | Время использования |
 | ResponseTimeMs | `long` | Время ответа в миллисекундах |
 | ApiKey | `ApiKeyEntity` | Навигационное свойство к родительскому ключу |
 
 **Фабричный метод:**
-- `Create(apiKeyId, endpoint, statusCode, ipAddress?, userAgent?, responseTimeMs)` — создание записи использования с текущей меткой времени UTC
+- `Create(apiKeyId, endpoint, statusCode, ipAddress?, userAgent?, responseTimeMs, customerId?, environment, rateLimitTier, rateLimitRequestsPerMinute)` — создание записи использования с текущей меткой времени UTC и аналитическими измерениями
 
 ## Объекты-значения
 
@@ -80,6 +91,24 @@
 | Active | Ключ активен и может использоваться |
 | Revoked | Ключ был отозван вручную |
 | Expired | Ключ просрочен |
+
+### ApiKeyEnvironment
+
+| Значение | Описание |
+|----------|----------|
+| Sandbox | Непроизводственное тестирование партнёров |
+| Production | Боевой партнёрский трафик |
+
+### ApiKeyRateLimitTier
+
+| Значение | Запросов/минуту |
+|----------|-----------------|
+| Development | 60 |
+| Standard | 600 |
+| Professional | 3 000 |
+| Enterprise | 12 000 |
+
+Sandbox-ключи ограничены 120 запросами/минуту независимо от tier.
 
 ## Доменные события
 

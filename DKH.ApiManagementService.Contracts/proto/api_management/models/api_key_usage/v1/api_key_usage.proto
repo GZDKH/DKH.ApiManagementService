@@ -4,6 +4,7 @@ package proto.api_management.models.api_key_usage.v1;
 
 option csharp_namespace = "DKH.ApiManagementService.Contracts.ApiManagement.Models.ApiKeyUsage.v1";
 
+import "api_management/models/api_key/v1/api_key.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 import "types/guid.proto";
@@ -17,6 +18,10 @@ message ApiKeyUsageModel {
   google.protobuf.StringValue user_agent = 6;
   google.protobuf.Timestamp timestamp = 7;
   int64 response_time_ms = 8;
+  proto.platform.grpc.common.types.GuidValue customer_id = 9;
+  proto.api_management.models.api_key.v1.ApiKeyEnvironment environment = 10;
+  proto.api_management.models.api_key.v1.ApiKeyRateLimitTier rate_limit_tier = 11;
+  int32 rate_limit_requests_per_minute = 12;
 }
 
 message ApiKeyUsageStatsModel {

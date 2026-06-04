@@ -1,4 +1,5 @@
 using DKH.ApiManagementService.Domain.Entities;
+using DKH.ApiManagementService.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -37,8 +38,29 @@ public class ApiKeyConfiguration : IEntityTypeConfiguration<ApiKeyEntity>
         builder.Property(x => x.Permissions)
             .HasColumnType("jsonb");
 
+        builder.Property(x => x.CustomerId);
+
+        builder.Property(x => x.Environment)
+            .IsRequired()
+            .HasConversion<string>()
+            .HasDefaultValue(ApiKeyEnvironment.Production)
+            .HasMaxLength(32);
+
+        builder.Property(x => x.RateLimitTier)
+            .IsRequired()
+            .HasConversion<string>()
+            .HasDefaultValue(ApiKeyRateLimitTier.Standard)
+            .HasMaxLength(32);
+
+        builder.Property(x => x.RateLimitRequestsPerMinute)
+            .HasDefaultValue(600)
+            .IsRequired();
+
         builder.Property(x => x.Description)
             .HasMaxLength(1024);
+
+        builder.Property(x => x.PreviousKeyPrefix)
+            .HasMaxLength(48);
 
         builder.Property(x => x.CreationTime);
 
@@ -50,6 +72,14 @@ public class ApiKeyConfiguration : IEntityTypeConfiguration<ApiKeyEntity>
         builder.HasIndex(x => x.Scope);
 
         builder.HasIndex(x => x.Status);
+
+        builder.HasIndex(x => x.CustomerId);
+
+        builder.HasIndex(x => x.Environment);
+
+        builder.HasIndex(x => x.RateLimitTier);
+
+        builder.HasIndex(x => new { x.CustomerId, x.Environment });
 
         builder.HasMany(x => x.UsageRecords)
             .WithOne(x => x.ApiKey)

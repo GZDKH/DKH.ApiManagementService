@@ -37,6 +37,21 @@ public sealed class ListApiKeysQueryHandler(IAppDbContext dbContext, IPlatformCu
             query = query.Where(x => x.Status == request.StatusFilter.Value);
         }
 
+        if (request.CustomerIdFilter.HasValue)
+        {
+            query = query.Where(x => x.CustomerId == request.CustomerIdFilter.Value);
+        }
+
+        if (request.EnvironmentFilter.HasValue)
+        {
+            query = query.Where(x => x.Environment == request.EnvironmentFilter.Value);
+        }
+
+        if (request.RateLimitTierFilter.HasValue)
+        {
+            query = query.Where(x => x.RateLimitTier == request.RateLimitTierFilter.Value);
+        }
+
         var totalCount = await query.CountAsync(cancellationToken);
 
         var entities = await query

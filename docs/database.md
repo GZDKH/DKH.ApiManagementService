@@ -20,9 +20,16 @@
 | Scope | `character varying(32)` | NOT NULL (enum as string) |
 | Status | `character varying(32)` | NOT NULL (enum as string) |
 | Permissions | `jsonb` | NOT NULL |
+| CustomerId | `uuid` | NULLABLE, customer/tenant owner for public API keys |
+| Environment | `character varying(32)` | NOT NULL, default `Production` |
+| RateLimitTier | `character varying(32)` | NOT NULL, default `Standard` |
+| RateLimitRequestsPerMinute | `integer` | NOT NULL, default `600` |
 | Description | `character varying(1024)` | NULLABLE |
 | ExpiresAt | `timestamptz` | NULLABLE |
 | LastUsedAt | `timestamptz` | NULLABLE |
+| LastRotatedAt | `timestamptz` | NULLABLE |
+| PreviousKeyPrefix | `character varying(48)` | NULLABLE |
+| RotationCount | `integer` | NOT NULL, default `0` |
 | CreationTime | `timestamptz` | NOT NULL (from FullAuditedEntity) |
 | CreatorId | `uuid` | NULLABLE (from FullAuditedEntity) |
 | LastModificationTime | `timestamptz` | NULLABLE (from FullAuditedEntity) |
@@ -35,6 +42,10 @@
 - `IX_api_keys_KeyHash` — unique index on `KeyHash`
 - `IX_api_keys_Scope` — index on `Scope`
 - `IX_api_keys_Status` — index on `Status`
+- `IX_api_keys_CustomerId` — index on `CustomerId`
+- `IX_api_keys_Environment` — index on `Environment`
+- `IX_api_keys_RateLimitTier` — index on `RateLimitTier`
+- `IX_api_keys_CustomerId_Environment` — composite index for customer/environment key management
 
 ### api_key_usage
 
@@ -46,12 +57,20 @@
 | StatusCode | `integer` | NOT NULL |
 | IpAddress | `character varying(45)` | NULLABLE |
 | UserAgent | `character varying(512)` | NULLABLE |
+| CustomerId | `uuid` | NULLABLE, copied from the API key at record time |
+| Environment | `character varying(32)` | NOT NULL, copied from the API key at record time |
+| RateLimitTier | `character varying(32)` | NOT NULL, copied from the API key at record time |
+| RateLimitRequestsPerMinute | `integer` | NOT NULL, copied from the API key at record time |
 | Timestamp | `timestamptz` | NOT NULL |
 | ResponseTimeMs | `bigint` | NOT NULL |
 
 **Indexes:**
 - `IX_api_key_usage_ApiKeyId` — FK index
 - `IX_api_key_usage_Timestamp` — index on `Timestamp`
+- `IX_api_key_usage_CustomerId` — index on `CustomerId`
+- `IX_api_key_usage_Environment` — index on `Environment`
+- `IX_api_key_usage_RateLimitTier` — index on `RateLimitTier`
+- `IX_api_key_usage_CustomerId_Environment` — composite index for customer/environment analytics
 
 **Foreign keys:**
 - `FK_api_key_usage_api_keys_ApiKeyId` -> `api_keys(Id)` ON DELETE CASCADE
@@ -62,6 +81,7 @@
 |-----------|------|-------------|
 | `202502100001_InitialCreate` | 2026-02-10 | Create `api_keys` and `api_key_usage` tables |
 | `RemoveDuplicateCreatedBy` | 2026-02-15 | Drop duplicate `CreatedBy` column from `api_keys` |
+| `AddPublicApiHardening` | 2026-06-04 | Add customer ownership, sandbox/production environment, rate-limit tier, rotation metadata, and usage analytics dimensions |
 
 ```bash
 # Add migration
@@ -75,4 +95,4 @@ dotnet ef database update \
   --project DKH.ApiManagementService.Infrastructure
 ```
 
-*Last updated: February 2026*
+*Last updated: June 2026*

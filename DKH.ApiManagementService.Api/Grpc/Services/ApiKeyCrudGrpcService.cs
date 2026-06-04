@@ -26,13 +26,24 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeysCrudService.ApiK
     // ApiKey gets a creator grant automatically (GrantCreatorFullAccess).
     public override async Task<CreateApiKeyResponse> CreateApiKey(CreateApiKeyRequest request, ServerCallContext context)
     {
+        var environment = request.Environment != ApiKeyEnvironment.Unspecified
+            ? request.Environment.ToDomainEnvironment()
+            : Domain.Enums.ApiKeyEnvironment.Production;
+
+        var rateLimitTier = request.RateLimitTier != ApiKeyRateLimitTier.Unspecified
+            ? request.RateLimitTier.ToDomainRateLimitTier()
+            : Domain.Enums.ApiKeyRateLimitTier.Standard;
+
         var result = await mediator.Send(
             new CreateApiKeyCommand(
                 request.Name,
                 request.Scope.ToDomainScope(),
                 [.. request.Permissions],
                 request.Description,
-                request.ExpiresAt?.ToDateTimeOffset()),
+                request.ExpiresAt?.ToDateTimeOffset(),
+                request.CustomerId?.ToGuid(),
+                environment,
+                rateLimitTier),
             context.CancellationToken);
 
         return new CreateApiKeyResponse
@@ -72,12 +83,23 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeysCrudService.ApiK
             ? request.SoftDeleteFilter.ToDomain()
             : Platform.Domain.Enums.PlatformSoftDeleteFilter.ActiveOnly;
 
+        var environmentFilter = request.EnvironmentFilter != ApiKeyEnvironment.Unspecified
+            ? request.EnvironmentFilter.ToDomainEnvironment()
+            : (Domain.Enums.ApiKeyEnvironment?)null;
+
+        var rateLimitTierFilter = request.RateLimitTierFilter != ApiKeyRateLimitTier.Unspecified
+            ? request.RateLimitTierFilter.ToDomainRateLimitTier()
+            : (Domain.Enums.ApiKeyRateLimitTier?)null;
+
         var result = await mediator.Send(
             new ListApiKeysQuery(
                 request.Pagination?.Page > 0 ? request.Pagination.Page : 1,
                 request.Pagination?.PageSize > 0 ? request.Pagination.PageSize : 20,
                 scopeFilter,
                 statusFilter,
+                request.CustomerIdFilter?.ToGuid(),
+                environmentFilter,
+                rateLimitTierFilter,
                 softDeleteFilter),
             context.CancellationToken);
 
@@ -110,7 +132,10 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeysCrudService.ApiK
                 request.Name,
                 request.Description,
                 request.Permissions.Count > 0 ? request.Permissions.ToList() : null,
-                request.ExpiresAt?.ToDateTimeOffset()),
+                request.ExpiresAt?.ToDateTimeOffset(),
+                request.CustomerId?.ToGuid(),
+                request.Environment != ApiKeyEnvironment.Unspecified ? request.Environment.ToDomainEnvironment() : null,
+                request.RateLimitTier != ApiKeyRateLimitTier.Unspecified ? request.RateLimitTier.ToDomainRateLimitTier() : null),
             context.CancellationToken);
 
         return new UpdateApiKeyResponse { ApiKey = apiKey };
