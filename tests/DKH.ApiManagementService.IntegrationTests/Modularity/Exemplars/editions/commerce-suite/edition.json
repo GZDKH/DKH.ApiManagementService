@@ -1,0 +1,15 @@
+{
+  "id": "commerce-suite",
+  "name": { "en": "Commerce Suite", "ru": "Коммерческий пакет" },
+  "description": {
+    "en": "Catalog, payments and payment providers for a full storefront.",
+    "ru": "Каталог, платежи и платёжные провайдеры для полноценной витрины."
+  },
+  "components": [
+    "dkh.product-catalog",
+    "dkh.payments",
+    "dkh.payments.stripe",
+    "dkh.payments.telegram"
+  ],
+  "requiresEntitlement": "commerce-suite"
+}
