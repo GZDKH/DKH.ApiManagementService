@@ -12,6 +12,7 @@ using DKH.Platform.Identity;
 using DKH.Platform.IntegrationTesting;
 using DKH.Platform.Modularity;
 using FluentAssertions;
+using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,8 +28,16 @@ namespace DKH.ApiManagementService.IntegrationTests.Integration.Grpc;
 [Trait("Category", "Integration")]
 public class ModuleControlPlaneGrpcServiceTests : PlatformIntegrationTest
 {
+    private enum Caller
+    {
+        SuperAdmin,
+        NonAdmin,
+        Anonymous,
+    }
+
     private PlatformGrpcTestFactory<GrpcTestExceptionPolicy> CreateFactory(
         string? manifestsDirectory = null,
+        Caller caller = Caller.SuperAdmin,
         params string[] enabledModules)
     {
         var dbName = $"apimgmt-module-{Guid.NewGuid()}";
@@ -44,7 +53,7 @@ public class ModuleControlPlaneGrpcServiceTests : PlatformIntegrationTest
             settings["Modularity:ManifestsDirectory"] = manifestsDirectory;
         }
 
-        return this.CreatePlatformGrpcTest<GrpcTestExceptionPolicy>(
+        var factory = this.CreatePlatformGrpcTest<GrpcTestExceptionPolicy>(
                 platformBuilder => platformBuilder
                     .AddPlatformAuthorization(policies => policies.AddRolePolicy(
                         "ApiManagementAdminAccess",
@@ -66,15 +75,28 @@ public class ModuleControlPlaneGrpcServiceTests : PlatformIntegrationTest
 
                 services.AddSingleton<IModuleManifestSource, DirectoryModuleManifestSource>();
                 services.AddSingleton<IPlatformModuleEntitlementProvider, PlatformConfigurationModuleEntitlementProvider>();
-            })
-            .WithAuthenticatedUser(
+            });
+
+        return caller switch
+        {
+            Caller.Anonymous => factory.WithAnonymousUser(),
+            Caller.NonAdmin => factory.WithAuthenticatedUser(
+                userId: Guid.NewGuid(),
+                username: "non-admin",
+                email: "non-admin@dkh.local",
+                roles: [],
+                permissions: [],
+                tenantId: null,
+                additionalClaims: []),
+            _ => factory.WithAuthenticatedUser(
                 userId: Guid.NewGuid(),
                 username: "test-user",
                 email: "test@dkh.local",
                 roles: [PlatformRoles.Realm.SuperAdmin],
                 permissions: [],
                 tenantId: null,
-                additionalClaims: []);
+                additionalClaims: []),
+        };
     }
 
     [Fact]
@@ -135,5 +157,65 @@ public class ModuleControlPlaneGrpcServiceTests : PlatformIntegrationTest
         component.Kind.Should().Be(ProtoModule.ModuleKind.Service);
         component.RequiresEntitlement.Should().Be("logistics");
         component.State.Should().Be(ProtoModule.ModuleState.Discovered);
+    }
+
+    [Fact]
+    public async Task ListCatalog_AllowsAnonymousCaller_ForCapabilitiesManifestAsync()
+    {
+        var directory = Directory.CreateTempSubdirectory("dkh-modules-").FullName;
+        await File.WriteAllTextAsync(
+            Path.Combine(directory, "module.json"),
+                                 /*lang=json,strict*/
+                                 """{ "id": "dkh.logistics", "kind": "service", "name": { "en": "Logistics" }, "version": "1.4.0", "requiresEntitlement": "logistics" }""");
+
+        await using var factory = CreateFactory(manifestsDirectory: directory, caller: Caller.Anonymous);
+        var client = this.CreateGrpcClient<CatalogClient, GrpcTestExceptionPolicy>(factory);
+
+        // The gateways proxy these reads without admin authority — they must resolve anonymously
+        // so the capabilities endpoint can never 403.
+        var components = await client.ListComponentsAsync(new ListComponentsRequest());
+        var editions = await client.ListEditionsAsync(new ListEditionsRequest());
+
+        components.Components.Should().ContainSingle(component => component.Id == "dkh.logistics");
+        editions.Editions.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GetModuleState_AllowsAnonymousCaller_ReachesHandlerAsync()
+    {
+        await using var factory = CreateFactory(caller: Caller.Anonymous);
+        var client = this.CreateGrpcClient<StateClient, GrpcTestExceptionPolicy>(factory);
+
+        var act = async () => await client.GetModuleStateAsync(new GetModuleStateRequest { ModuleId = "dkh.unknown" });
+
+        // NotFound (not PermissionDenied / Unauthenticated) proves the anonymous call reached the
+        // handler — the module simply has no recorded state.
+        var exception = await act.Should().ThrowAsync<RpcException>();
+        exception.Which.StatusCode.Should().Be(StatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task InstallModule_StillRequiresAdmin_RejectsNonAdminCallerAsync()
+    {
+        await using var factory = CreateFactory(caller: Caller.NonAdmin);
+        var client = this.CreateGrpcClient<StateClient, GrpcTestExceptionPolicy>(factory);
+
+        var act = async () => await client.InstallModuleAsync(
+            new InstallModuleRequest { ModuleId = "dkh.logistics", Version = "1.4.0" });
+
+        var exception = await act.Should().ThrowAsync<RpcException>();
+        exception.Which.StatusCode.Should().Be(StatusCode.PermissionDenied);
+    }
+
+    [Fact]
+    public async Task ListEntitlements_StillRequiresAdmin_RejectsNonAdminCallerAsync()
+    {
+        await using var factory = CreateFactory(caller: Caller.NonAdmin);
+        var client = this.CreateGrpcClient<EntitlementClient, GrpcTestExceptionPolicy>(factory);
+
+        var act = async () => await client.ListEntitlementsAsync(new ListEntitlementsRequest());
+
+        var exception = await act.Should().ThrowAsync<RpcException>();
+        exception.Which.StatusCode.Should().Be(StatusCode.PermissionDenied);
     }
 }
