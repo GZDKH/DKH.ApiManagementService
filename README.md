@@ -25,4 +25,5 @@ dotnet test
 ## Port
 
 - gRPC: `5012`
+- Developer portal: `/scalar`, `/swagger`, `/openapi/api-management.json`
 - Database: `dkh_api_management` (PostgreSQL)

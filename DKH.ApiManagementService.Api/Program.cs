@@ -22,6 +22,7 @@ using DKH.Platform.Logging;
 using DKH.Platform.MediatR.Behaviors;
 using DKH.Platform.Messaging.MediatR;
 using DKH.Platform.Modularity;
+using DKH.Platform.RestfulApi;
 using DKH.Platform.Telemetry;
 using Microsoft.Extensions.Options;
 
@@ -97,6 +98,7 @@ await Platform
             };
         });
     })
+    .AddPlatformRestfulApi(api => api.ConfigureConfiguration())
     .AddPlatformPostgreSql<AppDbContext>(options => options.ConnectionStringKey = "Default")
     .AddPlatformRepositories<AppDbContext>()
     .AddPlatformDomainEvents()
