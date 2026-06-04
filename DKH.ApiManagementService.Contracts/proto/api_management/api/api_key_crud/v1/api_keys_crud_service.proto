@@ -31,6 +31,9 @@ message CreateApiKeyRequest {
   google.protobuf.StringValue description = 4;
   google.protobuf.Timestamp expires_at = 5;
   proto.platform.grpc.common.types.GuidValue created_by = 6;
+  proto.platform.grpc.common.types.GuidValue customer_id = 7;
+  proto.api_management.models.api_key.v1.ApiKeyEnvironment environment = 8;
+  proto.api_management.models.api_key.v1.ApiKeyRateLimitTier rate_limit_tier = 9;
 }
 
 message CreateApiKeyResponse {
@@ -51,6 +54,9 @@ message ListApiKeysRequest {
   proto.api_management.models.api_key.v1.ApiKeyScope scope_filter = 2;
   proto.api_management.models.api_key.v1.ApiKeyStatus status_filter = 3;
   optional proto.platform.grpc.common.types.SoftDeleteFilter soft_delete_filter = 4;
+  proto.platform.grpc.common.types.GuidValue customer_id_filter = 5;
+  proto.api_management.models.api_key.v1.ApiKeyEnvironment environment_filter = 6;
+  proto.api_management.models.api_key.v1.ApiKeyRateLimitTier rate_limit_tier_filter = 7;
 }
 
 message ListApiKeysResponse {
@@ -64,6 +70,9 @@ message UpdateApiKeyRequest {
   google.protobuf.StringValue description = 3;
   repeated string permissions = 4;
   google.protobuf.Timestamp expires_at = 5;
+  proto.platform.grpc.common.types.GuidValue customer_id = 6;
+  proto.api_management.models.api_key.v1.ApiKeyEnvironment environment = 7;
+  proto.api_management.models.api_key.v1.ApiKeyRateLimitTier rate_limit_tier = 8;
 }
 
 message UpdateApiKeyResponse {

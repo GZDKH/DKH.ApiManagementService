@@ -22,6 +22,10 @@ message ValidateApiKeyResponse {
   proto.api_management.models.api_key.v1.ApiKeyScope scope = 3;
   repeated string permissions = 4;
   string error_reason = 5;
+  proto.platform.grpc.common.types.GuidValue customer_id = 6;
+  proto.api_management.models.api_key.v1.ApiKeyEnvironment environment = 7;
+  proto.api_management.models.api_key.v1.ApiKeyRateLimitTier rate_limit_tier = 8;
+  int32 rate_limit_requests_per_minute = 9;
 }
 
 message CheckPermissionRequest {

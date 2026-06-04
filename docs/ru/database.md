@@ -22,9 +22,16 @@
 | Scope | `character varying(32)` | NOT NULL (enum как строка) |
 | Status | `character varying(32)` | NOT NULL (enum как строка) |
 | Permissions | `jsonb` | NOT NULL |
+| CustomerId | `uuid` | NULLABLE, владелец customer/tenant для публичных API-ключей |
+| Environment | `character varying(32)` | NOT NULL, по умолчанию `Production` |
+| RateLimitTier | `character varying(32)` | NOT NULL, по умолчанию `Standard` |
+| RateLimitRequestsPerMinute | `integer` | NOT NULL, по умолчанию `600` |
 | Description | `character varying(1024)` | NULLABLE |
 | ExpiresAt | `timestamptz` | NULLABLE |
 | LastUsedAt | `timestamptz` | NULLABLE |
+| LastRotatedAt | `timestamptz` | NULLABLE |
+| PreviousKeyPrefix | `character varying(48)` | NULLABLE |
+| RotationCount | `integer` | NOT NULL, по умолчанию `0` |
 | CreationTime | `timestamptz` | NOT NULL (из FullAuditedEntity) |
 | CreatorId | `uuid` | NULLABLE (из FullAuditedEntity) |
 | LastModificationTime | `timestamptz` | NULLABLE (из FullAuditedEntity) |
@@ -37,6 +44,10 @@
 - `IX_api_keys_KeyHash` — уникальный индекс по `KeyHash`
 - `IX_api_keys_Scope` — индекс по `Scope`
 - `IX_api_keys_Status` — индекс по `Status`
+- `IX_api_keys_CustomerId` — индекс по `CustomerId`
+- `IX_api_keys_Environment` — индекс по `Environment`
+- `IX_api_keys_RateLimitTier` — индекс по `RateLimitTier`
+- `IX_api_keys_CustomerId_Environment` — составной индекс для управления ключами customer/environment
 
 ### api_key_usage
 
@@ -48,12 +59,20 @@
 | StatusCode | `integer` | NOT NULL |
 | IpAddress | `character varying(45)` | NULLABLE |
 | UserAgent | `character varying(512)` | NULLABLE |
+| CustomerId | `uuid` | NULLABLE, копируется из API-ключа при записи |
+| Environment | `character varying(32)` | NOT NULL, копируется из API-ключа при записи |
+| RateLimitTier | `character varying(32)` | NOT NULL, копируется из API-ключа при записи |
+| RateLimitRequestsPerMinute | `integer` | NOT NULL, копируется из API-ключа при записи |
 | Timestamp | `timestamptz` | NOT NULL |
 | ResponseTimeMs | `bigint` | NOT NULL |
 
 **Индексы:**
 - `IX_api_key_usage_ApiKeyId` — индекс FK
 - `IX_api_key_usage_Timestamp` — индекс по `Timestamp`
+- `IX_api_key_usage_CustomerId` — индекс по `CustomerId`
+- `IX_api_key_usage_Environment` — индекс по `Environment`
+- `IX_api_key_usage_RateLimitTier` — индекс по `RateLimitTier`
+- `IX_api_key_usage_CustomerId_Environment` — составной индекс для аналитики customer/environment
 
 **Внешние ключи:**
 - `FK_api_key_usage_api_keys_ApiKeyId` -> `api_keys(Id)` ON DELETE CASCADE
@@ -64,6 +83,7 @@
 |----------|------|----------|
 | `202502100001_InitialCreate` | 2026-02-10 | Создание таблиц `api_keys` и `api_key_usage` |
 | `RemoveDuplicateCreatedBy` | 2026-02-15 | Удаление дублирующей колонки `CreatedBy` из `api_keys` |
+| `AddPublicApiHardening` | 2026-06-04 | Добавляет владельца customer, sandbox/production environment, rate-limit tier, метаданные ротации и измерения usage analytics |
 
 ```bash
 # Добавить миграцию

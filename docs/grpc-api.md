@@ -10,8 +10,8 @@ CRUD operations for API key management.
 |--------|---------|----------|-------------|
 | CreateApiKey | `CreateApiKeyRequest` | `CreateApiKeyResponse` | Create a new API key (returns raw key once) |
 | GetApiKey | `GetApiKeyRequest` | `GetApiKeyResponse` | Get API key by ID |
-| ListApiKeys | `ListApiKeysRequest` | `ListApiKeysResponse` | List API keys with scope/status filtering and pagination |
-| UpdateApiKey | `UpdateApiKeyRequest` | `UpdateApiKeyResponse` | Update API key name, description, permissions, expiration |
+| ListApiKeys | `ListApiKeysRequest` | `ListApiKeysResponse` | List API keys with scope/status/customer/environment/tier filtering and pagination |
+| UpdateApiKey | `UpdateApiKeyRequest` | `UpdateApiKeyResponse` | Update API key name, description, permissions, expiration, customer, environment, and tier |
 | DeleteApiKey | `DeleteApiKeyRequest` | `DeleteApiKeyResponse` | Revoke and soft-delete a key |
 | RegenerateApiKey | `RegenerateApiKeyRequest` | `RegenerateApiKeyResponse` | Regenerate key value (returns new raw key) |
 
@@ -21,7 +21,7 @@ Key validation and permission checking (consumed by gateways at runtime).
 
 | Method | Request | Response | Description |
 |--------|---------|----------|-------------|
-| ValidateApiKey | `ValidateApiKeyRequest` | `ValidateApiKeyResponse` | Validate a raw key, returns scope, permissions, and error reason |
+| ValidateApiKey | `ValidateApiKeyRequest` | `ValidateApiKeyResponse` | Validate a raw key, returns scope, permissions, customer, environment, rate-limit tier, and error reason |
 | CheckPermission | `CheckPermissionRequest` | `CheckPermissionResponse` | Check if a key has a specific permission |
 
 ### ApiKeyUsageService
@@ -52,6 +52,13 @@ Usage tracking and statistics.
 | created_at | `Timestamp` | Creation timestamp |
 | updated_at | `Timestamp` | Last update timestamp |
 | created_by | `GuidValue` | Creator user ID |
+| customer_id | `GuidValue` | Customer/tenant owner for public API keys |
+| environment | `ApiKeyEnvironment` | Sandbox or production |
+| rate_limit_tier | `ApiKeyRateLimitTier` | Configured tier |
+| rate_limit_requests_per_minute | `int32` | Resolved per-minute request limit |
+| last_rotated_at | `Timestamp` | Last key rotation timestamp |
+| rotation_count | `int32` | Number of completed rotations |
+| previous_key_prefix | `StringValue` | Previous key prefix after rotation |
 
 ### ApiKeyUsageModel
 
@@ -65,6 +72,10 @@ Usage tracking and statistics.
 | user_agent | `StringValue` | Client user agent |
 | timestamp | `Timestamp` | Usage timestamp |
 | response_time_ms | `int64` | Response time in milliseconds |
+| customer_id | `GuidValue` | Customer/tenant owner copied from the key at record time |
+| environment | `ApiKeyEnvironment` | Key environment copied at record time |
+| rate_limit_tier | `ApiKeyRateLimitTier` | Tier copied at record time |
+| rate_limit_requests_per_minute | `int32` | Resolved limit copied at record time |
 
 ### ApiKeyUsageStatsModel
 
@@ -111,4 +122,4 @@ DKH.ApiManagementService.Contracts/proto/api_management/
 - Docker internal: `5012`
 - Docker external DB: `5212` (PostgreSQL)
 
-*Last updated: February 2026*
+*Last updated: June 2026*

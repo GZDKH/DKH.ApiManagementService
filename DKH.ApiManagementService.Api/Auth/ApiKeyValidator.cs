@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Claims;
 using DKH.ApiManagementService.Application.Abstractions;
 using DKH.ApiManagementService.Domain.Entities;
@@ -35,6 +36,14 @@ public sealed class ApiKeyValidator(
 
     /// <summary>Claim type carrying the API key scope (mcp, webhook, partner, storefront, internal).</summary>
     public const string ApiKeyScopeClaimType = "api_key_scope";
+
+    public const string CustomerIdClaimType = "customer_id";
+
+    public const string ApiKeyEnvironmentClaimType = "api_key_environment";
+
+    public const string ApiKeyRateLimitTierClaimType = "api_key_rate_limit_tier";
+
+    public const string ApiKeyRateLimitRequestsPerMinuteClaimType = "api_key_rate_limit_rpm";
 
     public async Task<PlatformApiKeyValidationResult> ValidateAsync(
         string apiKey,
@@ -76,7 +85,15 @@ public sealed class ApiKeyValidator(
             new(ClaimTypes.NameIdentifier, entity.Id.ToString()),
             new(ApiKeyIdClaimType, entity.Id.ToString()),
             new(ApiKeyScopeClaimType, entity.Scope.ToString()),
+            new(ApiKeyEnvironmentClaimType, entity.Environment.ToString()),
+            new(ApiKeyRateLimitTierClaimType, entity.RateLimitTier.ToString()),
+            new(ApiKeyRateLimitRequestsPerMinuteClaimType, entity.RateLimitRequestsPerMinute.ToString(CultureInfo.InvariantCulture)),
         };
+
+        if (entity.CustomerId.HasValue)
+        {
+            claims.Add(new Claim(CustomerIdClaimType, entity.CustomerId.Value.ToString()));
+        }
 
         claims.AddRange(entity.Permissions.Select(permission => new Claim(PermissionClaimType, permission)));
 

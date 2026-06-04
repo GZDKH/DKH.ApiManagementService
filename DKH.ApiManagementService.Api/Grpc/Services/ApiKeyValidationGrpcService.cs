@@ -28,6 +28,26 @@ public class ApiKeyValidationGrpcService(IMediator mediator) : ApiKeyQueryServic
             response.Scope = result.Scope.Value.ToProtoScope();
         }
 
+        if (result.CustomerId.HasValue)
+        {
+            response.CustomerId = GuidValue.FromGuid(result.CustomerId.Value);
+        }
+
+        if (result.Environment.HasValue)
+        {
+            response.Environment = result.Environment.Value.ToProtoEnvironment();
+        }
+
+        if (result.RateLimitTier.HasValue)
+        {
+            response.RateLimitTier = result.RateLimitTier.Value.ToProtoRateLimitTier();
+        }
+
+        if (result.RateLimitRequestsPerMinute.HasValue)
+        {
+            response.RateLimitRequestsPerMinute = result.RateLimitRequestsPerMinute.Value;
+        }
+
         if (result.Permissions is not null)
         {
             response.Permissions.AddRange(result.Permissions);

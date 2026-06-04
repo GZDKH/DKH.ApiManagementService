@@ -35,7 +35,11 @@ public sealed class ValidateApiKeyQueryHandler(IApiKeyRepository repository) : I
             true,
             entity.Id,
             entity.Scope,
-            entity.Permissions);
+            entity.Permissions,
+            entity.CustomerId,
+            entity.Environment,
+            entity.RateLimitTier,
+            entity.RateLimitRequestsPerMinute);
     }
 
     private static string ComputeHash(string input)

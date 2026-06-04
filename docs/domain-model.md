@@ -15,9 +15,16 @@ Inherits from `FullAuditedEntityWithKey<Guid>` (provides `Id`, `CreationTime`, `
 | Scope | `ApiKeyScope` | Access scope |
 | Status | `ApiKeyStatus` | Current status |
 | Permissions | `List<string>` | Granted permissions |
+| CustomerId | `Guid?` | Customer/tenant owner for partner-facing keys |
+| Environment | `ApiKeyEnvironment` | Sandbox or production key environment |
+| RateLimitTier | `ApiKeyRateLimitTier` | Configured rate-limit tier |
+| RateLimitRequestsPerMinute | `int` | Resolved per-minute request limit for the environment/tier |
 | Description | `string?` | Optional description |
 | ExpiresAt | `DateTimeOffset?` | Optional expiration |
 | LastUsedAt | `DateTimeOffset?` | Last usage timestamp |
+| LastRotatedAt | `DateTimeOffset?` | Last key rotation timestamp |
+| PreviousKeyPrefix | `string?` | Previous key prefix after rotation |
+| RotationCount | `int` | Number of completed key rotations |
 | UsageRecords | `IReadOnlyCollection<ApiKeyUsageEntity>` | Navigation to usage records |
 | CreationTime | `DateTime` | Creation timestamp (from base class) |
 | CreatorId | `Guid?` | Creator user ID (from base class) |
@@ -28,10 +35,10 @@ Inherits from `FullAuditedEntityWithKey<Guid>` (provides `Id`, `CreationTime`, `
 | DeletionTime | `DateTime?` | Deletion timestamp (from base class) |
 
 **Behavior methods:**
-- `Create(name, keyHash, keyPrefix, scope, permissions, description?, expiresAt?)` — factory method, raises `ApiKeyCreatedDomainEvent`
-- `Update(name?, description?, permissions?, expiresAt?)` — update mutable fields
+- `Create(name, keyHash, keyPrefix, scope, permissions, customerId?, environment, rateLimitTier, description?, expiresAt?)` — factory method, raises `ApiKeyCreatedDomainEvent`
+- `Update(name?, description?, permissions?, expiresAt?, customerId?, environment?, rateLimitTier?)` — update mutable fields and public API policy metadata
 - `Revoke()` — set status to Revoked, raises `ApiKeyRevokedDomainEvent`
-- `Regenerate(newKeyHash, newKeyPrefix)` — replace key hash/prefix, raises `ApiKeyRegeneratedDomainEvent`
+- `Regenerate(newKeyHash, newKeyPrefix)` — replace key hash/prefix, records rotation metadata, raises `ApiKeyRegeneratedDomainEvent`
 - `RecordUsage()` — update `LastUsedAt` to current UTC time
 - `IsExpired()` — checks if expiration date has passed
 - `IsActive()` — checks status is Active and not expired
@@ -49,12 +56,16 @@ Inherits from `Entity<Guid>` (provides `Id`).
 | StatusCode | `int` | Response status code |
 | IpAddress | `string?` | Client IP address |
 | UserAgent | `string?` | Client user agent string |
+| CustomerId | `Guid?` | Customer/tenant owner copied from the key at record time |
+| Environment | `ApiKeyEnvironment` | Key environment copied at record time |
+| RateLimitTier | `ApiKeyRateLimitTier` | Rate-limit tier copied at record time |
+| RateLimitRequestsPerMinute | `int` | Resolved limit copied at record time |
 | Timestamp | `DateTimeOffset` | Usage timestamp |
 | ResponseTimeMs | `long` | Response time in milliseconds |
 | ApiKey | `ApiKeyEntity` | Navigation property to parent key |
 
 **Factory method:**
-- `Create(apiKeyId, endpoint, statusCode, ipAddress?, userAgent?, responseTimeMs)` — creates usage record with current UTC timestamp
+- `Create(apiKeyId, endpoint, statusCode, ipAddress?, userAgent?, responseTimeMs, customerId?, environment, rateLimitTier, rateLimitRequestsPerMinute)` — creates usage record with current UTC timestamp and analytics dimensions
 
 ## Value objects
 
@@ -85,6 +96,24 @@ Encapsulates SHA-256 hashing of raw API keys.
 | Active | Key is active and usable |
 | Revoked | Key has been manually revoked |
 | Expired | Key has passed its expiration date |
+
+### ApiKeyEnvironment
+
+| Value | Description |
+|-------|-------------|
+| Sandbox | Non-production partner testing |
+| Production | Live partner traffic |
+
+### ApiKeyRateLimitTier
+
+| Value | Requests/minute |
+|-------|-----------------|
+| Development | 60 |
+| Standard | 600 |
+| Professional | 3,000 |
+| Enterprise | 12,000 |
+
+Sandbox keys are capped at 120 requests/minute regardless of tier.
 
 ## Domain events
 
@@ -129,4 +158,4 @@ Examples:
 
 The raw key is returned once at creation time. Only the SHA-256 hash is stored.
 
-*Last updated: February 2026*
+*Last updated: June 2026*

@@ -16,5 +16,13 @@ public sealed class UpdateApiKeyCommandValidator : AbstractValidator<UpdateApiKe
         RuleFor(x => x.Description)
             .MaximumLength(1024)
             .When(x => x.Description is not null);
+
+        RuleFor(x => x.Environment)
+            .IsInEnum()
+            .When(x => x.Environment.HasValue);
+
+        RuleFor(x => x.RateLimitTier)
+            .IsInEnum()
+            .When(x => x.RateLimitTier.HasValue);
     }
 }

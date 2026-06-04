@@ -19,6 +19,9 @@ public sealed class CreateApiKeyCommandHandler(
             keyPrefix,
             request.Scope,
             request.Permissions,
+            request.CustomerId,
+            request.Environment,
+            request.RateLimitTier,
             request.Description,
             request.ExpiresAt);
 
