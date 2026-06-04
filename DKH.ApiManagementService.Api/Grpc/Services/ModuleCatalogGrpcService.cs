@@ -9,7 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DKH.ApiManagementService.Api.Grpc.Services;
 
-[Authorize(Policy = ApiManagementServiceAuthorizationPolicies.ApiManagementAdminAccess)]
+// Read-only deployed-module catalog (components, editions, dependency graph) — the manifest every
+// admin/storefront shell reads to render its navigation, not admin-sensitive data. The gateways
+// proxy this per-user call without admin authority (Authorization is stripped by design), so the
+// reads are anonymous and the capabilities endpoint can never 403. State transitions and
+// entitlement grants stay admin-gated on their own services.
+[AllowAnonymous]
 public class ModuleCatalogGrpcService(IModuleManifestSource manifestSource, IAppDbContext dbContext)
     : ModuleCatalogService.ModuleCatalogServiceBase
 {

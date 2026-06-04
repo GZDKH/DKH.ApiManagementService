@@ -38,6 +38,10 @@ public class ModuleStateGrpcService(IAppDbContext dbContext) : ModuleStateServic
     public override Task<ModuleStateModel> DisableModule(DisableModuleRequest request, ServerCallContext context)
         => TransitionAsync(request.ModuleId, entity => entity.Disable(), context);
 
+    // Read-only lifecycle state of a deployed module — part of the capabilities manifest every shell
+    // reads. Anonymous (overrides the class-level admin gate) so the gateways' per-user proxy call can
+    // resolve module state without admin authority. Install/Enable/Disable stay admin-gated.
+    [AllowAnonymous]
     public override async Task<ModuleStateModel> GetModuleState(GetModuleStateRequest request, ServerCallContext context)
     {
         var entity = await dbContext.ModuleStates
