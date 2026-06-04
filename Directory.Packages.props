@@ -39,7 +39,7 @@
     <PackageVersion Include="DKH.Platform.Authorization.ResourceAccess.Grpc" Version="1.1.0" />
     <PackageVersion Include="DKH.Platform.Core" Version="1.7.0" />
     <PackageVersion Include="DKH.Platform.Grpc" Version="1.2.5" />
-    <PackageVersion Include="DKH.Platform.Identity" Version="1.7.0" />
+    <PackageVersion Include="DKH.Platform.Identity" Version="1.7.2" />
     <PackageVersion Include="DKH.Platform.Grpc.Common" Version="1.2.0" />
     <PackageVersion Include="DKH.Platform.Domain" Version="1.12.0" />
     <PackageVersion Include="DKH.Platform.Application" Version="1.1.0" />
