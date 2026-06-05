@@ -1,0 +1,27 @@
+{
+  "id": "dkh.subscriptions",
+  "kind": "Service",
+  "name": { "en": "Subscriptions", "ru": "Подписки" },
+  "description": {
+    "en": "Subscription plans, bot subscriptions and billing cycles.",
+    "ru": "Тарифные планы, бот-подписки и циклы биллинга."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Commerce",
+  "requiresEntitlement": "subscriptions",
+  "provides": [
+    { "id": "subscriptions.management" }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": ["ConnectionStrings__Subscriptions"]
+  },
+  "routes": [
+    { "path": "/api/v1/subscriptions", "grpcService": "SubscriptionManagementService" }
+  ]
+}

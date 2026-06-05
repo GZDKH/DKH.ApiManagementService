@@ -1,0 +1,27 @@
+{
+  "id": "dkh.customs",
+  "kind": "Service",
+  "name": { "en": "Customs", "ru": "Таможня" },
+  "description": {
+    "en": "HS code catalogue, duty rules and customs documents.",
+    "ru": "Каталог кодов ТН ВЭД, правила пошлин и таможенные документы."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Logistics",
+  "requiresEntitlement": "customs",
+  "provides": [
+    { "id": "customs.catalog" }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": true,
+    "env": ["ConnectionStrings__Customs"]
+  },
+  "routes": [
+    { "path": "/api/v1/customs", "grpcService": "CustomsCatalogService" }
+  ]
+}

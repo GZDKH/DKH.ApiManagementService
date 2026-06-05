@@ -1,0 +1,27 @@
+{
+  "id": "dkh.delivery",
+  "kind": "Service",
+  "name": { "en": "Delivery", "ru": "Доставка" },
+  "description": {
+    "en": "Delivery orders, carriers and tracking.",
+    "ru": "Заказы доставки, перевозчики и трекинг."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Logistics",
+  "requiresEntitlement": "delivery",
+  "provides": [
+    { "id": "delivery.management" }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": ["ConnectionStrings__Delivery"]
+  },
+  "routes": [
+    { "path": "/api/v1/delivery", "grpcService": "DeliveryCrudService" }
+  ]
+}

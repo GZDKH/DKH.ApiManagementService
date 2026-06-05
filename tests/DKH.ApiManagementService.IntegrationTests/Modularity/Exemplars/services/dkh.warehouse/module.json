@@ -1,0 +1,29 @@
+{
+  "id": "dkh.warehouse",
+  "kind": "Service",
+  "name": { "en": "Warehouse", "ru": "Склад (операции)" },
+  "description": {
+    "en": "Warehouse handling tasks, receiving and picking on top of inventory.",
+    "ru": "Складские задачи, приёмка и комплектация поверх остатков."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Warehouse",
+  "requiresEntitlement": "warehouse",
+  "provides": [
+    { "id": "warehouse.management" }
+  ],
+  "requires": [
+    { "capabilityId": "inventory.management" }
+  ],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": true,
+    "env": ["ConnectionStrings__Warehouse"]
+  },
+  "routes": [
+    { "path": "/api/v1/warehouses", "grpcService": "WarehouseManagementService" }
+  ]
+}

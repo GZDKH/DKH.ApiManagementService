@@ -1,0 +1,28 @@
+{
+  "id": "dkh.search",
+  "kind": "Service",
+  "name": { "en": "Search", "ru": "Поиск" },
+  "description": {
+    "en": "Hybrid product search indexing and retrieval.",
+    "ru": "Гибридная индексация и выдача поиска товаров."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Core",
+  "provides": [
+    { "id": "search.index" }
+  ],
+  "requires": [
+    { "capabilityId": "catalog.products" }
+  ],
+  "infra": {
+    "database": false,
+    "queue": true,
+    "cache": true,
+    "env": ["ConnectionStrings__Search"]
+  },
+  "routes": [
+    { "path": "/api/v1/search", "grpcService": "ProductSearchService" }
+  ]
+}

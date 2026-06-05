@@ -1,0 +1,26 @@
+{
+  "id": "dkh.product-requests",
+  "kind": "Service",
+  "name": { "en": "Product Requests", "ru": "Запросы товаров" },
+  "description": {
+    "en": "Customer product requests and sourcing workflow.",
+    "ru": "Запросы товаров от клиентов и процесс поиска поставки."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Commerce",
+  "provides": [
+    { "id": "product-requests.management" }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": ["ConnectionStrings__ProductRequests"]
+  },
+  "routes": [
+    { "path": "/api/v1/product-requests", "grpcService": "ProductRequestCrudService" }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "dkh.counterparties",
+  "kind": "Service",
+  "name": { "en": "Counterparties", "ru": "Контрагенты" },
+  "description": {
+    "en": "Suppliers, partners, AP balances and reconciliation.",
+    "ru": "Поставщики, партнёры, балансы кредиторки и сверка."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Commerce",
+  "provides": [
+    { "id": "counterparties.management" }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": ["ConnectionStrings__Counterparty"]
+  },
+  "routes": [
+    { "path": "/api/v1/counterparties", "grpcService": "CounterpartyCrudService" }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "id": "dkh.procurement",
+  "kind": "Service",
+  "name": { "en": "Procurement", "ru": "Закупки" },
+  "description": {
+    "en": "Procurement orders, receiving acts and dashboards.",
+    "ru": "Заказы закупок, акты приёмки и дашборды."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Commerce",
+  "requiresEntitlement": "procurement",
+  "provides": [
+    { "id": "procurement.management" }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": ["ConnectionStrings__Procurement"]
+  },
+  "routes": [
+    { "path": "/api/v1/procurement", "grpcService": "ProcurementOrderService" }
+  ]
+}

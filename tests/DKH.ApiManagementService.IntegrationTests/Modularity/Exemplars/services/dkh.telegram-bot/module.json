@@ -1,0 +1,27 @@
+{
+  "id": "dkh.telegram-bot",
+  "kind": "Service",
+  "name": { "en": "Telegram Bot", "ru": "Telegram-бот" },
+  "description": {
+    "en": "Telegram bot management, flows, broadcasts and subscriber CRM.",
+    "ru": "Управление Telegram-ботом, сценарии, рассылки и CRM подписчиков."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Marketing",
+  "requiresEntitlement": "telegram",
+  "provides": [
+    { "id": "telegram.bot" }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": true,
+    "env": ["ConnectionStrings__TelegramBot"]
+  },
+  "routes": [
+    { "path": "/api/v1/telegram/bots", "grpcService": "BotsCrudService" }
+  ]
+}

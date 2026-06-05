@@ -1,0 +1,27 @@
+{
+  "id": "dkh.broadcasts",
+  "kind": "Service",
+  "name": { "en": "Broadcasts", "ru": "Рассылки" },
+  "description": {
+    "en": "Bulk message broadcasts and delivery tracking.",
+    "ru": "Массовые рассылки сообщений и отслеживание доставки."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Marketing",
+  "requiresEntitlement": "broadcasts",
+  "provides": [
+    { "id": "broadcasts.delivery" }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": ["ConnectionStrings__Broadcast"]
+  },
+  "routes": [
+    { "path": "/api/v1/broadcasts", "grpcService": "BroadcastManagementService" }
+  ]
+}

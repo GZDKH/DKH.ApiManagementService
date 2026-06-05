@@ -1,0 +1,27 @@
+{
+  "id": "dkh.staff",
+  "kind": "Service",
+  "name": { "en": "Staff", "ru": "Персонал" },
+  "description": {
+    "en": "HR records, staff roles and onboarding for staff apps.",
+    "ru": "Кадровые записи, роли персонала и онбординг для staff-приложений."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Core",
+  "requiresEntitlement": "staff",
+  "provides": [
+    { "id": "staff.management" }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": ["ConnectionStrings__Staff"]
+  },
+  "routes": [
+    { "path": "/api/v1/staff", "grpcService": "StaffManagementService" }
+  ]
+}
