@@ -1,0 +1,36 @@
+{
+  "id": "dkh.assistant",
+  "kind": "Service",
+  "name": {
+    "en": "Assistant",
+    "ru": "Ассистент"
+  },
+  "description": {
+    "en": "AI assistant and conversational flows.",
+    "ru": "AI-ассистент и диалоговые сценарии."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "AI",
+  "provides": [
+    {
+      "id": "assistant.chat"
+    }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": false,
+    "cache": true,
+    "env": [
+      "ConnectionStrings__Assistant"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/assistant",
+      "grpcService": "AssistantService"
+    }
+  ]
+}

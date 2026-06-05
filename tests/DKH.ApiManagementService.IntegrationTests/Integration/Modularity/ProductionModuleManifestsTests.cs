@@ -23,12 +23,24 @@ public sealed class ProductionModuleManifestsTests
     // manifest for any of these means it must stay visible — i.e. NO requiresEntitlement.
     private static readonly string[] NavMappedServiceIds =
     [
-        "dkh.product-catalog", "dkh.payments", "dkh.logistics",
+        "dkh.product-catalog", "dkh.payments", "dkh.logistics", "dkh.customs",
     ];
 
     private static readonly string[] ExpectedPluginIds =
     [
         "dkh.ai.claude", "dkh.payments.stripe", "dkh.payments.telegram",
+    ];
+
+    // The curated production service catalog (Phase 6 sweep — one component per deployed bounded context).
+    // Exact-match guard: adding/removing a service manifest is a deliberate, reviewed change to the catalog.
+    private static readonly string[] ExpectedServiceIds =
+    [
+        "dkh.api-management", "dkh.assistant", "dkh.broadcast", "dkh.cart", "dkh.counterparty",
+        "dkh.customers", "dkh.customs", "dkh.delivery", "dkh.inventory", "dkh.logistics",
+        "dkh.media", "dkh.notifications", "dkh.orders", "dkh.payments", "dkh.print",
+        "dkh.procurement", "dkh.product-catalog", "dkh.product-request", "dkh.reference", "dkh.reviews",
+        "dkh.search", "dkh.staff", "dkh.storefront", "dkh.subscription", "dkh.telegram-bot",
+        "dkh.telegram-client", "dkh.warehouse",
     ];
 
     private static DirectoryModuleManifestSource CreateSource()
@@ -52,6 +64,17 @@ public sealed class ProductionModuleManifestsTests
             !string.IsNullOrWhiteSpace(component.Id)
             && !string.IsNullOrWhiteSpace(component.Version)
             && component.Name.Count > 0);
+    }
+
+    [Fact]
+    public async Task ProductionManifests_ShipTheCuratedServiceCatalogAsync()
+    {
+        var components = await CreateSource().GetComponentsAsync();
+
+        components
+            .Where(component => component.Kind == PlatformModuleKind.Service)
+            .Select(component => component.Id)
+            .Should().BeEquivalentTo(ExpectedServiceIds);
     }
 
     [Fact]

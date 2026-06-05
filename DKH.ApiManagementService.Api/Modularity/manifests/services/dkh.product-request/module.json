@@ -1,0 +1,40 @@
+{
+  "id": "dkh.product-request",
+  "kind": "Service",
+  "name": {
+    "en": "Product Requests",
+    "ru": "Запросы товаров"
+  },
+  "description": {
+    "en": "Product addition and sourcing requests.",
+    "ru": "Заявки на добавление и поиск товаров."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Commerce",
+  "provides": [
+    {
+      "id": "product-requests.management"
+    }
+  ],
+  "requires": [
+    {
+      "capabilityId": "catalog.products"
+    }
+  ],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": [
+      "ConnectionStrings__ProductRequest"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/product-requests",
+      "grpcService": "ProductRequestService"
+    }
+  ]
+}

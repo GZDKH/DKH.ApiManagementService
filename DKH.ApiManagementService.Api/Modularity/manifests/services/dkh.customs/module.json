@@ -1,0 +1,36 @@
+{
+  "id": "dkh.customs",
+  "kind": "Service",
+  "name": {
+    "en": "Customs",
+    "ru": "Таможня"
+  },
+  "description": {
+    "en": "Customs clearance and shipment declaration.",
+    "ru": "Таможенное оформление и декларирование грузов."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Logistics",
+  "provides": [
+    {
+      "id": "customs.clearance"
+    }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": [
+      "ConnectionStrings__Customs"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/customs",
+      "grpcService": "CustomsService"
+    }
+  ]
+}

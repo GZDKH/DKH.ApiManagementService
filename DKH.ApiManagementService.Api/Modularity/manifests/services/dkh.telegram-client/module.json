@@ -1,0 +1,36 @@
+{
+  "id": "dkh.telegram-client",
+  "kind": "Service",
+  "name": {
+    "en": "Telegram Client",
+    "ru": "Telegram-клиент"
+  },
+  "description": {
+    "en": "Telegram client for integrations and messaging.",
+    "ru": "Клиент Telegram для интеграций и переписки."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Communications",
+  "provides": [
+    {
+      "id": "telegram.client"
+    }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": true,
+    "env": [
+      "ConnectionStrings__TelegramClient"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/telegram-client",
+      "grpcService": "TelegramClientService"
+    }
+  ]
+}

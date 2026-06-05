@@ -1,0 +1,40 @@
+{
+  "id": "dkh.subscription",
+  "kind": "Service",
+  "name": {
+    "en": "Subscriptions",
+    "ru": "Подписки"
+  },
+  "description": {
+    "en": "Subscriptions and recurring billing.",
+    "ru": "Подписки и регулярные платежи."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Commerce",
+  "provides": [
+    {
+      "id": "subscriptions.billing"
+    }
+  ],
+  "requires": [
+    {
+      "capabilityId": "payments.checkout"
+    }
+  ],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": [
+      "ConnectionStrings__Subscription"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/subscriptions",
+      "grpcService": "SubscriptionService"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "dkh.counterparty",
+  "kind": "Service",
+  "name": {
+    "en": "Counterparties",
+    "ru": "Контрагенты"
+  },
+  "description": {
+    "en": "Suppliers, distributors and B2B partners.",
+    "ru": "Поставщики, дистрибьюторы и партнёры B2B."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Operations",
+  "provides": [
+    {
+      "id": "counterparty.management"
+    }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": [
+      "ConnectionStrings__Counterparty"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/counterparties",
+      "grpcService": "CounterpartyService"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "dkh.staff",
+  "kind": "Service",
+  "name": {
+    "en": "Staff",
+    "ru": "Персонал"
+  },
+  "description": {
+    "en": "Employees, roles and HR records.",
+    "ru": "Сотрудники, роли и кадровый учёт."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Operations",
+  "provides": [
+    {
+      "id": "staff.management"
+    }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": [
+      "ConnectionStrings__Staff"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/staff",
+      "grpcService": "StaffService"
+    }
+  ]
+}

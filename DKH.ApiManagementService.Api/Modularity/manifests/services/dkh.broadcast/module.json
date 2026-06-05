@@ -1,0 +1,40 @@
+{
+  "id": "dkh.broadcast",
+  "kind": "Service",
+  "name": {
+    "en": "Broadcast",
+    "ru": "Рассылки"
+  },
+  "description": {
+    "en": "Bulk broadcasts and notification campaigns.",
+    "ru": "Массовые рассылки и кампании уведомлений."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Communications",
+  "provides": [
+    {
+      "id": "broadcast.campaigns"
+    }
+  ],
+  "requires": [
+    {
+      "capabilityId": "notifications.delivery"
+    }
+  ],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": [
+      "ConnectionStrings__Broadcast"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/broadcast",
+      "grpcService": "BroadcastService"
+    }
+  ]
+}

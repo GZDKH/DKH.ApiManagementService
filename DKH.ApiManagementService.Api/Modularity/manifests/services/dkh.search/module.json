@@ -1,0 +1,40 @@
+{
+  "id": "dkh.search",
+  "kind": "Service",
+  "name": {
+    "en": "Search",
+    "ru": "Поиск"
+  },
+  "description": {
+    "en": "Catalog indexing and full-text search.",
+    "ru": "Индексация и полнотекстовый поиск по каталогу."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Commerce",
+  "provides": [
+    {
+      "id": "search.indexing"
+    }
+  ],
+  "requires": [
+    {
+      "capabilityId": "catalog.products"
+    }
+  ],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": true,
+    "env": [
+      "ConnectionStrings__Search"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/search",
+      "grpcService": "SearchService"
+    }
+  ]
+}
