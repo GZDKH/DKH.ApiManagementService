@@ -126,6 +126,27 @@ public class ModuleControlPlaneGrpcServiceTests : PlatformIntegrationTest
     }
 
     [Fact]
+    public async Task GetModuleState_ManifestPresentWithoutRecord_DefaultsToEnabledAsync()
+    {
+        // A module shipped as a manifest is deployed → Enabled by default, with NO InstallModule call.
+        // This is what keeps the nav-mapped sections (navigation.ts capabilityModuleId) visible after
+        // activation, instead of Discovered → hidden (the 2026-06-05 regression).
+        var directory = Directory.CreateTempSubdirectory("dkh-modules-").FullName;
+        await File.WriteAllTextAsync(
+            Path.Combine(directory, "module.json"),
+                                 /*lang=json,strict*/
+                                 """{ "id": "dkh.product-catalog", "kind": "service", "name": { "en": "Catalog" }, "version": "3.15.0" }""");
+
+        await using var factory = CreateFactory(manifestsDirectory: directory, caller: Caller.Anonymous);
+        var client = this.CreateGrpcClient<StateClient, GrpcTestExceptionPolicy>(factory);
+
+        var state = await client.GetModuleStateAsync(new GetModuleStateRequest { ModuleId = "dkh.product-catalog" });
+
+        state.State.Should().Be(ProtoModule.ModuleState.Enabled);
+        state.Version.Should().Be("3.15.0");
+    }
+
+    [Fact]
     public async Task CheckEntitlement_ReflectsConfiguredEnabledModulesAsync()
     {
         await using var factory = CreateFactory(manifestsDirectory: null, enabledModules: "dkh.logistics");

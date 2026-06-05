@@ -1,0 +1,36 @@
+{
+  "id": "dkh.customers",
+  "kind": "Service",
+  "name": {
+    "en": "Customers",
+    "ru": "Клиенты"
+  },
+  "description": {
+    "en": "Customer accounts, profiles and admin management.",
+    "ru": "Аккаунты клиентов, профили и админ-управление."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Commerce",
+  "provides": [
+    {
+      "id": "customers.management"
+    }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": [
+      "ConnectionStrings__Customers"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/customers",
+      "grpcService": "CustomerManagementService"
+    }
+  ]
+}

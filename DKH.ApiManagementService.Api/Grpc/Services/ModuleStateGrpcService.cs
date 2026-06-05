@@ -11,7 +11,8 @@ using Microsoft.EntityFrameworkCore;
 namespace DKH.ApiManagementService.Api.Grpc.Services;
 
 [Authorize(Policy = ApiManagementServiceAuthorizationPolicies.ApiManagementAdminAccess)]
-public class ModuleStateGrpcService(IAppDbContext dbContext) : ModuleStateService.ModuleStateServiceBase
+public class ModuleStateGrpcService(IAppDbContext dbContext, IModuleManifestSource manifestSource)
+    : ModuleStateService.ModuleStateServiceBase
 {
     public override async Task<ModuleStateModel> InstallModule(InstallModuleRequest request, ServerCallContext context)
     {
@@ -46,10 +47,23 @@ public class ModuleStateGrpcService(IAppDbContext dbContext) : ModuleStateServic
     {
         var entity = await dbContext.ModuleStates
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.ModuleId == request.ModuleId, context.CancellationToken)
-            ?? throw new RpcException(new Status(StatusCode.NotFound, $"Module '{request.ModuleId}' has no recorded state."));
+            .FirstOrDefaultAsync(x => x.ModuleId == request.ModuleId, context.CancellationToken);
 
-        return entity.ToStateModel();
+        if (entity is not null)
+        {
+            return entity.ToStateModel();
+        }
+
+        // No explicit operator record: a module shipped as a manifest is deployed, so it is Enabled by
+        // default. An operator Install/Disable writes a real record that overrides this. A module with
+        // neither a record nor a manifest is genuinely unknown.
+        var components = await manifestSource.GetComponentsAsync(context.CancellationToken);
+        var manifest = components.FirstOrDefault(component =>
+            string.Equals(component.Id, request.ModuleId, StringComparison.Ordinal));
+
+        return manifest is not null
+            ? ModuleStateEntity.Create(manifest.Id, manifest.Version, ModuleLifecycleState.Enabled).ToStateModel()
+            : throw new RpcException(new Status(StatusCode.NotFound, $"Module '{request.ModuleId}' has no recorded state."));
     }
 
     private async Task<ModuleStateModel> TransitionAsync(string moduleId, Action<ModuleStateEntity> apply, ServerCallContext context)

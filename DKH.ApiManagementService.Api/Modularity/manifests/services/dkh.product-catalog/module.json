@@ -1,0 +1,43 @@
+{
+  "id": "dkh.product-catalog",
+  "kind": "Service",
+  "name": {
+    "en": "Product Catalog",
+    "ru": "Каталог товаров"
+  },
+  "description": {
+    "en": "Products, categories, brands, specifications and search.",
+    "ru": "Товары, категории, бренды, характеристики и поиск."
+  },
+  "version": "3.15.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Commerce",
+  "provides": [
+    {
+      "id": "catalog.products"
+    },
+    {
+      "id": "catalog.search"
+    }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": true,
+    "env": [
+      "ConnectionStrings__Catalog"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/products",
+      "grpcService": "ProductManagementService"
+    },
+    {
+      "path": "/api/v1/categories",
+      "grpcService": "CategoryManagementService"
+    }
+  ]
+}
