@@ -16,6 +16,14 @@ public sealed class ModuleManifestExemplarsTests
     private static readonly string ExemplarsDirectory =
         Path.Combine(AppContext.BaseDirectory, "Modularity", "Exemplars");
 
+    // Canonical reference templates that must always be present regardless of how many
+    // per-service declarations the dkh-4xlnx sweep adds.
+    private static readonly string[] CanonicalComponentIds =
+    [
+        "dkh.product-catalog", "dkh.payments", "dkh.logistics",
+        "dkh.ai.claude", "dkh.payments.stripe", "dkh.payments.telegram",
+    ];
+
     private static DirectoryModuleManifestSource CreateSource()
         => new(new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
@@ -29,9 +37,12 @@ public sealed class ModuleManifestExemplarsTests
     {
         var components = await CreateSource().GetComponentsAsync();
 
-        components.Should().HaveCount(6);
-        components.Count(component => component.Kind == PlatformModuleKind.Service).Should().Be(3);
+        // The 6 canonical reference templates are always present; the service set grows as the
+        // per-service module.json sweep (bead dkh-4xlnx) lands more declarations, so assert
+        // membership + the fixed plugin set rather than a brittle total count.
+        components.Select(component => component.Id).Should().Contain(CanonicalComponentIds);
         components.Count(component => component.Kind == PlatformModuleKind.Plugin).Should().Be(3);
+        components.Count(component => component.Kind == PlatformModuleKind.Service).Should().BeGreaterThanOrEqualTo(3);
         components.Should().OnlyContain(component =>
             !string.IsNullOrWhiteSpace(component.Id)
             && !string.IsNullOrWhiteSpace(component.Version)

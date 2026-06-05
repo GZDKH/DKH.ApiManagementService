@@ -1,0 +1,28 @@
+{
+  "id": "dkh.reviews",
+  "kind": "Service",
+  "name": { "en": "Reviews", "ru": "Отзывы" },
+  "description": {
+    "en": "Product reviews, moderation and replies.",
+    "ru": "Отзывы о товарах, модерация и ответы."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Commerce",
+  "provides": [
+    { "id": "reviews.moderation" }
+  ],
+  "requires": [
+    { "capabilityId": "catalog.products" }
+  ],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": ["ConnectionStrings__Reviews"]
+  },
+  "routes": [
+    { "path": "/api/v1/reviews", "grpcService": "ReviewManagementService" }
+  ]
+}
