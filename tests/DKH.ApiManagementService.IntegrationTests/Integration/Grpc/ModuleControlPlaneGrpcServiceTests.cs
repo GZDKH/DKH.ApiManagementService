@@ -160,6 +160,40 @@ public class ModuleControlPlaneGrpcServiceTests : PlatformIntegrationTest
     }
 
     [Fact]
+    public async Task ListComponents_SurfacesPluginAlongsideService_WithPluginKindAsync()
+    {
+        // Phase 8: a loaded plugin must appear in the unified catalog as kind=plugin — alongside
+        // services — so the control plane sees plugins and services through one ListComponents view.
+        var directory = Directory.CreateTempSubdirectory("dkh-modules-").FullName;
+        var serviceDir = Directory.CreateDirectory(Path.Combine(directory, "services", "dkh.logistics")).FullName;
+        var pluginDir = Directory.CreateDirectory(Path.Combine(directory, "plugins", "dkh.ai.claude")).FullName;
+        await File.WriteAllTextAsync(
+            Path.Combine(serviceDir, "module.json"),
+                                 /*lang=json,strict*/
+                                 """{ "id": "dkh.logistics", "kind": "service", "name": { "en": "Logistics" }, "version": "1.4.0", "requiresEntitlement": "logistics" }""");
+        await File.WriteAllTextAsync(
+            Path.Combine(pluginDir, "module.json"),
+                                 /*lang=json,strict*/
+                                 """{ "id": "dkh.ai.claude", "kind": "plugin", "name": { "en": "Claude AI" }, "version": "0.1.0", "requiresEntitlement": "ai.assistant", "provides": [ { "id": "ai.provider.claude" } ] }""");
+
+        await using var factory = CreateFactory(manifestsDirectory: directory);
+        var client = this.CreateGrpcClient<CatalogClient, GrpcTestExceptionPolicy>(factory);
+
+        var response = await client.ListComponentsAsync(new ListComponentsRequest());
+
+        response.Components.Should().HaveCount(2);
+
+        var plugin = response.Components.Should().ContainSingle(component => component.Id == "dkh.ai.claude").Subject;
+        plugin.Kind.Should().Be(ProtoModule.ModuleKind.Plugin);
+        plugin.RequiresEntitlement.Should().Be("ai.assistant");
+        plugin.State.Should().Be(ProtoModule.ModuleState.Discovered);
+        plugin.Provides.Should().ContainSingle(capability => capability.Id == "ai.provider.claude");
+
+        response.Components.Should().ContainSingle(component => component.Id == "dkh.logistics")
+            .Which.Kind.Should().Be(ProtoModule.ModuleKind.Service);
+    }
+
+    [Fact]
     public async Task ListCatalog_AllowsAnonymousCaller_ForCapabilitiesManifestAsync()
     {
         var directory = Directory.CreateTempSubdirectory("dkh-modules-").FullName;
