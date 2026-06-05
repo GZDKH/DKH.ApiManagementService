@@ -1,0 +1,30 @@
+{
+  "id": "dkh.logistics",
+  "kind": "Service",
+  "name": { "en": "Logistics", "ru": "Логистика" },
+  "description": {
+    "en": "Shipping rates, route options and surcharges.",
+    "ru": "Тарифы доставки, варианты маршрутов и надбавки."
+  },
+  "version": "1.4.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Logistics",
+  "requiresEntitlement": "logistics",
+  "provides": [
+    { "id": "logistics.rates" },
+    { "id": "logistics.routes" }
+  ],
+  "requires": [
+    { "capabilityId": "catalog.products" }
+  ],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": true,
+    "env": ["ConnectionStrings__Logistics"]
+  },
+  "routes": [
+    { "path": "/api/v1/logistics/rates", "grpcService": "RateCalculationService" }
+  ]
+}

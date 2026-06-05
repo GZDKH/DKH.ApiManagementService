@@ -1,0 +1,24 @@
+{
+  "id": "dkh.payments.telegram",
+  "kind": "Plugin",
+  "name": { "en": "Telegram Payments", "ru": "Платежи Telegram" },
+  "description": {
+    "en": "Telegram payment provider plugin.",
+    "ru": "Плагин платёжного провайдера Telegram."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Payments",
+  "requiresEntitlement": "payments.telegram",
+  "provides": [
+    { "id": "payments.provider.telegram" }
+  ],
+  "requires": [
+    { "capabilityId": "payments.checkout" }
+  ],
+  "server": {
+    "entryAssembly": "DKH.PaymentService.Plugins.Telegram.dll",
+    "extensions": ["payments.provider"]
+  }
+}
