@@ -62,6 +62,39 @@
 **Фабричный метод:**
 - `Create(apiKeyId, endpoint, statusCode, ipAddress?, userAgent?, responseTimeMs, customerId?, environment, rateLimitTier, rateLimitRequestsPerMinute)` — создание записи использования с текущей меткой времени UTC и аналитическими измерениями
 
+### WebhookSubscriptionEntity (корень агрегата)
+
+Наследует `FullAuditedEntityWithKey<Guid>`.
+
+| Свойство | Тип | Описание |
+|----------|-----|----------|
+| Id | `Guid` | Первичный ключ |
+| ApiKeyId | `Guid?` | API-ключ, которому принадлежит подписка |
+| CustomerId | `Guid?` | Владелец customer/tenant для partner-facing subscriptions |
+| Name | `string` | Человекочитаемое имя подписки |
+| CallbackUrl | `string` | Callback endpoint партнёра |
+| Events | `List<string>` | Нормализованные имена событий подписки |
+| SigningSecretHash | `string` | SHA-256 hash webhook signing secret |
+| SigningSecretPrefix | `string` | Только отображаемый prefix; raw secret не хранится |
+| Status | `WebhookSubscriptionStatus` | Lifecycle state |
+| RetryMaxAttempts | `int` | Максимальное число retry перед DLQ |
+| RetryBackoffSeconds | `int` | Интервал retry в секундах |
+| DlqEnabled | `bool` | Разрешён ли DLQ для неуспешных доставок |
+| LastDeliveryAt | `DateTimeOffset?` | Время последней попытки доставки |
+| LastDeliverySucceeded | `bool?` | Результат последней доставки |
+| LastDeliveryStatusCode | `int?` | HTTP status партнёра |
+| LastDeliveryError | `string?` | Последняя ошибка доставки |
+| FailureCount | `int` | Число последовательных неуспешных доставок |
+| LastRotatedAt | `DateTimeOffset?` | Время последней ротации signing secret |
+| RotationCount | `int` | Количество ротаций signing secret |
+
+**Методы поведения:**
+- `Create(apiKeyId?, customerId?, name, callbackUrl, events, rawSigningSecret, retryMaxAttempts, retryBackoffSeconds, dlqEnabled)` — нормализует events и хранит только hash/prefix signing secret
+- `Update(name, callbackUrl, events, retryMaxAttempts, retryBackoffSeconds, dlqEnabled)` — обновляет route и retry/DLQ policy
+- `Disable()` — отключает доставку без удаления подписки
+- `RotateSecret(rawSigningSecret)` — заменяет hash/prefix и пишет telemetry ротации
+- `RecordDelivery(succeeded, statusCode, error, deliveredAt)` — записывает observability поля подписчика
+
 ## Объекты-значения
 
 ### ApiKeyHash
@@ -109,6 +142,23 @@
 | Enterprise | 12 000 |
 
 Sandbox-ключи ограничены 120 запросами/минуту независимо от tier.
+
+### WebhookSubscriptionStatus
+
+| Значение | Описание |
+|----------|----------|
+| Active | Подписка может получать доставки |
+| Disabled | Подписка сохранена, но доставка отключена |
+
+## Доменные сервисы
+
+### WebhookSigningSecretHasher
+
+Вычисляет lowercase SHA-256 hash raw signing secret и display-only prefix. Raw webhook signing secret не хранится.
+
+### WebhookSignatureService
+
+Формирует deterministic HMAC-SHA256 signature по `timestamp.payload` с prefix `sha256=` для outbound webhook delivery.
 
 ## Доменные события
 

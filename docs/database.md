@@ -75,6 +75,43 @@
 **Foreign keys:**
 - `FK_api_key_usage_api_keys_ApiKeyId` -> `api_keys(Id)` ON DELETE CASCADE
 
+### webhook_subscriptions
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| Id | `uuid` | PK |
+| ApiKeyId | `uuid` | NULLABLE, API key that owns the subscription |
+| CustomerId | `uuid` | NULLABLE, customer/tenant owner copied from the API key |
+| Name | `character varying(256)` | NOT NULL |
+| CallbackUrl | `character varying(2048)` | NOT NULL |
+| Events | `jsonb` | NOT NULL, normalized event names |
+| SigningSecretHash | `character varying(64)` | NOT NULL, SHA-256 hash of the signing secret |
+| SigningSecretPrefix | `character varying(32)` | NOT NULL, display prefix only |
+| Status | `character varying(32)` | NOT NULL (`Active`, `Disabled`) |
+| RetryMaxAttempts | `integer` | NOT NULL, default `5` |
+| RetryBackoffSeconds | `integer` | NOT NULL, default `30` |
+| DlqEnabled | `boolean` | NOT NULL, default `true` |
+| LastDeliveryAt | `timestamptz` | NULLABLE |
+| LastDeliverySucceeded | `boolean` | NULLABLE |
+| LastDeliveryStatusCode | `integer` | NULLABLE |
+| LastDeliveryError | `character varying(2048)` | NULLABLE |
+| FailureCount | `integer` | NOT NULL, default `0` |
+| LastRotatedAt | `timestamptz` | NULLABLE |
+| RotationCount | `integer` | NOT NULL, default `0` |
+| CreationTime | `timestamptz` | NOT NULL (from FullAuditedEntity) |
+| CreatorId | `uuid` | NULLABLE (from FullAuditedEntity) |
+| LastModificationTime | `timestamptz` | NULLABLE (from FullAuditedEntity) |
+| LastModifierId | `uuid` | NULLABLE (from FullAuditedEntity) |
+| IsDeleted | `boolean` | NOT NULL (from FullAuditedEntity) |
+| DeleterId | `uuid` | NULLABLE (from FullAuditedEntity) |
+| DeletionTime | `timestamptz` | NULLABLE (from FullAuditedEntity) |
+
+**Indexes:**
+- `IX_webhook_subscriptions_ApiKeyId` — index on `ApiKeyId`
+- `IX_webhook_subscriptions_CustomerId` — index on `CustomerId`
+- `IX_webhook_subscriptions_Status` — index on `Status`
+- `IX_webhook_subscriptions_CustomerId_Status` — composite index for customer-facing subscription lists
+
 ## Migrations
 
 | Migration | Date | Description |
@@ -82,6 +119,7 @@
 | `202502100001_InitialCreate` | 2026-02-10 | Create `api_keys` and `api_key_usage` tables |
 | `RemoveDuplicateCreatedBy` | 2026-02-15 | Drop duplicate `CreatedBy` column from `api_keys` |
 | `AddPublicApiHardening` | 2026-06-04 | Add customer ownership, sandbox/production environment, rate-limit tier, rotation metadata, and usage analytics dimensions |
+| `AddWebhookSubscriptions` | 2026-06-05 | Add `webhook_subscriptions` table for partner callback URLs, event filters, HMAC secret metadata, retry/DLQ policy, and delivery observability |
 
 ```bash
 # Add migration

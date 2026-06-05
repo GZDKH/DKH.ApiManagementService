@@ -23,6 +23,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
     public DbSet<ModuleEntitlementEntity> ModuleEntitlements { get; init; } = null!;
 
+    public DbSet<WebhookSubscriptionEntity> WebhookSubscriptions { get; init; } = null!;
+
     public DbSet<ApiManagementAccessGrantEntity> ApiManagementAccessGrants => Set<ApiManagementAccessGrantEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

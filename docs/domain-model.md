@@ -67,6 +67,39 @@ Inherits from `Entity<Guid>` (provides `Id`).
 **Factory method:**
 - `Create(apiKeyId, endpoint, statusCode, ipAddress?, userAgent?, responseTimeMs, customerId?, environment, rateLimitTier, rateLimitRequestsPerMinute)` — creates usage record with current UTC timestamp and analytics dimensions
 
+### WebhookSubscriptionEntity (aggregate root)
+
+Inherits from `FullAuditedEntityWithKey<Guid>`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| Id | `Guid` | Primary key |
+| ApiKeyId | `Guid?` | API key that owns the subscription |
+| CustomerId | `Guid?` | Customer/tenant owner for partner-facing subscriptions |
+| Name | `string` | Human-readable subscription name |
+| CallbackUrl | `string` | Partner callback endpoint |
+| Events | `List<string>` | Normalized subscribed event names |
+| SigningSecretHash | `string` | SHA-256 hash of the webhook signing secret |
+| SigningSecretPrefix | `string` | Display prefix only; raw secrets are never stored |
+| Status | `WebhookSubscriptionStatus` | Active/disabled lifecycle state |
+| RetryMaxAttempts | `int` | Max retry attempts before DLQ |
+| RetryBackoffSeconds | `int` | Retry backoff interval in seconds |
+| DlqEnabled | `bool` | Whether failed deliveries can move to DLQ |
+| LastDeliveryAt | `DateTimeOffset?` | Last delivery attempt timestamp |
+| LastDeliverySucceeded | `bool?` | Last delivery result |
+| LastDeliveryStatusCode | `int?` | Last partner HTTP status |
+| LastDeliveryError | `string?` | Last delivery error summary |
+| FailureCount | `int` | Consecutive failed delivery count |
+| LastRotatedAt | `DateTimeOffset?` | Last signing-secret rotation timestamp |
+| RotationCount | `int` | Number of completed signing-secret rotations |
+
+**Behavior methods:**
+- `Create(apiKeyId?, customerId?, name, callbackUrl, events, rawSigningSecret, retryMaxAttempts, retryBackoffSeconds, dlqEnabled)` — normalizes events and stores only the signing secret hash/prefix
+- `Update(name, callbackUrl, events, retryMaxAttempts, retryBackoffSeconds, dlqEnabled)` — updates route and retry/DLQ policy
+- `Disable()` — disables delivery without deleting the subscription
+- `RotateSecret(rawSigningSecret)` — replaces hash/prefix and records rotation telemetry
+- `RecordDelivery(succeeded, statusCode, error, deliveredAt)` — records subscriber observability fields
+
 ## Value objects
 
 ### ApiKeyHash
@@ -114,6 +147,23 @@ Encapsulates SHA-256 hashing of raw API keys.
 | Enterprise | 12,000 |
 
 Sandbox keys are capped at 120 requests/minute regardless of tier.
+
+### WebhookSubscriptionStatus
+
+| Value | Description |
+|-------|-------------|
+| Active | Subscription can receive deliveries |
+| Disabled | Subscription remains stored but delivery is disabled |
+
+## Domain services
+
+### WebhookSigningSecretHasher
+
+Computes a lowercase SHA-256 hash of a raw signing secret and derives a display-only prefix. Raw webhook signing secrets are never stored.
+
+### WebhookSignatureService
+
+Produces deterministic HMAC-SHA256 signatures over `timestamp.payload` with the `sha256=` prefix for outbound webhook delivery.
 
 ## Domain events
 
