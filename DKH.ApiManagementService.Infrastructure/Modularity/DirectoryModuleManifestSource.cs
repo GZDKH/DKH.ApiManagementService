@@ -16,7 +16,7 @@ public sealed class DirectoryModuleManifestSource(IConfiguration configuration) 
 
     private static readonly JsonSerializerOptions SerializerOptions = new(JsonSerializerDefaults.Web);
 
-    private readonly string? _directory = ResolveDirectory(configuration[DirectoryKey]);
+    private readonly string? _directory = configuration[DirectoryKey];
 
     public Task<IReadOnlyList<PlatformModuleManifest>> GetComponentsAsync(CancellationToken cancellationToken = default)
         => LoadAsync<PlatformModuleManifest>("module.json", cancellationToken);
@@ -44,15 +44,4 @@ public sealed class DirectoryModuleManifestSource(IConfiguration configuration) 
 
         return manifests;
     }
-
-    /// <summary>
-    ///     Resolves the configured manifests directory. Absolute paths are used as-is; a relative path is
-    ///     resolved against <see cref="AppContext.BaseDirectory" /> (the app output directory where deployed
-    ///     manifests are content-copied), so the same relative value works in-container and in local dev
-    ///     regardless of the process working directory.
-    /// </summary>
-    private static string? ResolveDirectory(string? configured)
-        => string.IsNullOrWhiteSpace(configured) || Path.IsPathRooted(configured)
-            ? configured
-            : Path.Combine(AppContext.BaseDirectory, configured);
 }
