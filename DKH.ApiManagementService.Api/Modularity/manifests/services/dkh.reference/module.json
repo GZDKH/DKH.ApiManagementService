@@ -1,0 +1,40 @@
+{
+  "id": "dkh.reference",
+  "kind": "Service",
+  "name": {
+    "en": "Reference Data",
+    "ru": "Справочные данные"
+  },
+  "description": {
+    "en": "Countries, currencies, languages, units and translation bundles.",
+    "ru": "Страны, валюты, языки, единицы измерения и пакеты переводов."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Core",
+  "provides": [
+    {
+      "id": "reference.data"
+    }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": true,
+    "env": [
+      "ConnectionStrings__Reference"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/countries",
+      "grpcService": "CountryManagementService"
+    },
+    {
+      "path": "/api/v1/currencies",
+      "grpcService": "CurrencyManagementService"
+    }
+  ]
+}

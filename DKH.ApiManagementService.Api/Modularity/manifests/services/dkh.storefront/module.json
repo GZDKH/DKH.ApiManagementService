@@ -1,0 +1,40 @@
+{
+  "id": "dkh.storefront",
+  "kind": "Service",
+  "name": {
+    "en": "Storefront Builder",
+    "ru": "Конструктор витрин"
+  },
+  "description": {
+    "en": "Multi-storefront builder, themes, blocks and lifecycle.",
+    "ru": "Мультивитринный конструктор, темы, блоки и жизненный цикл."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Commerce",
+  "provides": [
+    {
+      "id": "storefront.builder"
+    }
+  ],
+  "requires": [
+    {
+      "capabilityId": "catalog.products"
+    }
+  ],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": true,
+    "env": [
+      "ConnectionStrings__Storefront"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/storefronts",
+      "grpcService": "StorefrontManagementService"
+    }
+  ]
+}

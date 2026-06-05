@@ -1,0 +1,24 @@
+{
+  "id": "dkh.payments.stripe",
+  "kind": "Plugin",
+  "name": { "en": "Stripe Payments", "ru": "Платежи Stripe" },
+  "description": {
+    "en": "Stripe payment provider plugin.",
+    "ru": "Плагин платёжного провайдера Stripe."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Payments",
+  "requiresEntitlement": "payments.stripe",
+  "provides": [
+    { "id": "payments.provider.stripe" }
+  ],
+  "requires": [
+    { "capabilityId": "payments.checkout", "versionRange": "[1.0.0, )" }
+  ],
+  "server": {
+    "entryAssembly": "DKH.PaymentService.Plugins.Stripe.dll",
+    "extensions": ["payments.provider"]
+  }
+}

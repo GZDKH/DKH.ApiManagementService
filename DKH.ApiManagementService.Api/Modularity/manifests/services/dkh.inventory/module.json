@@ -1,0 +1,40 @@
+{
+  "id": "dkh.inventory",
+  "kind": "Service",
+  "name": {
+    "en": "Inventory",
+    "ru": "Склад (остатки)"
+  },
+  "description": {
+    "en": "Stock levels, reservations, batches and low-stock alerts.",
+    "ru": "Остатки, резервирование, партии и уведомления о нехватке."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Warehouse",
+  "provides": [
+    {
+      "id": "inventory.management"
+    }
+  ],
+  "requires": [
+    {
+      "capabilityId": "catalog.products"
+    }
+  ],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": true,
+    "env": [
+      "ConnectionStrings__Inventory"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/inventory",
+      "grpcService": "StockManagementService"
+    }
+  ]
+}

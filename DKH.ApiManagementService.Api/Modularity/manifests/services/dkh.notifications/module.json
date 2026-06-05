@@ -1,0 +1,36 @@
+{
+  "id": "dkh.notifications",
+  "kind": "Service",
+  "name": {
+    "en": "Notifications",
+    "ru": "Уведомления"
+  },
+  "description": {
+    "en": "Multi-channel notification delivery and progress tracking.",
+    "ru": "Мультиканальная доставка уведомлений и отслеживание прогресса."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Core",
+  "provides": [
+    {
+      "id": "notifications.delivery"
+    }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": [
+      "ConnectionStrings__Notifications"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/notifications",
+      "grpcService": "NotificationService"
+    }
+  ]
+}

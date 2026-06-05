@@ -1,0 +1,40 @@
+{
+  "id": "dkh.cart",
+  "kind": "Service",
+  "name": {
+    "en": "Cart",
+    "ru": "Корзина"
+  },
+  "description": {
+    "en": "Shopping cart, promo codes and checkout claim.",
+    "ru": "Корзина покупок, промокоды и привязка чекаута."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Commerce",
+  "provides": [
+    {
+      "id": "cart.management"
+    }
+  ],
+  "requires": [
+    {
+      "capabilityId": "catalog.products"
+    }
+  ],
+  "infra": {
+    "database": true,
+    "queue": false,
+    "cache": true,
+    "env": [
+      "ConnectionStrings__Cart"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/cart",
+      "grpcService": "CartManagementService"
+    }
+  ]
+}
