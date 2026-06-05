@@ -1,0 +1,40 @@
+{
+  "id": "dkh.warehouse",
+  "kind": "Service",
+  "name": {
+    "en": "Warehouse",
+    "ru": "Склад"
+  },
+  "description": {
+    "en": "Warehouse operations and stock placement.",
+    "ru": "Складские операции и размещение запасов."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Warehouse",
+  "provides": [
+    {
+      "id": "warehouse.operations"
+    }
+  ],
+  "requires": [
+    {
+      "capabilityId": "inventory.management"
+    }
+  ],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": [
+      "ConnectionStrings__Warehouse"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/warehouse",
+      "grpcService": "WarehouseService"
+    }
+  ]
+}

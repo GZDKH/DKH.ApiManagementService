@@ -1,0 +1,36 @@
+{
+  "id": "dkh.media",
+  "kind": "Service",
+  "name": {
+    "en": "Media",
+    "ru": "Медиа"
+  },
+  "description": {
+    "en": "Image and file storage, asset processing.",
+    "ru": "Хранилище изображений и файлов, обработка ассетов."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Media",
+  "provides": [
+    {
+      "id": "media.assets"
+    }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": false,
+    "cache": true,
+    "env": [
+      "ConnectionStrings__Media"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/media",
+      "grpcService": "MediaService"
+    }
+  ]
+}

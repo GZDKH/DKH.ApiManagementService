@@ -1,0 +1,40 @@
+{
+  "id": "dkh.delivery",
+  "kind": "Service",
+  "name": {
+    "en": "Delivery",
+    "ru": "Доставка"
+  },
+  "description": {
+    "en": "Delivery fulfilment and shipment tracking.",
+    "ru": "Исполнение доставки и отслеживание отправлений."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Logistics",
+  "provides": [
+    {
+      "id": "delivery.fulfilment"
+    }
+  ],
+  "requires": [
+    {
+      "capabilityId": "logistics.routes"
+    }
+  ],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": [
+      "ConnectionStrings__Delivery"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/delivery",
+      "grpcService": "DeliveryService"
+    }
+  ]
+}

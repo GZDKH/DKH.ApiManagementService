@@ -1,0 +1,36 @@
+{
+  "id": "dkh.api-management",
+  "kind": "Service",
+  "name": {
+    "en": "API Management",
+    "ru": "Управление API"
+  },
+  "description": {
+    "en": "API keys, permissions, rate limits and usage analytics.",
+    "ru": "Ключи API, права доступа, лимиты и аналитика использования."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Platform",
+  "provides": [
+    {
+      "id": "platform.api-management"
+    }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": false,
+    "cache": true,
+    "env": [
+      "ConnectionStrings__ApiManagement"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/api-management/keys",
+      "grpcService": "ApiKeysCrudService"
+    }
+  ]
+}

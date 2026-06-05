@@ -9,22 +9,36 @@ namespace DKH.ApiManagementService.Infrastructure.Modularity;
 ///     Reads module and edition declarations from a configured directory (<c>Modularity:ManifestsDirectory</c>),
 ///     scanning recursively for <c>module.json</c> / <c>edition.json</c>. The deployment is responsible for
 ///     collecting each component's manifest into that directory. Returns empty when unconfigured or missing.
+///     Manifests are content-copied into the app output and immutable for the process lifetime, so each kind is
+///     scanned and parsed once (lazily, thread-safe) and the result cached — this source is a singleton hit on
+///     every catalog / dependency-graph / state request, and the catalog grows over time.
 /// </summary>
-public sealed class DirectoryModuleManifestSource(IConfiguration configuration) : IModuleManifestSource
+public sealed class DirectoryModuleManifestSource : IModuleManifestSource
 {
     private const string DirectoryKey = "Modularity:ManifestsDirectory";
 
     private static readonly JsonSerializerOptions SerializerOptions = new(JsonSerializerDefaults.Web);
 
-    private readonly string? _directory = ResolveDirectory(configuration[DirectoryKey]);
+    private readonly string? _directory;
+    private readonly Lazy<Task<IReadOnlyList<PlatformModuleManifest>>> _components;
+    private readonly Lazy<Task<IReadOnlyList<PlatformEditionManifest>>> _editions;
+
+    public DirectoryModuleManifestSource(IConfiguration configuration)
+    {
+        _directory = ResolveDirectory(configuration[DirectoryKey]);
+        _components = new Lazy<Task<IReadOnlyList<PlatformModuleManifest>>>(
+            () => LoadAsync<PlatformModuleManifest>("module.json"), LazyThreadSafetyMode.ExecutionAndPublication);
+        _editions = new Lazy<Task<IReadOnlyList<PlatformEditionManifest>>>(
+            () => LoadAsync<PlatformEditionManifest>("edition.json"), LazyThreadSafetyMode.ExecutionAndPublication);
+    }
 
     public Task<IReadOnlyList<PlatformModuleManifest>> GetComponentsAsync(CancellationToken cancellationToken = default)
-        => LoadAsync<PlatformModuleManifest>("module.json", cancellationToken);
+        => _components.Value;
 
     public Task<IReadOnlyList<PlatformEditionManifest>> GetEditionsAsync(CancellationToken cancellationToken = default)
-        => LoadAsync<PlatformEditionManifest>("edition.json", cancellationToken);
+        => _editions.Value;
 
-    private async Task<IReadOnlyList<T>> LoadAsync<T>(string fileName, CancellationToken cancellationToken)
+    private async Task<IReadOnlyList<T>> LoadAsync<T>(string fileName)
     {
         if (string.IsNullOrWhiteSpace(_directory) || !Directory.Exists(_directory))
         {
@@ -35,7 +49,7 @@ public sealed class DirectoryModuleManifestSource(IConfiguration configuration) 
         foreach (var file in Directory.EnumerateFiles(_directory, fileName, SearchOption.AllDirectories))
         {
             await using var stream = File.OpenRead(file);
-            var manifest = await JsonSerializer.DeserializeAsync<T>(stream, SerializerOptions, cancellationToken);
+            var manifest = await JsonSerializer.DeserializeAsync<T>(stream, SerializerOptions);
             if (manifest is not null)
             {
                 manifests.Add(manifest);

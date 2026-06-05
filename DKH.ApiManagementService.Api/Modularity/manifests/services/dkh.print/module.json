@@ -1,0 +1,36 @@
+{
+  "id": "dkh.print",
+  "kind": "Service",
+  "name": {
+    "en": "Print",
+    "ru": "Печать"
+  },
+  "description": {
+    "en": "Label, tag and document printing.",
+    "ru": "Печать этикеток, ярлыков и сопроводительных документов."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Operations",
+  "provides": [
+    {
+      "id": "print.labels"
+    }
+  ],
+  "requires": [],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": [
+      "ConnectionStrings__Print"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/print",
+      "grpcService": "PrintService"
+    }
+  ]
+}

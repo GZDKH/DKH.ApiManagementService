@@ -1,0 +1,40 @@
+{
+  "id": "dkh.procurement",
+  "kind": "Service",
+  "name": {
+    "en": "Procurement",
+    "ru": "Закупки"
+  },
+  "description": {
+    "en": "Supplier orders and goods receiving.",
+    "ru": "Заказы поставщикам и приёмка товара."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Operations",
+  "provides": [
+    {
+      "id": "procurement.orders"
+    }
+  ],
+  "requires": [
+    {
+      "capabilityId": "catalog.products"
+    }
+  ],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": [
+      "ConnectionStrings__Procurement"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/procurement",
+      "grpcService": "ProcurementService"
+    }
+  ]
+}
