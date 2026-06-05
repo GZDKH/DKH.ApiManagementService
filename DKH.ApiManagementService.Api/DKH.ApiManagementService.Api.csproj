@@ -10,6 +10,10 @@
     <Content Include="..\.dockerignore">
       <Link>.dockerignore</Link>
     </Content>
+    <!-- Production module/edition manifests shipped with the service and read by
+         DirectoryModuleManifestSource via Modularity:ManifestsDirectory. -->
+    <Content Remove="Modularity\manifests\**\*.json"/>
+    <Content Include="Modularity\manifests\**\*.json" CopyToOutputDirectory="PreserveNewest"/>
   </ItemGroup>
 
   <ItemGroup>
