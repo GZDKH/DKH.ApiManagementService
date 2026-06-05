@@ -15,5 +15,7 @@ public interface IAppDbContext
 
     DbSet<ModuleEntitlementEntity> ModuleEntitlements { get; }
 
+    DbSet<WebhookSubscriptionEntity> WebhookSubscriptions { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

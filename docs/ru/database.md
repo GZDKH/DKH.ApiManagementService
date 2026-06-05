@@ -77,6 +77,36 @@
 **Внешние ключи:**
 - `FK_api_key_usage_api_keys_ApiKeyId` -> `api_keys(Id)` ON DELETE CASCADE
 
+### webhook_subscriptions
+
+| Колонка | Тип | Ограничения |
+|---------|-----|-------------|
+| Id | `uuid` | PK |
+| ApiKeyId | `uuid` | NULLABLE, API-ключ-владелец подписки |
+| CustomerId | `uuid` | NULLABLE, владелец customer/tenant |
+| Name | `character varying(256)` | NOT NULL |
+| CallbackUrl | `character varying(2048)` | NOT NULL |
+| Events | `jsonb` | NOT NULL, нормализованные имена событий |
+| SigningSecretHash | `character varying(64)` | NOT NULL, SHA-256 hash signing secret |
+| SigningSecretPrefix | `character varying(32)` | NOT NULL, только отображаемый prefix |
+| Status | `character varying(32)` | NOT NULL (`Active`, `Disabled`) |
+| RetryMaxAttempts | `integer` | NOT NULL, default `5` |
+| RetryBackoffSeconds | `integer` | NOT NULL, default `30` |
+| DlqEnabled | `boolean` | NOT NULL, default `true` |
+| LastDeliveryAt | `timestamptz` | NULLABLE |
+| LastDeliverySucceeded | `boolean` | NULLABLE |
+| LastDeliveryStatusCode | `integer` | NULLABLE |
+| LastDeliveryError | `character varying(2048)` | NULLABLE |
+| FailureCount | `integer` | NOT NULL, default `0` |
+| LastRotatedAt | `timestamptz` | NULLABLE |
+| RotationCount | `integer` | NOT NULL, default `0` |
+
+**Индексы:**
+- `IX_webhook_subscriptions_ApiKeyId`
+- `IX_webhook_subscriptions_CustomerId`
+- `IX_webhook_subscriptions_Status`
+- `IX_webhook_subscriptions_CustomerId_Status`
+
 ## Миграции
 
 | Миграция | Дата | Описание |
@@ -84,6 +114,7 @@
 | `202502100001_InitialCreate` | 2026-02-10 | Создание таблиц `api_keys` и `api_key_usage` |
 | `RemoveDuplicateCreatedBy` | 2026-02-15 | Удаление дублирующей колонки `CreatedBy` из `api_keys` |
 | `AddPublicApiHardening` | 2026-06-04 | Добавляет владельца customer, sandbox/production environment, rate-limit tier, метаданные ротации и измерения usage analytics |
+| `AddWebhookSubscriptions` | 2026-06-05 | Добавляет `webhook_subscriptions` для callback URL, событий, HMAC metadata, retry/DLQ policy и delivery observability |
 
 ```bash
 # Добавить миграцию
