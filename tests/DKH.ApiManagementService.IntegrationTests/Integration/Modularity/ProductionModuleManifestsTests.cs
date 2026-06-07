@@ -78,6 +78,28 @@ public sealed class ProductionModuleManifestsTests
     }
 
     [Fact]
+    public async Task AppSettings_EnablesEveryServiceManifest_AndLeavesPluginsOptInAsync()
+    {
+        var components = await CreateSource().GetComponentsAsync();
+        var serviceIds = components
+            .Where(component => component.Kind == PlatformModuleKind.Service)
+            .Select(component => component.Id);
+        var pluginIds = components
+            .Where(component => component.Kind == PlatformModuleKind.Plugin)
+            .Select(component => component.Id);
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile(Path.Combine(AppContext.BaseDirectory, "appsettings.json"), optional: false)
+            .Build();
+
+        var enabledModuleIds = configuration
+            .GetSection(PlatformConfigurationModuleEntitlementProvider.ConfigurationKey)
+            .Get<string[]>() ?? [];
+
+        enabledModuleIds.Should().BeEquivalentTo(serviceIds);
+        enabledModuleIds.Should().NotContain(pluginIds);
+    }
+
+    [Fact]
     public async Task CoreServiceManifests_HaveNoEntitlement_SoTheyResolveVisibleAsync()
     {
         var components = await CreateSource().GetComponentsAsync();
