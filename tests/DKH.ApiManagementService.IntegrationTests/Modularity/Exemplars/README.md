@@ -18,6 +18,7 @@ service.
 | `dkh.product-catalog` | Service | `catalog.products`, `catalog.search` | — | (core, always available) |
 | `dkh.payments` | Service | `payments.checkout` | `catalog.products [3.0.0,)` | `payments` |
 | `dkh.logistics` | Service | `logistics.rates`, `logistics.routes` | `catalog.products` | `logistics` |
+| `dkh.engagement` | Service | `engagement.requests`, `engagement.providers`, `engagement.reports` | `catalog.products` | (core, always available) |
 | `dkh.ai.claude` | Plugin | `ai.provider.claude` | — | `ai.assistant` |
 | `dkh.payments.stripe` | Plugin | `payments.provider.stripe` | `payments.checkout [1.0.0,)` | `payments.stripe` |
 | `dkh.payments.telegram` | Plugin | `payments.provider.telegram` | `payments.checkout` | `payments.telegram` |
@@ -26,7 +27,7 @@ service.
 
 ```
 dkh.product-catalog, dkh.ai.claude   (no dependencies)
-  └─ dkh.payments, dkh.logistics      (need catalog.products)
+  └─ dkh.payments, dkh.logistics, dkh.engagement   (need catalog.products)
        └─ dkh.payments.stripe, dkh.payments.telegram   (need payments.checkout)
 ```
 
