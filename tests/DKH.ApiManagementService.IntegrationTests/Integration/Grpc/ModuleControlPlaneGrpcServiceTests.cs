@@ -149,11 +149,11 @@ public class ModuleControlPlaneGrpcServiceTests : PlatformIntegrationTest
     [Fact]
     public async Task CheckEntitlement_ReflectsConfiguredEnabledModulesAsync()
     {
-        await using var factory = CreateFactory(manifestsDirectory: null, enabledModules: "dkh.logistics");
+        await using var factory = CreateFactory(manifestsDirectory: null, enabledModules: "dkh.test-enabled");
         var client = this.CreateGrpcClient<EntitlementClient, GrpcTestExceptionPolicy>(factory);
 
-        var granted = await client.CheckEntitlementAsync(new CheckEntitlementRequest { ModuleId = "dkh.logistics" });
-        var denied = await client.CheckEntitlementAsync(new CheckEntitlementRequest { ModuleId = "dkh.payments" });
+        var granted = await client.CheckEntitlementAsync(new CheckEntitlementRequest { ModuleId = "dkh.test-enabled" });
+        var denied = await client.CheckEntitlementAsync(new CheckEntitlementRequest { ModuleId = "dkh.ai.claude" });
 
         granted.Granted.Should().BeTrue();
         denied.Granted.Should().BeFalse();
