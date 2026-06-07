@@ -1,0 +1,54 @@
+{
+  "id": "dkh.engagement",
+  "kind": "Service",
+  "name": {
+    "en": "Engagement Services",
+    "ru": "Выездные услуги"
+  },
+  "description": {
+    "en": "Marketplace requests, provider assignment, service reports and review workflow for field services.",
+    "ru": "Заявки маркетплейса, назначение исполнителей, отчеты и проверка выездных услуг."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Services",
+  "provides": [
+    {
+      "id": "engagement.requests"
+    },
+    {
+      "id": "engagement.providers"
+    },
+    {
+      "id": "engagement.reports"
+    }
+  ],
+  "requires": [
+    {
+      "capabilityId": "catalog.products"
+    }
+  ],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": true,
+    "env": [
+      "ConnectionStrings__Engagement"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/engagement/requests",
+      "grpcService": "EngagementService"
+    },
+    {
+      "path": "/api/v1/engagement/providers",
+      "grpcService": "ServiceProviderProfileService"
+    },
+    {
+      "path": "/api/v1/engagement/reports",
+      "grpcService": "EngagementReportService"
+    }
+  ]
+}

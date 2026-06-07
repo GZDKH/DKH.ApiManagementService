@@ -21,6 +21,7 @@ public sealed class ModuleManifestExemplarsTests
     private static readonly string[] CanonicalComponentIds =
     [
         "dkh.product-catalog", "dkh.payments", "dkh.logistics",
+        "dkh.engagement",
         "dkh.ai.claude", "dkh.payments.stripe", "dkh.payments.telegram",
     ];
 
