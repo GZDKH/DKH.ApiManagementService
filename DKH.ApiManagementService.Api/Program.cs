@@ -62,7 +62,14 @@ await Platform
         PlatformRoles.Realm.SuperAdmin,
         PlatformRoles.Realm.Admin,
         PlatformRoles.FullAccess,
-        PlatformRoles.Realm.StorefrontOwner))
+        PlatformRoles.Realm.StorefrontOwner)
+        .AddRolePolicy(
+            ApiManagementServiceAuthorizationPolicies.ScopeTokenIssuerAccess,
+            PlatformRoles.Realm.SuperAdmin,
+            PlatformRoles.Realm.Admin,
+            PlatformRoles.FullAccess,
+            PlatformRoles.Realm.StorefrontOwner,
+            "engagement.operator"))
     .ConfigurePlatformWebApplicationBuilder(builder =>
     {
         builder.Services.AddPlatformResourceAccess<ApiKeyEntity, ApiManagementAccessGrantEntity, Guid>(opts =>
@@ -109,6 +116,7 @@ await Platform
         grpc.MapService<ApiKeyCrudGrpcService>();
         grpc.MapService<ApiKeyValidationGrpcService>();
         grpc.MapService<ApiKeyUsageGrpcService>();
+        grpc.MapService<ScopeTokenGrpcService>();
         grpc.MapService<AiProviderCrudGrpcService>();
         grpc.MapService<ApiManagementGrantsGrpcService>();
         grpc.MapService<ModuleCatalogGrpcService>();
@@ -122,4 +130,5 @@ await Platform
 internal static class ApiManagementServiceAuthorizationPolicies
 {
     public const string ApiManagementAdminAccess = "ApiManagementAdminAccess";
+    public const string ScopeTokenIssuerAccess = "ScopeTokenIssuerAccess";
 }

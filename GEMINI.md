@@ -76,11 +76,11 @@ pwsh ./.scripts/maintenance/clean.ps1
 - `DKH.ApiManagementService.Domain` — Entities (ApiKey, ApiKeyUsage), value objects (ApiKeyHash, Permission), enums (ApiKeyScope)
 - `DKH.ApiManagementService.Application` — MediatR handlers, validators, mappers
 - `DKH.ApiManagementService.Infrastructure` — EF Core DbContext, repositories, ApiKeyGenerator
-- `DKH.ApiManagementService.Api` — gRPC services (3 services), Program.cs, DI setup
+- `DKH.ApiManagementService.Api` — gRPC services, Program.cs, DI setup
 - `DKH.ApiManagementService.Contracts` — Protobuf schemas in `proto/api_management/`
 
 **Gateway Pattern:**
-gRPC Clients (AdminGateway, McpGateway) → gRPC Services → MediatR Handlers → Domain
+gRPC Clients (AdminGateway, McpGateway, EngagementService) → gRPC Services → MediatR Handlers → Domain
 
 ## Downstream Services (via gRPC)
 
@@ -93,13 +93,14 @@ This service has no downstream gRPC dependencies.
 | ApiKeyCrudService | Create, Get, List, Update, Delete, Regenerate | API key lifecycle management |
 | ApiKeyValidationService | ValidateApiKey, CheckPermission | Key validation and permission checks |
 | ApiKeyUsageService | RecordUsage, GetUsageStats, GetUsageHistory | Usage tracking and statistics |
+| ScopeTokenService | IssueTemporaryScopeToken | Trusted service workflow token issuing |
 
 ## Contracts (gRPC)
 
-Proto files in `DKH.ApiManagementService.Contracts/proto/api_management/{services|models}/v1/`
-- Services: `api_key_crud_service.proto`, `api_key_validation_service.proto`, `api_key_usage_service.proto`
+Proto files in `DKH.ApiManagementService.Contracts/proto/api_management/{api|models}/`
+- Services: `api_key_crud_service.proto`, `api_key_query_service.proto`, `api_key_usage_service.proto`, `scope_token_service.proto`
 - Models: `api_key.proto`, `api_key_usage.proto`
-- C# namespace: `DKH.ApiManagementService.Contracts.Services.V1` / `DKH.ApiManagementService.Contracts.Models.V1`
+- C# namespace: `DKH.ApiManagementService.Contracts.ApiManagement.Api.*.v1` / `DKH.ApiManagementService.Contracts.ApiManagement.Models.*.v1`
 
 ## Configuration
 
@@ -131,6 +132,7 @@ Proto files in `DKH.ApiManagementService.Contracts/proto/api_management/{service
 
 - `DKH.AdminGateway` — API key management UI (CRUD, usage stats)
 - `DKH.McpGateway` — API key validation for MCP tool requests
+- `DKH.EngagementService` — temporary scope token issuing after service-provider approval
 
 ## Related Repositories
 

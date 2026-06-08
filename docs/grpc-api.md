@@ -34,6 +34,15 @@ Usage tracking and statistics.
 | GetUsageStats | `GetUsageStatsRequest` | `GetUsageStatsResponse` | Get aggregated usage statistics for a key over a time range |
 | GetUsageHistory | `GetUsageHistoryRequest` | `GetUsageHistoryResponse` | Get paginated usage history for a key over a time range |
 
+### ScopeTokenService
+
+Short-lived scope token issuing for trusted service workflows. The service is protected by
+the `ScopeTokenIssuerAccess` policy and accepts admin/full-access roles plus `engagement.operator`.
+
+| Method | Request | Response | Description |
+|--------|---------|----------|-------------|
+| IssueTemporaryScopeToken | `IssueTemporaryScopeTokenRequest` | `IssueTemporaryScopeTokenResponse` | Issue a temporary raw token for a subject, resource, permission set, and TTL |
+
 ## Models
 
 ### ApiKeyModel
@@ -97,6 +106,8 @@ DKH.ApiManagementService.Contracts/proto/api_management/
 │   │   └── api_keys_crud_service.proto
 │   ├── api_key_query/v1/
 │   │   └── api_key_query_service.proto
+│   ├── scope_token/v1/
+│   │   └── scope_token_service.proto
 │   └── api_key_usage/v1/
 │       └── api_key_usage_service.proto
 └── models/
@@ -113,6 +124,7 @@ DKH.ApiManagementService.Contracts/proto/api_management/
 | `proto.api_management.api.api_key_crud.v1` | `DKH.ApiManagementService.Contracts.ApiManagement.Api.ApiKeyCrud.v1` |
 | `proto.api_management.api.api_key_query.v1` | `DKH.ApiManagementService.Contracts.ApiManagement.Api.ApiKeyQuery.v1` |
 | `proto.api_management.api.api_key_usage.v1` | `DKH.ApiManagementService.Contracts.ApiManagement.Api.ApiKeyUsage.v1` |
+| `proto.api_management.api.scope_token.v1` | `DKH.ApiManagementService.Contracts.ApiManagement.Api.ScopeToken.v1` |
 | `proto.api_management.models.api_key.v1` | `DKH.ApiManagementService.Contracts.ApiManagement.Models.ApiKey.v1` |
 | `proto.api_management.models.api_key_usage.v1` | `DKH.ApiManagementService.Contracts.ApiManagement.Models.ApiKeyUsage.v1` |
 
