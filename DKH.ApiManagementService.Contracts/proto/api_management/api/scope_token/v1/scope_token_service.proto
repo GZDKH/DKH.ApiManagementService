@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package proto.api_management.api.scope_token.v1;
+
+option csharp_namespace = "DKH.ApiManagementService.Contracts.ApiManagement.Api.ScopeToken.v1";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "types/guid.proto";
+
+service ScopeTokenService {
+  rpc IssueTemporaryScopeToken(IssueTemporaryScopeTokenRequest) returns (IssueTemporaryScopeTokenResponse);
+}
+
+message IssueTemporaryScopeTokenRequest {
+  string subject_id = 1;
+  string resource_type = 2;
+  proto.platform.grpc.common.types.GuidValue resource_id = 3;
+  repeated string permissions = 4;
+  int32 ttl_seconds = 5;
+  google.protobuf.StringValue reason = 6;
+}
+
+message IssueTemporaryScopeTokenResponse {
+  string raw_token = 1;
+  google.protobuf.Timestamp expires_at = 2;
+}

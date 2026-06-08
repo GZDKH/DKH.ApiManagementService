@@ -36,6 +36,15 @@ CRUD-операции для управления API-ключами.
 | GetUsageStats | `GetUsageStatsRequest` | `GetUsageStatsResponse` | Агрегированная статистика использования ключа за период |
 | GetUsageHistory | `GetUsageHistoryRequest` | `GetUsageHistoryResponse` | Пагинированная история использования ключа за период |
 
+### ScopeTokenService
+
+Выпуск короткоживущих scope token для доверенных service workflow. Сервис защищён
+политикой `ScopeTokenIssuerAccess` и доступен admin/full-access ролям, а также роли `engagement.operator`.
+
+| Метод | Запрос | Ответ | Описание |
+|-------|--------|-------|----------|
+| IssueTemporaryScopeToken | `IssueTemporaryScopeTokenRequest` | `IssueTemporaryScopeTokenResponse` | Выпуск временного raw token для subject, resource, набора разрешений и TTL |
+
 ## Модели
 
 ### ApiKeyModel
@@ -99,6 +108,8 @@ DKH.ApiManagementService.Contracts/proto/api_management/
 │   │   └── api_keys_crud_service.proto
 │   ├── api_key_query/v1/
 │   │   └── api_key_query_service.proto
+│   ├── scope_token/v1/
+│   │   └── scope_token_service.proto
 │   └── api_key_usage/v1/
 │       └── api_key_usage_service.proto
 └── models/
@@ -115,6 +126,7 @@ DKH.ApiManagementService.Contracts/proto/api_management/
 | `proto.api_management.api.api_key_crud.v1` | `DKH.ApiManagementService.Contracts.ApiManagement.Api.ApiKeyCrud.v1` |
 | `proto.api_management.api.api_key_query.v1` | `DKH.ApiManagementService.Contracts.ApiManagement.Api.ApiKeyQuery.v1` |
 | `proto.api_management.api.api_key_usage.v1` | `DKH.ApiManagementService.Contracts.ApiManagement.Api.ApiKeyUsage.v1` |
+| `proto.api_management.api.scope_token.v1` | `DKH.ApiManagementService.Contracts.ApiManagement.Api.ScopeToken.v1` |
 | `proto.api_management.models.api_key.v1` | `DKH.ApiManagementService.Contracts.ApiManagement.Models.ApiKey.v1` |
 | `proto.api_management.models.api_key_usage.v1` | `DKH.ApiManagementService.Contracts.ApiManagement.Models.ApiKeyUsage.v1` |
 

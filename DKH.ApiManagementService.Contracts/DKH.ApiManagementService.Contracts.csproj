@@ -11,6 +11,7 @@
     <Protobuf Include="proto/api_management/api/api_key_crud/v1/api_keys_crud_service.proto" ProtoRoot="proto" AdditionalProtocArguments="--proto_path=$(DKHPlatformGrpcCommonProtoDir)"/>
     <Protobuf Include="proto/api_management/api/api_key_query/v1/api_key_query_service.proto" ProtoRoot="proto" AdditionalProtocArguments="--proto_path=$(DKHPlatformGrpcCommonProtoDir)"/>
     <Protobuf Include="proto/api_management/api/api_key_usage/v1/api_key_usage_service.proto" ProtoRoot="proto" AdditionalProtocArguments="--proto_path=$(DKHPlatformGrpcCommonProtoDir)"/>
+    <Protobuf Include="proto/api_management/api/scope_token/v1/scope_token_service.proto" ProtoRoot="proto" AdditionalProtocArguments="--proto_path=$(DKHPlatformGrpcCommonProtoDir)"/>
     <Protobuf Include="proto/api_management/models/api_key/v1/api_key.proto" ProtoRoot="proto" AdditionalProtocArguments="--proto_path=$(DKHPlatformGrpcCommonProtoDir)"/>
     <Protobuf Include="proto/api_management/models/api_key_usage/v1/api_key_usage.proto" ProtoRoot="proto" AdditionalProtocArguments="--proto_path=$(DKHPlatformGrpcCommonProtoDir)"/>
     <Protobuf Include="proto/api_management/models/ai_provider/v1/ai_provider.proto" ProtoRoot="proto" AdditionalProtocArguments="--proto_path=$(DKHPlatformGrpcCommonProtoDir)"/>

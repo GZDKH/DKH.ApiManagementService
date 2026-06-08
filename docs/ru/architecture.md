@@ -38,7 +38,7 @@ Api (gRPC) → Application (Commands/Queries) → Domain (Entities) ← Infrastr
 
 ### Api
 
-- Три gRPC-сервиса, диспетчеризующие запросы в MediatR
+- gRPC-сервисы, диспетчеризующие запросы в MediatR
 - Точка входа через Platform builder (`Platform.CreateWeb`)
 
 ## Взаимодействие
@@ -46,6 +46,7 @@ Api (gRPC) → Application (Commands/Queries) → Domain (Entities) ← Infrastr
 ```
 AdminGateway (REST) ──gRPC──► ApiManagementService ──► PostgreSQL
 McpGateway   (MCP)  ──gRPC──► ApiManagementService
+EngagementService    ──gRPC──► ApiManagementService
 ```
 
 ## Конфигурация

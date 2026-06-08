@@ -36,7 +36,7 @@ Api (gRPC) → Application (Commands/Queries) → Domain (Entities) ← Infrastr
 
 ### Api
 
-- Three gRPC services dispatching to MediatR
+- gRPC services dispatching to MediatR
 - Platform builder entry point (`Platform.CreateWeb`)
 
 ## Communication
@@ -44,6 +44,7 @@ Api (gRPC) → Application (Commands/Queries) → Domain (Entities) ← Infrastr
 ```
 AdminGateway (REST) ──gRPC──► ApiManagementService ──► PostgreSQL
 McpGateway   (MCP)  ──gRPC──► ApiManagementService
+EngagementService    ──gRPC──► ApiManagementService
 ```
 
 ## Configuration
