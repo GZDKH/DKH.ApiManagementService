@@ -55,6 +55,11 @@ public static class ApiKeyMapper
             proto.CustomerId = GuidValue.FromGuid(entity.CustomerId.Value);
         }
 
+        if (entity.StorefrontId.HasValue)
+        {
+            proto.StorefrontId = GuidValue.FromGuid(entity.StorefrontId.Value);
+        }
+
         if (entity.LastRotatedAt.HasValue)
         {
             proto.LastRotatedAt = Timestamp.FromDateTimeOffset(entity.LastRotatedAt.Value);

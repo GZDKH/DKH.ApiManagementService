@@ -42,6 +42,7 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeysCrudService.ApiK
                 request.Description,
                 request.ExpiresAt?.ToDateTimeOffset(),
                 request.CustomerId?.ToGuid(),
+                request.StorefrontId?.ToGuid(),
                 environment,
                 rateLimitTier),
             context.CancellationToken);

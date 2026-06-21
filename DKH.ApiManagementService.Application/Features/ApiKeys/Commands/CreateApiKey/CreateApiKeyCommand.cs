@@ -13,6 +13,7 @@ public sealed record CreateApiKeyCommand(
     string? Description = null,
     DateTimeOffset? ExpiresAt = null,
     Guid? CustomerId = null,
+    Guid? StorefrontId = null,
     DomainEnvironment Environment = DomainEnvironment.Production,
     DomainRateLimitTier RateLimitTier = DomainRateLimitTier.Standard) : IRequest<CreateApiKeyResult>;
 
