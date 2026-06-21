@@ -33,6 +33,11 @@ public class ApiKeyValidationGrpcService(IMediator mediator) : ApiKeyQueryServic
             response.CustomerId = GuidValue.FromGuid(result.CustomerId.Value);
         }
 
+        if (result.StorefrontId.HasValue)
+        {
+            response.StorefrontId = GuidValue.FromGuid(result.StorefrontId.Value);
+        }
+
         if (result.Environment.HasValue)
         {
             response.Environment = result.Environment.Value.ToProtoEnvironment();
