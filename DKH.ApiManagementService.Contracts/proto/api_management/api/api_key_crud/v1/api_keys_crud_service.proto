@@ -34,6 +34,7 @@ message CreateApiKeyRequest {
   proto.platform.grpc.common.types.GuidValue customer_id = 7;
   proto.api_management.models.api_key.v1.ApiKeyEnvironment environment = 8;
   proto.api_management.models.api_key.v1.ApiKeyRateLimitTier rate_limit_tier = 9;
+  proto.platform.grpc.common.types.GuidValue storefront_id = 10;
 }
 
 message CreateApiKeyResponse {

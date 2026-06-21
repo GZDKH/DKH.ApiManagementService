@@ -58,4 +58,5 @@ message ApiKeyModel {
   google.protobuf.Timestamp last_rotated_at = 17;
   int32 rotation_count = 18;
   google.protobuf.StringValue previous_key_prefix = 19;
+  proto.platform.grpc.common.types.GuidValue storefront_id = 20;
 }
