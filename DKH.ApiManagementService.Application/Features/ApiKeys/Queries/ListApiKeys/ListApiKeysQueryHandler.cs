@@ -52,6 +52,11 @@ public sealed class ListApiKeysQueryHandler(IAppDbContext dbContext, IPlatformCu
             query = query.Where(x => x.RateLimitTier == request.RateLimitTierFilter.Value);
         }
 
+        if (request.StorefrontIdFilter.HasValue)
+        {
+            query = query.Where(x => x.StorefrontId == request.StorefrontIdFilter.Value);
+        }
+
         var totalCount = await query.CountAsync(cancellationToken);
 
         var entities = await query

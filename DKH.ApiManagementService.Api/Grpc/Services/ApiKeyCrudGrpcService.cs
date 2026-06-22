@@ -101,6 +101,7 @@ public class ApiKeyCrudGrpcService(IMediator mediator) : ApiKeysCrudService.ApiK
                 request.CustomerIdFilter?.ToGuid(),
                 environmentFilter,
                 rateLimitTierFilter,
+                request.StorefrontIdFilter?.ToGuid(),
                 softDeleteFilter),
             context.CancellationToken);
 
