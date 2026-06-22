@@ -16,6 +16,7 @@ public sealed record ListApiKeysQuery(
     Guid? CustomerIdFilter = null,
     DomainEnvironment? EnvironmentFilter = null,
     DomainRateLimitTier? RateLimitTierFilter = null,
+    Guid? StorefrontIdFilter = null,
     PlatformSoftDeleteFilter SoftDeleteFilter = PlatformSoftDeleteFilter.ActiveOnly) : IRequest<ListApiKeysResult>;
 
 public sealed record ListApiKeysResult(IReadOnlyList<ApiKeyModel> ApiKeys, int TotalCount);

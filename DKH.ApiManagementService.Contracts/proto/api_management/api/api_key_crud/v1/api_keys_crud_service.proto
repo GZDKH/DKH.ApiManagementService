@@ -58,6 +58,7 @@ message ListApiKeysRequest {
   proto.platform.grpc.common.types.GuidValue customer_id_filter = 5;
   proto.api_management.models.api_key.v1.ApiKeyEnvironment environment_filter = 6;
   proto.api_management.models.api_key.v1.ApiKeyRateLimitTier rate_limit_tier_filter = 7;
+  proto.platform.grpc.common.types.GuidValue storefront_id_filter = 8;
 }
 
 message ListApiKeysResponse {
