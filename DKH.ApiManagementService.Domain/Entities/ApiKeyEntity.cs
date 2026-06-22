@@ -28,6 +28,7 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
         ApiKeyScope scope,
         IReadOnlyList<string> permissions,
         Guid? customerId,
+        Guid? storefrontId,
         ApiKeyEnvironment environment,
         ApiKeyRateLimitTier rateLimitTier,
         string? description,
@@ -41,6 +42,7 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
         Status = ApiKeyStatus.Active;
         Permissions = [.. permissions];
         CustomerId = customerId;
+        StorefrontId = storefrontId;
         Environment = environment;
         RateLimitTier = rateLimitTier;
         RateLimitRequestsPerMinute = ApiKeyRateLimitPolicy.GetRequestsPerMinute(environment, rateLimitTier);
@@ -61,6 +63,8 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
     public List<string> Permissions { get; private set; } = [];
 
     public Guid? CustomerId { get; private set; }
+
+    public Guid? StorefrontId { get; private set; }
 
     public ApiKeyEnvironment Environment { get; private set; }
 
@@ -100,6 +104,7 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
             scope,
             permissions,
             customerId: null,
+            storefrontId: null,
             ApiKeyEnvironment.Production,
             ApiKeyRateLimitTier.Standard,
             description,
@@ -118,6 +123,33 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
         string? description = null,
         DateTimeOffset? expiresAt = null)
     {
+        return Create(
+            name,
+            keyHash,
+            keyPrefix,
+            scope,
+            permissions,
+            customerId,
+            storefrontId: null,
+            environment,
+            rateLimitTier,
+            description,
+            expiresAt);
+    }
+
+    public static ApiKeyEntity Create(
+        string name,
+        string keyHash,
+        string keyPrefix,
+        ApiKeyScope scope,
+        IReadOnlyList<string> permissions,
+        Guid? customerId,
+        Guid? storefrontId,
+        ApiKeyEnvironment environment,
+        ApiKeyRateLimitTier rateLimitTier,
+        string? description = null,
+        DateTimeOffset? expiresAt = null)
+    {
         var entity = new ApiKeyEntity(
             Require(name, nameof(name)),
             Require(keyHash, nameof(keyHash)),
@@ -125,12 +157,13 @@ public sealed class ApiKeyEntity : FullAuditedEntityWithKey<Guid>, IAggregateRoo
             scope,
             permissions,
             customerId,
+            storefrontId,
             environment,
             rateLimitTier,
             description,
             expiresAt);
 
-        entity.AddDomainEvent(new ApiKeyCreatedDomainEvent(entity.Id, entity.Name, scope));
+        entity.AddDomainEvent(new ApiKeyCreatedDomainEvent(entity.Id, entity.Name, scope, storefrontId));
 
         return entity;
     }

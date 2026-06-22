@@ -37,6 +37,7 @@ public sealed class ValidateApiKeyQueryHandler(IApiKeyRepository repository) : I
             entity.Scope,
             entity.Permissions,
             entity.CustomerId,
+            entity.StorefrontId,
             entity.Environment,
             entity.RateLimitTier,
             entity.RateLimitRequestsPerMinute);

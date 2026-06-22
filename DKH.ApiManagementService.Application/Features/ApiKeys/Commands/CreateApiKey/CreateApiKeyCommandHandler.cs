@@ -20,6 +20,7 @@ public sealed class CreateApiKeyCommandHandler(
             request.Scope,
             request.Permissions,
             request.CustomerId,
+            request.StorefrontId,
             request.Environment,
             request.RateLimitTier,
             request.Description,

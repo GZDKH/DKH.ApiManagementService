@@ -10,6 +10,7 @@ public sealed record ValidateApiKeyResult(
     Domain.Enums.ApiKeyScope? Scope = null,
     IReadOnlyList<string>? Permissions = null,
     Guid? CustomerId = null,
+    Guid? StorefrontId = null,
     Domain.Enums.ApiKeyEnvironment? Environment = null,
     Domain.Enums.ApiKeyRateLimitTier? RateLimitTier = null,
     int? RateLimitRequestsPerMinute = null,
