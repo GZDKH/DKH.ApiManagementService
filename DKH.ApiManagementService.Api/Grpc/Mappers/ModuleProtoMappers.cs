@@ -83,6 +83,8 @@ internal static class ModuleProtoMappers
             Version = manifest.Version,
             RequiresEntitlement = manifest.RequiresEntitlement ?? string.Empty,
             State = (state ?? ModuleLifecycleState.Discovered).ToProto(),
+            Description = ToLocalizedText(manifest.Description),
+            Category = manifest.Category ?? string.Empty,
         };
 
         foreach (var capability in manifest.Provides)
