@@ -73,6 +73,10 @@ message ModuleComponentModel {
   repeated ModuleDependency requires = 6;
   string requires_entitlement = 7;
   ModuleState state = 8;
+  // Localized human-readable description from the component's manifest.
+  LocalizedText description = 9;
+  // Functional category from the manifest (e.g. "Commerce/Payments"); empty when unset.
+  string category = 10;
 }
 
 // A sellable bundle of components.
