@@ -33,6 +33,52 @@ public class ModuleStateGrpcService(IAppDbContext dbContext, IModuleManifestSour
         return entity.ToStateModel();
     }
 
+    // A host service (e.g. PaymentService) reports a side-load plugin it loaded so the plugin appears
+    // in the unified module catalog (it has no module.json in this service's directory). Anonymous like
+    // GetModuleState — an internal service-to-service call on the docker network; the catalog is
+    // non-sensitive display data and the network boundary is the control. Upsert by component id.
+    [AllowAnonymous]
+    public override async Task<ModuleComponentModel> ReportComponent(ReportComponentRequest request, ServerCallContext context)
+    {
+        var component = request.Component;
+        if (component is null || string.IsNullOrWhiteSpace(component.Id))
+        {
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "ReportComponent requires a component with an id."));
+        }
+
+        var kind = component.Kind switch
+        {
+            ModuleKind.Plugin => "Plugin",
+            ModuleKind.Service => "Service",
+            _ => "Unspecified",
+        };
+        var name = component.Name?.Values.ToDictionary(pair => pair.Key, pair => pair.Value) ?? [];
+        var description = component.Description is { Values.Count: > 0 }
+            ? component.Description.Values.ToDictionary(pair => pair.Key, pair => pair.Value)
+            : null;
+        var provides = component.Provides.Select(capability => new ReportedCapability(capability.Id, capability.Version)).ToList();
+        var requires = component.Requires.Select(dependency => new ReportedDependency(dependency.CapabilityId, dependency.VersionRange)).ToList();
+        var state = component.State.ToLifecycleState();
+
+        var entity = await dbContext.ReportedModuleComponents
+            .FirstOrDefaultAsync(x => x.ModuleId == component.Id, context.CancellationToken);
+
+        if (entity is null)
+        {
+            entity = ReportedModuleComponentEntity.Create(
+                component.Id, kind, name, component.Version, description, component.Category,
+                provides, requires, component.RequiresEntitlement, state);
+            dbContext.ReportedModuleComponents.Add(entity);
+        }
+        else
+        {
+            entity.Update(kind, name, component.Version, description, component.Category, provides, requires, component.RequiresEntitlement, state);
+        }
+
+        await dbContext.SaveChangesAsync(context.CancellationToken);
+        return component;
+    }
+
     public override Task<ModuleStateModel> EnableModule(EnableModuleRequest request, ServerCallContext context)
         => TransitionAsync(request.ModuleId, entity => entity.Enable(), context);
 
