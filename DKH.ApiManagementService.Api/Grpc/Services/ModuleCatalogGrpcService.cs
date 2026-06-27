@@ -26,8 +26,24 @@ public class ModuleCatalogGrpcService(IModuleManifestSource manifestSource, IApp
             .ToDictionaryAsync(x => x.ModuleId, x => x.State, context.CancellationToken);
 
         var response = new ListComponentsResponse();
-        response.Components.AddRange(components.Select(component =>
-            component.ToComponentModel(stateByModuleId.TryGetValue(component.Id, out var state) ? state : null)));
+        var directoryIds = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var component in components)
+        {
+            directoryIds.Add(component.Id);
+            response.Components.Add(
+                component.ToComponentModel(stateByModuleId.TryGetValue(component.Id, out var state) ? state : null));
+        }
+
+        // Side-load plugins reported by their host services (e.g. PaymentService's Stripe/Telegram).
+        // They have no module.json here, so they live only in ReportedModuleComponents. A first-party
+        // directory manifest wins on id collision (it is authoritative).
+        var reported = await dbContext.ReportedModuleComponents
+            .AsNoTracking()
+            .ToListAsync(context.CancellationToken);
+        response.Components.AddRange(reported
+            .Where(component => !directoryIds.Contains(component.ModuleId))
+            .Select(component => component.ToComponentModel()));
+
         return response;
     }
 

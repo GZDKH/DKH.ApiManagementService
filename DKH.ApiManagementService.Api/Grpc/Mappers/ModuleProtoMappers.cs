@@ -120,6 +120,62 @@ internal static class ModuleProtoMappers
         Granted = entity.Granted,
     };
 
+    // A side-load plugin reported by its host service (not in this service's module.json directory).
+    public static ProtoModule.ModuleComponentModel ToComponentModel(this ReportedModuleComponentEntity entity)
+    {
+        var model = new ProtoModule.ModuleComponentModel
+        {
+            Id = entity.ModuleId,
+            Kind = entity.Kind switch
+            {
+                "Plugin" => ProtoModule.ModuleKind.Plugin,
+                "Service" => ProtoModule.ModuleKind.Service,
+                _ => ProtoModule.ModuleKind.Unspecified,
+            },
+            Name = ToLocalizedTextFromMap(entity.Name),
+            Version = entity.Version,
+            Description = ToLocalizedTextFromMap(entity.Description),
+            Category = entity.Category ?? string.Empty,
+            RequiresEntitlement = entity.RequiresEntitlement ?? string.Empty,
+            State = entity.State.ToProto(),
+        };
+
+        foreach (var capability in entity.Provides)
+        {
+            model.Provides.Add(new ProtoModule.ModuleCapability { Id = capability.Id, Version = capability.Version });
+        }
+
+        foreach (var dependency in entity.Requires)
+        {
+            model.Requires.Add(new ProtoModule.ModuleDependency { CapabilityId = dependency.CapabilityId, VersionRange = dependency.VersionRange });
+        }
+
+        return model;
+    }
+
+    public static ModuleLifecycleState ToLifecycleState(this ProtoModule.ModuleState state) => state switch
+    {
+        ProtoModule.ModuleState.Installed => ModuleLifecycleState.Installed,
+        ProtoModule.ModuleState.Enabled => ModuleLifecycleState.Enabled,
+        ProtoModule.ModuleState.Disabled => ModuleLifecycleState.Disabled,
+        ProtoModule.ModuleState.Failed => ModuleLifecycleState.Failed,
+        _ => ModuleLifecycleState.Discovered,
+    };
+
+    private static ProtoModule.LocalizedText ToLocalizedTextFromMap(IReadOnlyDictionary<string, string>? values)
+    {
+        var text = new ProtoModule.LocalizedText();
+        if (values is not null)
+        {
+            foreach (var pair in values)
+            {
+                text.Values[pair.Key] = pair.Value;
+            }
+        }
+
+        return text;
+    }
+
     private static ProtoModule.LocalizedText ToLocalizedText(LocalizedString? source)
     {
         var text = new ProtoModule.LocalizedText();

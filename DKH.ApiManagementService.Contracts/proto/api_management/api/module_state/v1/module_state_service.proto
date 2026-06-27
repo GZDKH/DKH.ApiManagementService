@@ -12,6 +12,9 @@ service ModuleStateService {
   rpc EnableModule(EnableModuleRequest) returns (proto.api_management.models.module.v1.ModuleStateModel);
   rpc DisableModule(DisableModuleRequest) returns (proto.api_management.models.module.v1.ModuleStateModel);
   rpc GetModuleState(GetModuleStateRequest) returns (proto.api_management.models.module.v1.ModuleStateModel);
+  // Host services call this to register a side-loaded plugin component into the catalog.
+  // Upserts by id; subsequent calls update all fields including state.
+  rpc ReportComponent(ReportComponentRequest) returns (proto.api_management.models.module.v1.ModuleComponentModel);
 }
 
 message InstallModuleRequest {
@@ -29,4 +32,8 @@ message DisableModuleRequest {
 
 message GetModuleStateRequest {
   string module_id = 1;
+}
+
+message ReportComponentRequest {
+  proto.api_management.models.module.v1.ModuleComponentModel component = 1;
 }
