@@ -17,6 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Direct pin overrides the transitive Microsoft.OpenApi 2.0.0 (GHSA-v5pm-xwqc-g5wc,
+         NU1903) pulled via the Platform packages; version from Directory.Packages.props. -->
+    <PackageReference Include="Microsoft.OpenApi"/>
     <PackageReference Include="DKH.Platform"/>
     <PackageReference Include="DKH.Platform.ApiKeyAuth"/>
     <PackageReference Include="DKH.Platform.Authentication.Keycloak"/>
