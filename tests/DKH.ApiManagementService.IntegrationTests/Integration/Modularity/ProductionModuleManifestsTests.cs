@@ -36,7 +36,7 @@ public sealed class ProductionModuleManifestsTests
     private static readonly string[] ExpectedServiceIds =
     [
         "dkh.api-management", "dkh.assistant", "dkh.broadcast", "dkh.cart", "dkh.counterparty",
-        "dkh.customers", "dkh.customs", "dkh.delivery", "dkh.inventory", "dkh.logistics",
+        "dkh.customers", "dkh.customs", "dkh.delivery", "dkh.engagement", "dkh.inventory", "dkh.logistics",
         "dkh.media", "dkh.notifications", "dkh.orders", "dkh.payments", "dkh.print",
         "dkh.procurement", "dkh.product-catalog", "dkh.product-request", "dkh.reference", "dkh.reviews",
         "dkh.search", "dkh.staff", "dkh.storefront", "dkh.subscription", "dkh.telegram-bot",
