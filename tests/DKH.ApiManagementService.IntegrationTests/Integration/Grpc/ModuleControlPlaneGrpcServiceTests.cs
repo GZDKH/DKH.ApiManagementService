@@ -160,6 +160,20 @@ public class ModuleControlPlaneGrpcServiceTests : PlatformIntegrationTest
     }
 
     [Fact]
+    public async Task CheckEntitlement_AllowsAnonymousCaller_ForRuntimeGateAsync()
+    {
+        await using var factory = CreateFactory(
+            manifestsDirectory: null,
+            caller: Caller.Anonymous,
+            enabledModules: "dkh.test-enabled");
+        var client = this.CreateGrpcClient<EntitlementClient, GrpcTestExceptionPolicy>(factory);
+
+        var response = await client.CheckEntitlementAsync(new CheckEntitlementRequest { ModuleId = "dkh.test-enabled" });
+
+        response.Granted.Should().BeTrue();
+    }
+
+    [Fact]
     public async Task ListComponents_IngestsManifestsFromDirectoryAsync()
     {
         var directory = Directory.CreateTempSubdirectory("dkh-modules-").FullName;

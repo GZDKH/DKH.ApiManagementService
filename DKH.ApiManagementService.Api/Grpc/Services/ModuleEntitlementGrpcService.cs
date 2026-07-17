@@ -13,6 +13,8 @@ public class ModuleEntitlementGrpcService(
     IPlatformModuleEntitlementProvider entitlementProvider,
     IAppDbContext dbContext) : ModuleEntitlementService.ModuleEntitlementServiceBase
 {
+    // Gateways call this read-only check from public routes before user auth has run.
+    [AllowAnonymous]
     public override async Task<CheckEntitlementResponse> CheckEntitlement(CheckEntitlementRequest request, ServerCallContext context)
     {
         var granted = await entitlementProvider.IsEntitledAsync(
