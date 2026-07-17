@@ -1,0 +1,67 @@
+{
+  "id": "dkh.engagement",
+  "kind": "Service",
+  "name": {
+    "en": "Engagement Services",
+    "ru": "Сервис выездных услуг"
+  },
+  "description": {
+    "en": "Marketplace for on-site B2B engagement services: inspection, translation, guiding, and escorting.",
+    "ru": "Маркетплейс выездных B2B-услуг: инспекция, перевод, гид и сопровождение."
+  },
+  "version": "1.0.0",
+  "platformVersion": "1.0.0",
+  "author": "GZDKH",
+  "category": "Services",
+  "provides": [
+    {
+      "id": "engagement.requests"
+    },
+    {
+      "id": "engagement.providers"
+    },
+    {
+      "id": "engagement.templates"
+    },
+    {
+      "id": "engagement.reports"
+    }
+  ],
+  "requires": [
+    {
+      "capabilityId": "catalog.products"
+    },
+    {
+      "capabilityId": "counterparty.management"
+    },
+    {
+      "capabilityId": "staff.management"
+    },
+    {
+      "capabilityId": "platform.api-management"
+    },
+    {
+      "capabilityId": "payments.checkout"
+    },
+    {
+      "capabilityId": "media.assets"
+    },
+    {
+      "capabilityId": "notifications.delivery"
+    }
+  ],
+  "infra": {
+    "database": true,
+    "queue": true,
+    "cache": false,
+    "env": [
+      "ConnectionStrings__Default"
+    ]
+  },
+  "routes": [
+    {
+      "path": "/api/v1/engagement",
+      "grpcService": "EngagementService"
+    }
+  ]
+}
