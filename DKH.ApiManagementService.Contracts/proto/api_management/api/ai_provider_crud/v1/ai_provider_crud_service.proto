@@ -20,6 +20,11 @@ service AiProviderCrudService {
   rpc Delete(DeleteAiProviderRequest) returns (google.protobuf.Empty);
   rpc Restore(RestoreAiProviderRequest) returns (proto.api_management.models.ai_provider.v1.AiProviderModel);
   rpc PermanentlyDelete(PermanentlyDeleteAiProviderRequest) returns (google.protobuf.Empty);
+
+  // Internal service-to-service resolution of the active provider's runtime credentials for one
+  // provider type, used by AI runtimes (e.g. AssistantService) while serving a merchant request.
+  // Unlike List this exposes no admin surface: a single active provider, runtime fields only.
+  rpc ResolveActiveProvider(ResolveActiveProviderRequest) returns (ResolveActiveProviderResponse);
 }
 
 message CreateAiProviderRequest {
@@ -70,4 +75,22 @@ message RestoreAiProviderRequest {
 
 message PermanentlyDeleteAiProviderRequest {
   proto.platform.grpc.common.types.GuidValue id = 1;
+}
+
+message ResolveActiveProviderRequest {
+  proto.api_management.models.ai_provider.v1.AiProviderType provider_type = 1;
+}
+
+message ResolveActiveProviderResponse {
+  // Unset when no active provider is configured for the requested type.
+  optional ResolvedAiProvider provider = 1;
+}
+
+// Runtime subset of AiProviderModel: only what an AI client needs to build a chat client.
+// Deliberately omits id, status, quotas, audit fields and every other admin-listing field.
+message ResolvedAiProvider {
+  proto.api_management.models.ai_provider.v1.AiProviderType provider_type = 1;
+  google.protobuf.StringValue base_url = 2;
+  google.protobuf.StringValue api_key_reference = 3;
+  repeated string models = 4;
 }
