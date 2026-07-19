@@ -139,4 +139,55 @@ public class AiProviderCrudGrpcService(IMediator mediator) : AiProviderCrudServi
 
         return new Empty();
     }
+
+    // Internal service-to-service AI-key resolution for AI runtimes (AssistantService) that resolve
+    // the active provider while serving a merchant request. Those callers carry the merchant's token
+    // (StorefrontsWrite), which by design cannot satisfy ApiManagementAdminAccess — gating this read
+    // behind the admin policy is what left runtime AI-key resolution returning 401. Anonymous like
+    // ModuleStateGrpcService.GetModuleState — an internal call on the docker network, and the network
+    // boundary is the control. Least privilege: one active provider, runtime fields only, never the
+    // admin listing surface.
+    [AllowAnonymous]
+    public override async Task<ResolveActiveProviderResponse> ResolveActiveProvider(
+        ResolveActiveProviderRequest request,
+        ServerCallContext context)
+    {
+        if (request.ProviderType == AiProviderType.Unspecified)
+        {
+            throw new RpcException(
+                new Status(StatusCode.InvalidArgument, "ResolveActiveProvider requires a provider_type."));
+        }
+
+        var result = await mediator.Send(
+            new ListAiProvidersQuery(
+                1,
+                1,
+                request.ProviderType.ToDomainType(),
+                Domain.Enums.AiProviderStatus.Active,
+                PlatformSoftDeleteFilter.ActiveOnly),
+            context.CancellationToken);
+
+        var response = new ResolveActiveProviderResponse();
+        if (result.Providers.Count == 0)
+        {
+            return response;
+        }
+
+        var provider = result.Providers[0];
+        var resolved = new ResolvedAiProvider { ProviderType = provider.ProviderType };
+
+        if (provider.BaseUrl is not null)
+        {
+            resolved.BaseUrl = provider.BaseUrl;
+        }
+
+        if (provider.ApiKeyReference is not null)
+        {
+            resolved.ApiKeyReference = provider.ApiKeyReference;
+        }
+
+        resolved.Models.AddRange(provider.Models);
+        response.Provider = resolved;
+        return response;
+    }
 }
