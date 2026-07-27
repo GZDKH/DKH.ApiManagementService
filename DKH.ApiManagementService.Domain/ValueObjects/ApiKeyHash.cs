@@ -20,12 +20,6 @@ public sealed class ApiKeyHash : ValueObject
         return new ApiKeyHash(Convert.ToHexStringLower(hash));
     }
 
-    public static ApiKeyHash FromHash(string hash)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(hash);
-        return new ApiKeyHash(hash);
-    }
-
     protected override IEnumerable<object?> GetAtomicValues()
     {
         yield return Value;
