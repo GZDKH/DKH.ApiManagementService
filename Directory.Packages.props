@@ -31,7 +31,7 @@
   <ItemGroup>
     <PackageVersion Include="DKH.Platform" Version="1.5.1" />
     <PackageVersion Include="DKH.Platform.ApiKeyAuth" Version="1.0.0" />
-    <PackageVersion Include="DKH.Platform.Authentication.Keycloak" Version="1.4.0" />
+    <PackageVersion Include="DKH.Platform.Authentication.Keycloak" Version="1.5.0" />
     <PackageVersion Include="DKH.Platform.Authorization" Version="2.0.0" />
     <PackageVersion Include="DKH.Platform.Authorization.ResourceAccess" Version="0.6.0" />
     <PackageVersion Include="DKH.Platform.Modularity" Version="1.2.0" />
