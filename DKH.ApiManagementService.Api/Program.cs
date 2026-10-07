@@ -69,7 +69,7 @@ await Platform
             PlatformRoles.Realm.Admin,
             PlatformRoles.FullAccess,
             PlatformRoles.Realm.StorefrontOwner,
-            "engagement.operator"))
+            PlatformRoles.Engagement.Operator))
     .ConfigurePlatformWebApplicationBuilder(builder =>
     {
         builder.Services.AddPlatformResourceAccess<ApiKeyEntity, ApiManagementAccessGrantEntity, Guid>(opts =>
